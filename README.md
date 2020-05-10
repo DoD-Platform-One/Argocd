@@ -1,6 +1,10 @@
 # ArgoCD
 
-This is a standard deployment of ArgoCD _except_ that it is deployed with the following patch:
+This is a standard deployment of ArgoCD with a few exceptions:
+
+## HTTP server
+
+Deploy ArgoCD in the `--insecure` mode so that the ingress controller (Istio) can be the one to handle HTTPS instead.  This does __not__ mean we're "insecure"!
 
 ```yaml
 apiVersion: apps/v1
@@ -20,4 +24,6 @@ spec:
         - --insecure
 ```
 
-This ensures that HTTPS can be handled by the ingress (such as Istio).
+## Custom `repo-server`
+
+To support the various Kustomize plugins, a custom `repo-server` image is used following the standard ArgoCD custom tooling walkthrough [here](https://argoproj.github.io/argo-cd/operator-manual/custom_tools/#byoi-build-your-own-image).  The image and the contents can be found in the root level `Dockerfile`.
