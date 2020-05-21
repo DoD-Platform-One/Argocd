@@ -3,3 +3,10 @@ namespace: argocd
 resources:
   - namespace.yaml
   - install.yaml
+
+images:
+  # Use our own custom image
+  # NOTE: It is up to the "consumer" to provide the necssary ImagePullSecrets to pull this
+  - name: argoproj/argocd:v1.5.5
+    newName: registry.dsop.io/platform-one/private/big-bang/apps/argocd/p1-repo-server
+    newTag: 3c7747be
