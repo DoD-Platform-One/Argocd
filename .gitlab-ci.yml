@@ -20,7 +20,7 @@ stages:
 
     DOCKER_BUILDKIT: 1
 
-    REGISTRY: registry.dsop.io/platform-one/private/big-bang/apps/argocd
+    REGISTRY: $CI_REGISTRY/platform-one/apps/argocd
   services:
     - docker:dind
   before_script:
