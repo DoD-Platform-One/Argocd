@@ -30,8 +30,7 @@ build repo-server image:
   extends: .docker build
   only:
     changes:
-      - .gitlab-ci.yml
-      - Dockerfile
+    - Dockerfile
   variables:
     JOB: argocd-repo-server
   script:
