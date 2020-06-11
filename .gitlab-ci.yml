@@ -1,41 +1,4 @@
-stages:
-  - build
-
-.tag_image: &tag_image
-  - |
-    if [ -z "$CI_COMMIT_TAG" ]; then
-      export IMAGE=$REGISTRY/$JOB:$CI_COMMIT_SHORT_SHA
-    else
-      export IMAGE=$REGISTRY/$JOB:$CI_COMMIT_TAG
-    fi
-
-.docker build:
-  stage: build
-  image: docker
-  variables:
-    # dind stuff
-    DOCKER_HOST: tcp://localhost:2375/
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ""
-
-    DOCKER_BUILDKIT: 1
-
-    REGISTRY: $CI_REGISTRY/platform-one/apps/argocd
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY
-
-build repo-server image:
-  extends: .docker build
-  only:
-    changes:
-    - Dockerfile
-  variables:
-    JOB: argocd-repo-server
-  script:
-    - *tag_image
-    # Build the package
-    - DOCKER_BUILDKIT=1 docker build . -t $IMAGE -f Dockerfile
- 
-    - docker push $IMAGE
+include:
+  - project: 'platform-one/private/big-bang/pipeline-templates'
+    ref: master
+    file: '/templates/generic-app.yml'
