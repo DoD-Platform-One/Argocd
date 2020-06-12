@@ -2369,8 +2369,7 @@ spec:
         - "20"
         - --operation-processors
         - "10"
-        image: registry.dsop.io/platform-one/apps/argocd/argocd:v1.5.3
-        # image: argoproj/argocd:v1.5.5
+        image: registry.dsop.io/platform-one/apps/argocd/argocd-repo-server:v1.5.5-0.1.2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -2410,7 +2409,7 @@ spec:
       - command:
         - /shared/argocd-util
         - rundex
-        image: quay.io/dexidp/dex:v2.22.0
+        image: registry.dsop.io/platform-one/apps/argocd/dex:v2.22.0
         imagePullPolicy: Always
         name: dex
         ports:
@@ -2426,8 +2425,7 @@ spec:
         - -n
         - /usr/local/bin/argocd-util
         - /shared
-        image: registry.dsop.io/platform-one/apps/argocd/argocd:v1.5.3
-        # image: argoproj/argocd:v1.5.5
+        image: registry.dsop.io/platform-one/apps/argocd/argocd-repo-server:v1.5.5-0.1.2
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -2461,7 +2459,7 @@ spec:
         - ""
         - --appendonly
         - "no"
-        image: redis:5.0.3
+        image: registry.dsop.io/platform-one/apps/argocd/redis:5.0.3
         imagePullPolicy: Always
         name: redis
         ports:
@@ -2491,8 +2489,7 @@ spec:
         - argocd-repo-server
         - --redis
         - argocd-redis:6379
-        image: registry.dsop.io/platform-one/apps/argocd/argocd:v1.5.3
-        # image: argoproj/argocd:v1.5.5
+        image: registry.dsop.io/platform-one/apps/argocd/argocd-repo-server:v1.5.5-0.1.2
         imagePullPolicy: Always
         livenessProbe:
           initialDelaySeconds: 5
@@ -2546,8 +2543,7 @@ spec:
         - --repo-server
         - argocd-repo-server:8081
         - --insecure
-        image: registry.dsop.io/platform-one/apps/argocd/argocd:v1.5.3
-        # image: argoproj/argocd:v1.5.5
+        image: registry.dsop.io/platform-one/apps/argocd/argocd-repo-server:v1.5.5-0.1.2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
