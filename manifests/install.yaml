@@ -2202,6 +2202,14 @@ subjects:
   namespace: argocd
 ---
 apiVersion: v1
+data:
+  url: https://argocd.fences.dsop.io
+  oidc.config: |
+    name: Keycloak
+    issuer: https://keycloak.fences.dsop.io/auth/realms/platformone
+    clientID: argocd
+    clientSecret: $oidc.keycloak.clientSecret
+    requestedScopes: ["openid", "profile", "email", "groups"]
 kind: ConfigMap
 metadata:
   labels:
@@ -2210,6 +2218,9 @@ metadata:
   name: argocd-cm
 ---
 apiVersion: v1
+data:
+  policy.csv: |
+    g, ArgoCDAdmins, role:admin
 kind: ConfigMap
 metadata:
   labels:
