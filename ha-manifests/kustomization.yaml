@@ -7,4 +7,4 @@ resources:
 images:
   - name: argoproj/argocd:v1.6.1
     newName: registry.dsop.io/platform-one/apps/argocd
-    newTag: v1.6.1-0.1.1
+    newTag: v1.6.1-0.1.2
