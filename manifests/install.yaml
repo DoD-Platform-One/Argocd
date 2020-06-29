@@ -2200,6 +2200,14 @@ subjects:
 - kind: ServiceAccount
   name: argocd-server
   namespace: argocd
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cm
 
 ---
 apiVersion: v1
