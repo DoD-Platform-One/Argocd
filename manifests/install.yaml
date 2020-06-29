@@ -2208,7 +2208,7 @@ data:
     name: Keycloak
     issuer: https://keycloak.fences.dsop.io/auth/realms/platformone
     clientID: argocd
-    clientSecret: $oidc.keycloak.clientSecret
+    clientSecret: $keycloak-clientSecret
     requestedScopes: ["openid", "profile", "email", "groups"]
 kind: ConfigMap
 metadata:
