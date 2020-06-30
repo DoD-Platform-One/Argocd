@@ -2256,7 +2256,7 @@ metadata:
   name: argocd-secret
 type: Opaque
 data:
-  keycloak-clientSecret: temp
+  keycloak-clientSecret: MzkxMTUyMTktNzNmYS00ZDk3LWEzYzktOWU2NGI5MjVhMTQ3
 ---
 apiVersion: v1
 kind: Service
