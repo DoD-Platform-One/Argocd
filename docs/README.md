@@ -24,7 +24,9 @@ spec:
 
 ## Custom `repo-server`
 
-To support the various Kustomize plugins, a custom `repo-server` image is used following the standard ArgoCD custom tooling walkthrough [here](https://argoproj.github.io/argo-cd/operator-manual/custom_tools/#byoi-build-your-own-image).  The image and the contents can be found in the root level `Dockerfile`.
+To support the various Kustomize plugins, a custom `repo-server` image is used following the standard ArgoCD custom 
+tooling walkthrough [here](https://argoproj.github.io/argo-cd/operator-manual/custom_tools/#byoi-build-your-own-image). 
+ The image and the contents can be found in the root level `Dockerfile`.
 
 The image is located in the P1 repo:
 
@@ -54,9 +56,15 @@ kubectl -k ./
 
 ### Operations
 
-Deploy ArgoCD in the `--insecure` mode so that the ingress controller (Istio) can be the one to handle HTTPS instead.  This does __not__ mean we're "insecure"!
+Deploy ArgoCD in the `--insecure` mode so that the ingress controller (Istio) can be the one to handle HTTPS instead.  
+This does __not__ mean we're "insecure"!
 
 ### HTTP server
 
 https://argocd.<your.namespace.goes.here>
 
+### Allow SSO login 
+
+Once cluster is up and running use the docs in the keycloak repository for creating users to create the developer user. 
+Once the developer user is created login to keycloak using the admin password and assign that user to the ArgoCDAdmins
+group. Go to https://argocd.<domain>.<tld> select login with keycloak and use the developer username and password. 
