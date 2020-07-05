@@ -8,10 +8,10 @@ ENV XDG_CONFIG_HOME=$HOME/.config
 ENV KUSTOMIZE_PLUGIN_PATH=$XDG_CONFIG_HOME/kustomize/plugin/
 
 # Copy kustomize
-COPY --from=registry.dsop.io/platform-one/plugins/kustomize:v0.2.0 /kustomize /usr/local/bin/kustomize
+COPY --from=registry.dsop.io/platform-one/plugins/kustomize:v0.3.0 /kustomize /usr/local/bin/kustomize
 
 # Install plguins
-COPY --from=registry.dsop.io/platform-one/plugins/kustomize:v0.2.0 ${KUSTOMIZE_PLUGIN_PATH}/ ${KUSTOMIZE_PLUGIN_PATH}/
+COPY --from=registry.dsop.io/platform-one/plugins/kustomize:v0.3.0 ${KUSTOMIZE_PLUGIN_PATH}/ ${KUSTOMIZE_PLUGIN_PATH}/
 
 # Switch back to non-root user
 USER argocd
