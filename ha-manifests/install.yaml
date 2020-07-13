@@ -3069,7 +3069,6 @@ spec:
         - /shared/app
         - --redis
         - argocd-redis-ha-haproxy:6379
-        - --insecure
         image: argoproj/argocd:v1.6.1
         imagePullPolicy: Always
         livenessProbe:
@@ -3135,6 +3134,11 @@ spec:
                   app.kubernetes.io/name: argocd-redis-ha
               topologyKey: failure-domain.beta.kubernetes.io/zone
             weight: 100
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: argocd-redis-ha
+            topologyKey: kubernetes.io/hostname
       containers:
       - args:
         - /data/conf/redis.conf
