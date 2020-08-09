@@ -6,5 +6,5 @@ resources:
 
 images:
   - name: argoproj/argocd:v1.6.1
-    newName: registry.dsop.io/platform-one/apps/argocd/ib-argocd
-    newTag: v1.6.1-ironbank-bbredux
+    newName: registry.dsop.io/platform-one/apps/argocd/argocd-ib
+    newTag: v1.6.1-ib-bbredux
