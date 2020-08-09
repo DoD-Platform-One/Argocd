@@ -31,7 +31,7 @@ RUN curl -Lo ${HELMGENERATOR_NAME} ${HELMGENERATOR_URL} && \
 # Sops Generator
 # --------------------------------------------------------------------------
 ARG SOPSGENERATOR_NAME="SopsSecretGenerator"
-ARG SOPSGENERATOR_VERSION="1.3.1"
+ARG SOPSGENERATOR_VERSION="1.3.0"
 ARG SOPSGENERATOR_URL="https://github.com/goabout/kustomize-sopssecretgenerator/releases/download/v${SOPSGENERATOR_VERSION}/${SOPSGENERATOR_NAME}_${SOPSGENERATOR_VERSION}_${GOENV}_${GOARCH}"
 
 RUN curl -Lo ${SOPSGENERATOR_NAME} ${SOPSGENERATOR_URL} && \
@@ -50,5 +50,6 @@ ENV KUSTOMIZE_PLUGIN_PATH=${XDG_CONFIG_HOME}/kustomize/plugin
 # Copy over plugins
 COPY --from=build /plugins/HelmGenerator ${KUSTOMIZE_PLUGIN_PATH}/p1.dsop.io/v1beta1/helmgenerator/
 COPY --from=build /plugins/SopsSecretGenerator ${KUSTOMIZE_PLUGIN_PATH}/goabout.com/v1beta1/sopssecretgenerator/
+COPY --from=build /plugins/kustomize /usr/local/bin/kustomize
 
 USER argocd
