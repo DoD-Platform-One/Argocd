@@ -31,7 +31,7 @@ RUN curl -Lo ${HELMGENERATOR_NAME} ${HELMGENERATOR_URL} && \
 # Sops Generator
 # --------------------------------------------------------------------------
 ARG SOPSGENERATOR_NAME="SopsSecretGenerator"
-ARG SOPSGENERATOR_VERSION="1.3.0"
+ARG SOPSGENERATOR_VERSION="1.3.1"
 ARG SOPSGENERATOR_URL="https://github.com/goabout/kustomize-sopssecretgenerator/releases/download/v${SOPSGENERATOR_VERSION}/${SOPSGENERATOR_NAME}_${SOPSGENERATOR_VERSION}_${GOENV}_${GOARCH}"
 
 RUN curl -Lo ${SOPSGENERATOR_NAME} ${SOPSGENERATOR_URL} && \

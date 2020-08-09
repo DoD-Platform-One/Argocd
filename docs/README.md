@@ -1,5 +1,7 @@
 # ArgoCD
 
+This argocd app is based on the base image from Iron Bank ArgoCD - v1.6.1 with kustomize 3.8.0 plugins helmGenerator 0.2.0 SopGenerator 1.3.1
+
 This is a standard deployment of ArgoCD with a few exceptions:
 
 
