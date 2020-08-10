@@ -50,5 +50,6 @@ ENV KUSTOMIZE_PLUGIN_PATH=${XDG_CONFIG_HOME}/kustomize/plugin
 # Copy over plugins
 COPY --from=build /plugins/HelmGenerator ${KUSTOMIZE_PLUGIN_PATH}/p1.dsop.io/v1beta1/helmgenerator/
 COPY --from=build /plugins/SopsSecretGenerator ${KUSTOMIZE_PLUGIN_PATH}/goabout.com/v1beta1/sopssecretgenerator/
+COPY --from=build /plugins/kustomize /usr/local/bin/kustomize
 
 USER argocd
