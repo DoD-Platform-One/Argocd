@@ -11,3 +11,6 @@ images:
   - name: redis:5.0.3
     newName: registry.dsop.io/platform-one/apps/argocd/redis5-ib
     newTag: 5.0.9-ib
+  - name: quay.io/dexidp/dex:v2.22.0
+    newName: registry.dsop.io/platform-one/apps/argocd/dex-ib
+    newTag: v2.24.0-ib
