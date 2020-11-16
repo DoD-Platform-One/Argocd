@@ -3,6 +3,10 @@ istio:
   enabled: true
 
 global:
+  image:
+    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    tag: v1.7.8
+    imagePullPolicy: IfNotPresent
   imagePullSecrets:
   - name: private-registry
 argo:
