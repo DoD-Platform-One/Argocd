@@ -1,0 +1,6 @@
+dependencies:
+- name: argo-cd
+  repository: file://upstream/argo-cd
+  version: 2.9.5
+digest: sha256:de8e72902a09f76265cefc89002e3e0270cfd95fba00a09e65dc122af8359b5b
+generated: "2020-11-16T06:06:09.905252-05:00"
