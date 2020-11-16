@@ -14,5 +14,5 @@ spec:
         - destination:
             port:
               number: 80
-            host: {{ .Release.Name  }}-argocd-server
+            host: {{ .Release.Name  }}-server
 {{- end }}
