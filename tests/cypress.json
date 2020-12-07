@@ -1,0 +1,11 @@
+{
+ 
+  "pluginsFile": false,
+  "supportFile": false,
+  "fixturesFolder": false,
+  "env": {
+    "argocd_url": "",
+    "argocd_password": "",
+    "argocd_user": ""
+  }
+}
