@@ -16,8 +16,9 @@ global:
   #  runAsUser: 999
   #  runAsGroup: 999
   #  fsGroup: 999
-  imagePullSecrets: []
+  imagePullSecrets: [name: private-registry]
   hostAliases: []
+
   # - ip: 10.20.30.40
   #   hostnames:
   #   - git.myhostname
@@ -27,10 +28,10 @@ controller:
   name: application-controller
 
   image:
-    repository: # argoproj/argocd
-    tag: # v1.7.6
+    repository: registry.dsop.io/platform-one/big-bang/apps/core/argocd/argocd 
+    tag: v1.7.6-bb
     imagePullPolicy: # IfNotPresent
-
+  imagePullSecrets: [name: public-registry]
   ## Argo controller commandline flags
   args:
     statusProcessors: "20"
@@ -183,14 +184,15 @@ dex:
       enabled: false
 
   image:
-    repository: quay.io/dexidp/dex
-    tag: v2.22.0
+    repository: registry1.dsop.io/ironbank/opensource/dexidp/dex
+    tag: v2.26.0
     imagePullPolicy: IfNotPresent
+  imagePullSecrets: [name: private-registry]
   initImage:
     repository:
     tag:
     imagePullPolicy:
-
+  imagePullSecrets: [name: private-registry]
   ## Environment variables to pass to the Dex server
   ##
   env: []
@@ -255,10 +257,10 @@ redis:
   name: redis
 
   image:
-    repository: redis
-    tag: 5.0.8
+    repository: registry1.dsop.io/ironbank/opensource/redis/redis5
+    tag: 5.0.9
     imagePullPolicy: IfNotPresent
-
+  imagePullSecrets: [name: private-registry]
   containerPort: 6379
   servicePort: 6379
 
@@ -341,8 +343,8 @@ server:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: # argoproj/argocd
-    tag: # v1.7.6
+    repository: registry.dsop.io/platform-one/big-bang/apps/core/argocd/argocd
+    tag: v1.7.6-bb
     imagePullPolicy: # IfNotPresent
 
   ## Additional command line arguments to pass to argocd-server
@@ -692,8 +694,8 @@ repoServer:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: # argoproj/argocd
-    tag: # v1.7.6
+    repository: registry.dsop.io/platform-one/big-bang/apps/core/argocd/argocd
+    tag: v1.7.6-bb
     imagePullPolicy: # IfNotPresent
 
   ## Additional command line arguments to pass to argocd-repo-server
