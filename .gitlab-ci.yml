@@ -1,0 +1,4 @@
+include:
+  - project: 'platform-one/private/big-bang/pipeline-templates'
+    ref: master
+    file: '/templates/generic-app.yml'
