@@ -31,7 +31,7 @@ controller:
     repository: registry.dsop.io/platform-one/big-bang/apps/core/argocd/argocd 
     tag: v1.7.6-bb
     imagePullPolicy: # IfNotPresent
-  imagePullSecrets: [name: public-registry]
+  imagePullSecrets: [name: private-registry]
   ## Argo controller commandline flags
   args:
     statusProcessors: "20"
