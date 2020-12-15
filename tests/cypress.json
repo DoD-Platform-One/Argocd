@@ -4,8 +4,8 @@
   "supportFile": false,
   "fixturesFolder": false,
   "env": {
-    "argocd_url": "",
-    "argocd_password": "",
-    "argocd_user": ""
+    "argocd_url": "argocd.bigbang.dev",
+    "argocd_password": "password",
+    "argocd_user": "admin"
   }
 }
