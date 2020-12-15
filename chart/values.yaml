@@ -9,8 +9,8 @@ installCRDs: true
 
 global:
   image:
-    repository: argoproj/argocd
-    tag: v1.7.6
+    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    tag: v1.7.8
     imagePullPolicy: IfNotPresent
   securityContext: {}
   #  runAsUser: 999
@@ -28,8 +28,8 @@ controller:
   name: application-controller
 
   image:
-    repository: registry.dsop.io/platform-one/big-bang/apps/core/argocd/argocd 
-    tag: v1.7.6-bb
+    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    tag: v1.7.8
     imagePullPolicy: # IfNotPresent
   imagePullSecrets: [name: private-registry]
   ## Argo controller commandline flags
@@ -343,14 +343,14 @@ server:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry.dsop.io/platform-one/big-bang/apps/core/argocd/argocd
-    tag: v1.7.6-bb
+    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    tag: v1.7.8
     imagePullPolicy: # IfNotPresent
 
   ## Additional command line arguments to pass to argocd-server
   ##
-  extraArgs: []
-  #  - --insecure
+  extraArgs: 
+   - --insecure
 
   ## Environment variables to pass to argocd-server
   ##
@@ -694,8 +694,8 @@ repoServer:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry.dsop.io/platform-one/big-bang/apps/core/argocd/argocd
-    tag: v1.7.6-bb
+    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    tag: v1.7.8
     imagePullPolicy: # IfNotPresent
 
   ## Additional command line arguments to pass to argocd-repo-server
