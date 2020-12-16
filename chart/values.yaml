@@ -311,6 +311,7 @@ redis:
 
 # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # the custom redis deployment is omitted
+# NOTE: This is set to _always_ disabled until an appropriate replacement for the now deprecated `redis-ha` chart is identified
 redis-ha:
   enabled: false
   # Check the redis-ha chart for more properties
