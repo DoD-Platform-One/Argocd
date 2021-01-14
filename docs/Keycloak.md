@@ -1,11 +1,11 @@
-# Elastic Keycloak Configuration
-This document will explain how to configure keycloak with elastic search. This assumes you have the sample manifests applied.
+# ArgoCD Keycloak Configuration
+This document will explain how to configure keycloak with argocd. This assumes you have the sample manifests applied.
 
 ## Configuration items
 * Keycloak
 * ArgoCD
 
-These are the items you need to do after keycloak and elastic search are working on your cluster.
+These are the items you need to do after keycloak and argocd are working on your cluster.
 
 ### Keycloak Configuration
 
@@ -89,16 +89,19 @@ Client Configuration
 * Press Regenerate Secret and copy it to clipboard
 
 ### ArgoCD Configuration
-Update ArgoCD keycloak client secret:
+Update chart/values.yaml to enable sso and ArgoCD keycloak client secret:
+1. modify values.yaml. This will apply changes to argo-cm argo-rbac-cm and argo-secret:
+```
+# SSO Additions
+sso:
+  enabled: true <--change to true
+  keycloakClientSecret: <place secret here>
+```
+2. Apply helm chart:
+```
+helm upgrade -i -n argocd --create-namespace argocd chart/
+```
 
-1. Use secret from keycloak client configuration in clipboard and encode with base64 (NOTE: -n is required)
- 
-    ``echo -n '<secret>' | base64``
+3. Restart ArgoCD to apply changes by executing  "kubectl -n argocd delete pod --all" within bastion or environment.
 
-2. Copy output to update the secret value in this file: argocd-secret.yaml
-
-3. Push to git and let Argo update the client secret it uses for keycloak communication.
-
-4. Restart ArgoCD to apply changes by executing  "kubectl -n argocd delete pod --all" within bastion or environment.
-
-5. Go to https://argocd.<domain>.<tld> select login with keycloak and use the created username and password. 
+4. Go to https://argocd.<domain>.<tld> select login with keycloak and use the created username and password. 
