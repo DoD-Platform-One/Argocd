@@ -37,6 +37,6 @@ https://helm.sh/docs/intro/install/
 Clone repository
 
 ```
-git clone https://repo1.dsop.io/platform-one/big-bang/apps/core/argocd.git
+git clone https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd.git
 helm install argocd chart
 ```

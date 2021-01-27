@@ -32,7 +32,7 @@ tooling walkthrough [here](https://argoproj.github.io/argo-cd/operator-manual/cu
 
 The image is located in the P1 repo:
 
-registry.dsop.io/platform-one/apps/argocd/argocd-repo-server:v1.5.5-0.1.2
+registry.dso.mil/platform-one/apps/argocd/argocd-repo-server:v1.5.5-0.1.2
 
 ## Usage
 
@@ -51,7 +51,7 @@ brew install kustomize
 
 ### Deployment
 Clone repository
-git clone https://repo1.dsop.io/platform-one/apps/argocd.git
+git clone https://repo1.dso.mil/platform-one/apps/argocd.git
 cd fluentd-elasticsearch
 Apply kustomized manifest
 kubectl -k ./

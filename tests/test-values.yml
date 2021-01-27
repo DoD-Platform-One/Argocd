@@ -9,16 +9,16 @@ installCRDs: true
 
 global:
   image:
-    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
     tag: v1.7.8
     imagePullPolicy: IfNotPresent
   imagePullSecrets:
-  - name: private-registry
+  - name: private-registry-mil
   securityContext: {}
   #  runAsUser: 999
   #  runAsGroup: 999
   #  fsGroup: 999
-  imagePullSecrets: [name: private-registry]
+  imagePullSecrets: [name: private-registry-mil]
   hostAliases: []
 
   # - ip: 10.20.30.40
@@ -30,10 +30,10 @@ controller:
   name: application-controller
 
   image:
-    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
     tag: v1.7.8
     imagePullPolicy: # IfNotPresent
-  imagePullSecrets: [name: private-registry]
+  imagePullSecrets: [name: private-registry-mil]
   ## Argo controller commandline flags
   args:
     statusProcessors: "20"
@@ -186,15 +186,15 @@ dex:
       enabled: false
 
   image:
-    repository: registry1.dsop.io/ironbank/opensource/dexidp/dex
+    repository: registry1.dso.mil/ironbank/opensource/dexidp/dex
     tag: v2.26.0
     imagePullPolicy: IfNotPresent
-  imagePullSecrets: [name: private-registry]
+  imagePullSecrets: [name: private-registry-mil]
   initImage:
     repository:
     tag:
     imagePullPolicy:
-  imagePullSecrets: [name: private-registry]
+  imagePullSecrets: [name: private-registry-mil]
   ## Environment variables to pass to the Dex server
   ##
   env: []
@@ -259,10 +259,10 @@ redis:
   name: redis
 
   image:
-    repository: registry1.dsop.io/ironbank/opensource/redis/redis5
+    repository: registry1.dso.mil/ironbank/opensource/redis/redis5
     tag: 5.0.9
     imagePullPolicy: IfNotPresent
-  imagePullSecrets: [name: private-registry]
+  imagePullSecrets: [name: private-registry-mil]
   containerPort: 6379
   servicePort: 6379
 
@@ -346,7 +346,7 @@ server:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
     tag: v1.7.8
     imagePullPolicy: # IfNotPresent
 
@@ -697,7 +697,7 @@ repoServer:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry1.dsop.io/ironbank/opensource/argoproj/argocd
+    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
     tag: v1.7.8
     imagePullPolicy: # IfNotPresent
 
@@ -953,7 +953,7 @@ sso:
   config:
     oidc.config: |
       name: Keycloak
-      issuer: https://login.dsop.io/auth/realms/baby-yoda
+      issuer: https://login.dso.mil/auth/realms/baby-yoda
       clientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd
       clientSecret: $oidc.keycloak.clientSecret
       requestedScopes: ["openid","ArgoCD"]

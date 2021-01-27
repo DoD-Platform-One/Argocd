@@ -40,7 +40,7 @@ RUN curl -Lo ${SOPSGENERATOR_NAME} ${SOPSGENERATOR_URL} && \
 # Move things into their correct folder
 
 # Copy over to IB container
-FROM registry.dsop.io/platform-one/apps/argocd/ib-argocd:v1.6.1-ironbank AS IBArgo
+FROM registry.dso.mil/platform-one/apps/argocd/ib-argocd:v1.6.1-ironbank AS IBArgo
 
 USER root
 
@@ -48,7 +48,7 @@ ENV XDG_CONFIG_HOME=/.config
 ENV KUSTOMIZE_PLUGIN_PATH=${XDG_CONFIG_HOME}/kustomize/plugin
 
 # Copy over plugins
-COPY --from=build /plugins/HelmGenerator ${KUSTOMIZE_PLUGIN_PATH}/p1.dsop.io/v1beta1/helmgenerator/
+COPY --from=build /plugins/HelmGenerator ${KUSTOMIZE_PLUGIN_PATH}/p1.dso.mil/v1beta1/helmgenerator/
 COPY --from=build /plugins/SopsSecretGenerator ${KUSTOMIZE_PLUGIN_PATH}/goabout.com/v1beta1/sopssecretgenerator/
 COPY --from=build /plugins/kustomize /usr/local/bin/kustomize
 
