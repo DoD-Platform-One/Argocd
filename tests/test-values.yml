@@ -8,18 +8,16 @@ fullnameOverride: ""
 installCRDs: true
 
 global:
+  imagePullSecrets: [ private-registry-mil ]
+  securityContext: {}
+  hostAliases: []
   image:
     repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
     tag: v1.7.8
     imagePullPolicy: IfNotPresent
-  imagePullSecrets:
-  - name: private-registry-mil
-  securityContext: {}
   #  runAsUser: 999
   #  runAsGroup: 999
   #  fsGroup: 999
-  imagePullSecrets: [name: private-registry-mil]
-  hostAliases: []
 
   # - ip: 10.20.30.40
   #   hostnames:
@@ -28,22 +26,20 @@ global:
 ## Controller
 controller:
   name: application-controller
-
+  imagePullSecrets: [name: private-registry-mil]
+  ## Argo controller log format: text|json
+  logFormat: text
+  ## Argo controller log level
+  logLevel: info
   image:
     repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
     tag: v1.7.8
     imagePullPolicy: # IfNotPresent
-  imagePullSecrets: [name: private-registry-mil]
   ## Argo controller commandline flags
   args:
     statusProcessors: "20"
     operationProcessors: "10"
     appResyncPeriod: "180"
-
-  ## Argo controller log format: text|json
-  logFormat: text
-  ## Argo controller log level
-  logLevel: info
 
   ## Additional command line arguments to pass to argocd-controller
   ##
@@ -79,6 +75,7 @@ controller:
     periodSeconds: 10
     successThreshold: 1
     timeoutSeconds: 1
+
   livenessProbe:
     failureThreshold: 3
     initialDelaySeconds: 10
@@ -176,7 +173,7 @@ controller:
 dex:
   enabled: true
   name: dex-server
-
+  imagePullSecrets: [name: private-registry-mil]
   metrics:
     enabled: false
     service:
@@ -184,17 +181,14 @@ dex:
       labels: {}
     serviceMonitor:
       enabled: false
-
   image:
     repository: registry1.dso.mil/ironbank/opensource/dexidp/dex
     tag: v2.26.0
     imagePullPolicy: IfNotPresent
-  imagePullSecrets: [name: private-registry-mil]
   initImage:
     repository:
     tag:
     imagePullPolicy:
-  imagePullSecrets: [name: private-registry-mil]
   ## Environment variables to pass to the Dex server
   ##
   env: []
@@ -257,12 +251,11 @@ dex:
 redis:
   enabled: true
   name: redis
-
+  imagePullSecrets: [name: private-registry-mil]
   image:
     repository: registry1.dso.mil/ironbank/opensource/redis/redis5
     tag: 5.0.9
     imagePullPolicy: IfNotPresent
-  imagePullSecrets: [name: private-registry-mil]
   containerPort: 6379
   servicePort: 6379
 
