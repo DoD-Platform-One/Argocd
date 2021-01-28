@@ -33,10 +33,10 @@ Keycloak client configuration should look like the following:
   "clientAuthenticatorType": "client-secret",
   "secret": "**********",
   "redirectUris": [
-    "https://argocd.fences.dsop.io/auth/callback"
+    "https://argocd.fences.dso.mil/auth/callback"
   ],
   "webOrigins": [
-    "https://argocd.fences.dsop.io"
+    "https://argocd.fences.dso.mil"
   ],
   "notBefore": 0,
   "bearerOnly": false,
