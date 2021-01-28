@@ -8,7 +8,8 @@ fullnameOverride: ""
 installCRDs: true
 
 global:
-  imagePullSecrets: [ private-registry-mil ]
+  imagePullSecrets:
+  - name: private-registry-mil
   securityContext: {}
   hostAliases: []
   image:
