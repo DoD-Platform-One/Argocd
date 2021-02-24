@@ -8,17 +8,16 @@ fullnameOverride: ""
 installCRDs: true
 
 global:
-  securityContext: {}
-  imagePullSecrets: []
-  hostAliases: []
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     tag: v1.8.4
     imagePullPolicy: IfNotPresent
+  securityContext: {}
   #  runAsUser: 999
   #  runAsGroup: 999
   #  fsGroup: 999
-
+  imagePullSecrets: []
+  hostAliases: []
   # - ip: 10.20.30.40
   #   hostnames:
   #   - git.myhostname
@@ -31,6 +30,14 @@ controller:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     tag: v1.8.4
     imagePullPolicy: # IfNotPresent
+
+  # If changing the number of replicas you must pass the number as ARGOCD_CONTROLLER_REPLICAS as an environment variable
+  replicas: 1
+
+  # Deploy the application as a StatefulSet instead of a Deployment, this is required for HA capability.
+  # This is a feature flag that will become the default in chart version 3.x
+  enableStatefulSet: false
+
   ## Argo controller commandline flags
   args:
     statusProcessors: "20"
@@ -48,7 +55,10 @@ controller:
 
   ## Environment variables to pass to argocd-controller
   ##
-  env: []
+  env:
+    []
+    # - name: "ARGOCD_CONTROLLER_REPLICAS"
+    #   value: ""
 
   ## Annotations to be added to controller pods
   ##
@@ -59,7 +69,8 @@ controller:
   podLabels: {}
 
   ## Labels to set container specific security contexts
-  containerSecurityContext: {}
+  containerSecurityContext:
+    {}
     # capabilities:
     #   drop:
     #     - all
@@ -76,7 +87,6 @@ controller:
     periodSeconds: 10
     successThreshold: 1
     timeoutSeconds: 1
-
   livenessProbe:
     failureThreshold: 3
     initialDelaySeconds: 10
@@ -136,30 +146,30 @@ controller:
     rules:
       enabled: false
       spec: []
-      #- alert: ArgoAppMissing
-      #  expr: |
-      #    absent(argocd_app_info)
-      #  for: 15m
-      #  labels:
-      #    severity: critical
-      #  annotations:
-      #    summary: "[ArgoCD] No reported applications"
-      #    description: >
-      #      ArgoCD has not reported any applications data for the past 15 minutes which
-      #      means that it must be down or not functioning properly.  This needs to be
-      #      resolved for this cloud to continue to maintain state.
-      #- alert: ArgoAppNotSynced
-      #  expr: |
-      #    argocd_app_sync_status{sync_status!="Synced"} == 1
-      #  for: 12h
-      #  labels:
-      #    severity: warning
-      #  annotations:
-      #    summary: "[{{`{{$labels.name}}`}}] Application not synchronized"
-      #    description: >
-      #      The application [{{`{{$labels.name}}`}} has not been synchronized for over
-      #      12 hours which means that the state of this cloud has drifted away from the
-      #      state inside Git.
+      # - alert: ArgoAppMissing
+      #   expr: |
+      #     absent(argocd_app_info)
+      #   for: 15m
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "[ArgoCD] No reported applications"
+      #     description: >
+      #       ArgoCD has not reported any applications data for the past 15 minutes which
+      #       means that it must be down or not functioning properly.  This needs to be
+      #       resolved for this cloud to continue to maintain state.
+      # - alert: ArgoAppNotSynced
+      #   expr: |
+      #     argocd_app_info{sync_status!="Synced"} == 1
+      #   for: 12h
+      #   labels:
+      #     severity: warning
+      #   annotations:
+      #     summary: "[{{`{{$labels.name}}`}}] Application not synchronized"
+      #     description: >
+      #       The application [{{`{{$labels.name}}`}} has not been synchronized for over
+      #       12 hours which means that the state of this cloud has drifted away from the
+      #       state inside Git.
     #   selector:
     #     prometheus: kube-prometheus
     #   namespace: monitoring
@@ -182,6 +192,7 @@ dex:
       labels: {}
     serviceMonitor:
       enabled: false
+
   image:
     repository: registry1.dso.mil/ironbank/opensource/dexidp/dex
     tag: v2.26.0
@@ -206,6 +217,8 @@ dex:
   serviceAccount:
     create: true
     name: argocd-dex-server
+    ## Annotations applied to created service account
+    annotations: {}
 
   ## Additional volumeMounts to the controller main container.
   volumeMounts:
@@ -235,11 +248,11 @@ dex:
   priorityClassName: ""
 
   ## Labels to set container specific security contexts
-  containerSecurityContext: {}
+  containerSecurityContext:
+    {}
     # capabilities:
     #   drop:
     #     - all
-
 
   resources: {}
   #  limits:
@@ -254,12 +267,14 @@ redis:
   enabled: true
   name: redis
   imagePullSecrets: []
-  containerPort: 6379
-  servicePort: 6379
+
   image:
     repository: registry1.dso.mil/ironbank/opensource/redis/redis5
     tag: 5.0.9
     imagePullPolicy: IfNotPresent
+
+  containerPort: 6379
+  servicePort: 6379
 
   ## Environment variables to pass to the Redis server
   ##
@@ -283,7 +298,8 @@ redis:
   priorityClassName: ""
 
   ## Labels to set container specific security contexts
-  containerSecurityContext: {}
+  containerSecurityContext:
+    {}
     # capabilities:
     #   drop:
     #     - all
@@ -308,7 +324,6 @@ redis:
 
 # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # the custom redis deployment is omitted
-# NOTE: This is set to _always_ disabled until an appropriate replacement for the now deprecated `redis-ha` chart is identified
 redis-ha:
   enabled: false
   # Check the redis-ha chart for more properties
@@ -319,7 +334,7 @@ redis-ha:
   redis:
     masterGroupName: argocd
     config:
-      save: "\"\""
+      save: '""'
   haproxy:
     enabled: true
     metrics:
@@ -343,16 +358,20 @@ server:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     tag: v1.8.4
-    imagePullPolicy: Always # IfNotPresent
+    imagePullPolicy: Always
 
   ## Additional command line arguments to pass to argocd-server
   ##
-  extraArgs: 
+  extraArgs:
    - --insecure
 
   ## Environment variables to pass to argocd-server
   ##
   env: []
+
+  ## Specify postStart and preStop lifecycle hooks for your argo-cd-server container
+  ##
+  lifecycle: {}
 
   ## Argo server log format: text|json
   logFormat: text
@@ -402,7 +421,8 @@ server:
   priorityClassName: ""
 
   ## Labels to set container specific security contexts
-  containerSecurityContext: {}
+  containerSecurityContext:
+    {}
     # capabilities:
     #   drop:
     #     - all
@@ -427,6 +447,9 @@ server:
     annotations: {}
     labels: {}
     type: ClusterIP
+    ## For node port default ports
+    nodePortHttp: 30080
+    nodePortHttps: 30443
     servicePortHttp: 80
     servicePortHttps: 443
     servicePortHttpName: http
@@ -434,6 +457,7 @@ server:
     namedTargetPort: true
     loadBalancerIP: ""
     loadBalancerSourceRanges: []
+    externalIPs: []
 
   ## Server metrics service configuration
   metrics:
@@ -531,7 +555,7 @@ server:
     #       name: secret-name
     #       key: sshPrivateKey
     #   - type: helm
-    #     url: https://kubernetes-charts.storage.googleapis.com
+    #     url: https://charts.helm.sh/stable
     #     name: stable
     #   - type: helm
     #     url: https://argoproj.github.io/argo-helm
@@ -577,6 +601,10 @@ server:
 
   ## Annotations to be added to ArgoCD rbac ConfigMap
   rbacConfigAnnotations: {}
+
+  # Boolean determining whether or not to create the configmap. If false, it is expected tthe configmap will be created
+  # by something else. ArgoCD will not work if there is no configMap created with the name above.
+  rbacConfigCreate: true
 
   ## Not well tested and not well supported on release v1.0.0.
   ## Applications
@@ -752,7 +780,8 @@ repoServer:
   priorityClassName: ""
 
   ## Labels to set container specific security contexts
-  containerSecurityContext: {}
+  containerSecurityContext:
+    {}
     # capabilities:
     #   drop:
     #     - all
@@ -808,24 +837,24 @@ repoServer:
   ## Use init containers to configure custom tooling
   ## https://argoproj.github.io/argo-cd/operator-manual/custom_tools/
   ## When using the volumes & volumeMounts section bellow, please comment out those above.
- #  volumes:
- #  - name: custom-tools
- #    emptyDir: {}
- #
- #  initContainers:
- #  - name: download-tools
- #    image: alpine:3.8
- #    command: [sh, -c]
- #    args:
- #      - wget -qO- https://get.helm.sh/helm-v2.16.1-linux-amd64.tar.gz | tar -xvzf - &&
- #        mv linux-amd64/helm /custom-tools/
- #    volumeMounts:
- #      - mountPath: /custom-tools
- #        name: custom-tools
- #  volumeMounts:
- #  - mountPath: /usr/local/bin/helm
- #    name: custom-tools
- #    subPath: helm
+  #  volumes:
+  #  - name: custom-tools
+  #    emptyDir: {}
+  #
+  #  initContainers:
+  #  - name: download-tools
+  #    image: alpine:3.8
+  #    command: [sh, -c]
+  #    args:
+  #      - wget -qO- https://get.helm.sh/helm-v2.16.1-linux-amd64.tar.gz | tar -xvzf - &&
+  #        mv linux-amd64/helm /custom-tools/
+  #    volumeMounts:
+  #      - mountPath: /custom-tools
+  #        name: custom-tools
+  #  volumeMounts:
+  #  - mountPath: /usr/local/bin/helm
+  #    name: custom-tools
+  #    subPath: helm
 
 ## Argo Configs
 configs:
@@ -914,10 +943,11 @@ configs:
     # Custom secrets. Useful for injecting SSO secrets into environment variables.
     # Ref: https://argoproj.github.io/argo-cd/operator-manual/sso/
     # Note that all values must be non-empty.
-    extra: {}
+    extra:
+      {}
       # LDAP_PASSWORD: "mypassword"
 
-  # Argo TLS Data.
+    # Argo TLS Data.
     argocdServerTlsConfig:
       {}
       # key:
