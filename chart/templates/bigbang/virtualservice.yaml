@@ -1,4 +1,4 @@
-{{- if .Values.istio.enabled -}}
+{{- if and .Values.istio.enabled .Values.istio.argocd.enabled -}}
 {{- $serviceName := include "argo-cd.server.fullname" . -}}
 {{- $servicePort := ternary .Values.server.service.servicePortHttps .Values.server.service.servicePortHttp .Values.server.ingress.https -}}
 apiVersion: networking.istio.io/v1beta1
@@ -13,11 +13,22 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
     app.kubernetes.io/component: {{ .Values.server.name }}
+  {{- if .Values.istio.argocd.labels }}
+{{ toYaml .Values.istio.argocd.labels | indent 4 }}
+  {{- end }}
+  {{- if .Values.istio.argocd.annotations }}
+  annotations:
+{{ toYaml .Values.istio.argocd.annotations | indent 4 }}
+  {{- end }}
 spec:
   gateways:
-    - main.istio-system.svc.cluster.local
+  {{- range .Values.istio.argocd.gateways }}
+    - {{ . }}
+  {{- end }}
   hosts:
-    - "argocd.{{ .Values.hostname }}"
+  {{- range .Values.istio.argocd.hosts }}
+    - {{ tpl . $}}
+  {{- end }}
   http:
     - route:
         - destination:
