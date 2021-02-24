@@ -955,5 +955,6 @@ sso:
 # Big Bang Additions
 hostname: bigbang.dev
 istio:
+  # Toggle istio integration
   enabled: true
 
