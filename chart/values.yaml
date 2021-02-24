@@ -12,8 +12,8 @@ global:
   imagePullSecrets: []
   hostAliases: []
   image:
-    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
-    tag: v1.7.8
+    repository: registry1.dso.mil/ironbank/big-bang/argocd
+    tag: v1.8.4
     imagePullPolicy: IfNotPresent
   #  runAsUser: 999
   #  runAsGroup: 999
@@ -28,8 +28,8 @@ controller:
   name: application-controller
   imagePullSecrets: []
   image:
-    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
-    tag: v1.7.8
+    repository: registry1.dso.mil/ironbank/big-bang/argocd
+    tag: v1.8.4
     imagePullPolicy: # IfNotPresent
   ## Argo controller commandline flags
   args:
@@ -341,9 +341,9 @@ server:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
-    tag: v1.7.8
-    imagePullPolicy: # IfNotPresent
+    repository: registry1.dso.mil/ironbank/big-bang/argocd
+    tag: v1.8.4
+    imagePullPolicy: Always # IfNotPresent
 
   ## Additional command line arguments to pass to argocd-server
   ##
@@ -692,8 +692,8 @@ repoServer:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry1.dso.mil/ironbank/opensource/argoproj/argocd
-    tag: v1.7.8
+    repository: registry1.dso.mil/ironbank/big-bang/argocd
+    tag: v1.8.4
     imagePullPolicy: # IfNotPresent
 
   ## Additional command line arguments to pass to argocd-repo-server
