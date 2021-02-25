@@ -1,3 +1,4 @@
+{{-  if .Values.server.rbacConfigCreate }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -22,5 +23,6 @@ data:
 {{- end }}
 {{- if .Values.sso.enabled }}
 {{- toYaml .Values.sso.rbac | nindent 4}}
+{{- end }}
 {{- end }}
 {{- end }}
