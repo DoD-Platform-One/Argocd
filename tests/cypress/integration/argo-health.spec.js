@@ -5,7 +5,7 @@ describe('Basic ArgocD', function() {
       cy.get(':nth-child(2) > div > .argo-label-placeholder')
           .type(Cypress.env('argocd_password'))
       cy.get('.login__form-row > .argo-button').click()
-      cy.title().should('eq', 'Argo CD - Applications')
+      cy.title().should('eq', 'Applications - Argo CD')
 
   })
 })
