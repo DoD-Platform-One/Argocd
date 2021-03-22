@@ -322,11 +322,20 @@ redis:
   volumeMounts: []
   volumes: []
 
+redis-bb:
+  # pass throughs to BigBang's redis
+  # https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis/-/blob/main/chart/values.yaml
+  usePassword: false
+  istio:
+    redis:
+      enabled: false
+
 # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # the custom redis deployment is omitted
 redis-ha:
   enabled: false
   # Check the redis-ha chart for more properties
+  
   exporter:
     enabled: true
   persistentVolume:
