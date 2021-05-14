@@ -68,6 +68,11 @@ spec:
         {{- if .Values.repoServer.containerSecurityContext }}
         securityContext: {{- toYaml .Values.repoServer.containerSecurityContext | nindent 10 }}
         {{- end }}
+{{- if and (.Values.awsCredentials.awsAccessKeyId) (.Values.awsCredentials.awsSecretAccessKey) (.Values.awsCredentials.awsDefaultRegion) }}
+        envFrom:
+        - secretRef:
+            name: argocd-iam-secret
+{{- end }}
 {{- if or (.Values.repoServer.env) (.Values.openshift.enabled) }}
         env:
 {{- if .Values.repoServer.env }}

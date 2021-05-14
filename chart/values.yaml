@@ -7,6 +7,12 @@ fullnameOverride: ""
 # Optional CRD installation for those without Helm hooks
 installCRDs: true
 
+# Optional key/secret for IAM role when SOPS encryption in AWS.
+awsCredentials:
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  awsDefaultRegion: "us-gov-west-1"
+
 global:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
