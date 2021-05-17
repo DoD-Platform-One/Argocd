@@ -1,6 +1,6 @@
 dependencies:
-- name: redis
-  repository: file://external
-  version: 12.8.3-bb.0
-digest: sha256:e2f50d48fefef85a8cdf5d4123fbe506abe5f16097b5a6d690930a373230208a
-generated: "2021-03-10T06:37:49.922161-05:00"
+- name: bb-test-lib
+  repository: oci://registry.dso.mil/platform-one/big-bang/pipeline-templates/pipeline-templates
+  version: 0.5.2
+digest: sha256:6c39110f76dc0327492bfd243a76c074ca0f5f4127953c3a167a288c14850a05
+generated: "2021-05-13T10:15:03.2031629-06:00"

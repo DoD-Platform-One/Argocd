@@ -4,4 +4,3 @@ dependencies:
   repository: file://external
   condition: redis-ha.enabled
   alias: redis-bb
-
