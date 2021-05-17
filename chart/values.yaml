@@ -1017,3 +1017,5 @@ istio:
       - istio-system/main
     hosts:
       - argocd.{{ .Values.hostname }}
+monitoring:
+  enabled: false
