@@ -1,4 +1,4 @@
-{{- if .Values.server.metrics.enabled }}
+{{- if or (.Values.server.metrics.enabled) (.Values.monitoring.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:

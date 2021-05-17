@@ -95,7 +95,7 @@ spec:
         - name: {{ .Values.server.name }}
           containerPort: {{ .Values.server.containerPort }}
           protocol: TCP
-        {{ if .Values.server.metrics.enabled }}
+        {{ if or (.Values.server.metrics.enabled) (.Values.monitoring.enabled) }}
         - name: metrics
           containerPort: 8083
           protocol: TCP

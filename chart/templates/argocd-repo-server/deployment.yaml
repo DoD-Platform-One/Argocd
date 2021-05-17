@@ -103,7 +103,7 @@ spec:
         - name: repo-server
           containerPort: {{ .Values.repoServer.containerPort }}
           protocol: TCP
-        {{ if .Values.repoServer.metrics.enabled }}
+        {{ if or (.Values.repoServer.metrics.enabled) (.Values.monitoring.enabled) }}
         - name: metrics
           containerPort: 8084
           protocol: TCP
