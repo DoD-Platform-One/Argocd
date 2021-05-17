@@ -22,7 +22,8 @@ global:
   #  runAsUser: 999
   #  runAsGroup: 999
   #  fsGroup: 999
-  imagePullSecrets: []
+  imagePullSecrets: 
+  - name: private-registry
   hostAliases: []
   # - ip: 10.20.30.40
   #   hostnames:
@@ -31,7 +32,8 @@ global:
 ## Controller
 controller:
   name: application-controller
-  imagePullSecrets: []
+  imagePullSecrets:
+  - name: private-registry
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     tag: v1.8.4
@@ -190,7 +192,8 @@ controller:
 dex:
   enabled: true
   name: dex-server
-  imagePullSecrets: []
+  imagePullSecrets:
+  - name: private-registry
   metrics:
     enabled: false
     service:
@@ -272,7 +275,8 @@ dex:
 redis:
   enabled: true
   name: redis
-  imagePullSecrets: []
+  imagePullSecrets:
+  - name: private-registry
 
   image:
     repository: registry1.dso.mil/ironbank/opensource/redis/redis5
@@ -561,7 +565,7 @@ server:
   ## reference https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml
   config:
     # Argo CD's externally facing base URL (optional). Required when configuring SSO
-    url: https://argocd.example.com
+    url: https://argocd.{{ .Values.hostname }}
     # Argo CD instance label key
     application.instanceLabelKey: argocd.argoproj.io/instance
     # repositories: |
