@@ -565,7 +565,7 @@ server:
   ## reference https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cm.yaml
   config:
     # Argo CD's externally facing base URL (optional). Required when configuring SSO
-    url: https://argocd.{{ .Values.hostname }}
+    url: https://argocd.bigbang.dev
     # Argo CD instance label key
     application.instanceLabelKey: argocd.argoproj.io/instance
     # repositories: |
@@ -1019,3 +1019,10 @@ istio:
       - argocd.{{ .Values.hostname }}
 monitoring:
   enabled: false
+networkPolicies:
+  enabled: false
+  ingressLabels: 
+    app: istio-ingressgateway
+    istio: ingressgateway
+  # See `kubectl cluster-info` and then resolve to IP
+  controlPlaneCidr: 0.0.0.0/0

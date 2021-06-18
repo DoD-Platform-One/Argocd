@@ -1,4 +1,4 @@
-{{- include "bb-test-lib.cypress-configmap.overrides" (list . "argocd-test.cypress-configmap") }}
+{{- include "gluon.tests.cypress-configmap.overrides" (list . "argocd-test.cypress-configmap") }}
 {{- define "argocd-test.cypress-configmap" }}
 metadata:
   labels:
@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
 {{- end }}
 ---
-{{- include "bb-test-lib.cypress-runner.overrides" (list . "argocd-test.cypress-runner") -}}
+{{- include "gluon.tests.cypress-runner.overrides" (list . "argocd-test.cypress-runner") -}}
 {{- define "argocd-test.cypress-runner" -}}
 metadata:
   labels:
