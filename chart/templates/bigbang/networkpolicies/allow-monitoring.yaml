@@ -1,0 +1,27 @@
+{{- if and .Values.networkPolicies.enabled .Values.monitoring.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: inbound-prometheus
+spec:
+  policyTypes:
+    - Ingress
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "argo-cd.name" . }}
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            app.kubernetes.io/name: monitoring
+        podSelector:
+          matchLabels:
+            app: prometheus
+    - ports:
+        - protocol: TCP
+          port: {{ .Values.server.metrics.service.servicePort }}
+        - protocol: TCP
+          port: {{ .Values.repoServer.metrics.service.servicePort }}
+        - protocol: TCP
+          port: {{ .Values.controller.metrics.service.servicePort }}
+{{- end }}
