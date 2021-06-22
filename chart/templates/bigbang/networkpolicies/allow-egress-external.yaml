@@ -2,7 +2,8 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-egress-api
+  # Needed for API and GitRepo access
+  name: allow-egress-external
   namespace: {{ .Release.Namespace }}
 spec:
   podSelector: {}
@@ -11,8 +12,8 @@ spec:
   egress:
   - to:
     - ipBlock:
-        cidr: {{ .Values.networkPolicies.controlPlaneCidr }}
-        # ONLY Block requests to AWS metadata IP
+        cidr: 0.0.0.0/0
+        # ONLY Block requests to cloud metadata IP
         except:
         - 169.254.169.254/32
 {{- end }}
