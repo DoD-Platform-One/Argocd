@@ -20,7 +20,9 @@ describe('Basic ArgocD', function() {
       cy.contains('Sync OK')
       cy.contains('Healthy')
       cy.contains('Delete').click()
-      cy.get('button[qe-id="argo-popup-ok-button"]').click()
+      cy.contains('Please type').click()
+      cy.get('input[qeid="name-field-delete-confirmation"]').type('guestbook')
+      cy.get('button[qe-id="prompt-popup-ok-button"]').click()
       cy.contains('No applications yet')
 
   })
