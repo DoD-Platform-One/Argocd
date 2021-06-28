@@ -5,7 +5,7 @@ metadata:
 upstream:
   type: git
   git:
-    commit: ba3a0e31485ed629e379487ceff44ff4863e28ef
-    repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis
-    directory: /chart
-    ref: main
+    commit: 6a787e2edec4a2760a3579369307cb7a7e1d94a7
+    repo: https://github.com/bitnami/charts
+    directory: bitnami/redis
+    ref: 6a787e2edec4a2760a3579369307cb7a7e1d94a7
