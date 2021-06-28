@@ -383,7 +383,8 @@ redis:
 redis-bb:
   # pass throughs to BigBang's redis
   # https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis/-/blob/main/chart/values.yaml
-  usePassword: false
+  auth:
+    enabled: false
   istio:
     redis:
       enabled: false
