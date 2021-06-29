@@ -380,7 +380,9 @@ redis:
   volumeMounts: []
   volumes: []
 
+## BigBang HA Redis
 redis-bb:
+  enabled: false
   # pass throughs to BigBang's redis
   # https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis/-/blob/main/chart/values.yaml
   auth:
@@ -389,26 +391,26 @@ redis-bb:
     redis:
       enabled: false
 
-# This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
-# the custom redis deployment is omitted
-redis-ha:
-  enabled: false
-  # Check the redis-ha chart for more properties
+# # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
+# # the custom redis deployment is omitted
+# redis-ha:
+#   enabled: false
+#   # Check the redis-ha chart for more properties
   
-  exporter:
-    enabled: true
-  persistentVolume:
-    enabled: false
-  redis:
-    masterGroupName: argocd
-    config:
-      save: '""'
-  haproxy:
-    enabled: true
-    metrics:
-      enabled: true
-  image:
-    tag: 6.2.2-alpine
+#   exporter:
+#     enabled: true
+#   persistentVolume:
+#     enabled: false
+#   redis:
+#     masterGroupName: argocd
+#     config:
+#       save: '""'
+#   haproxy:
+#     enabled: true
+#     metrics:
+#       enabled: true
+#   image:
+#     tag: 6.2.2-alpine
 
 ## Server
 server:
