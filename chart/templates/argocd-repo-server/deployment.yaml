@@ -1,4 +1,4 @@
-{{- $redisHa := (index .Values "redis-ha") -}}
+{{- $redisHa := (index .Values "redis-bb") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,7 +43,7 @@ spec:
         command:
         - uid_entrypoint.sh
         - argocd-repo-server
-        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
+        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
         {{- end }}

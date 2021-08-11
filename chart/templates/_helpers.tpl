@@ -44,7 +44,7 @@ Create redis name and version as used by the chart label.
 {{- define "argo-cd.redis.fullname" -}}
 {{ $redisHa := (index .Values "redis-bb") }}
 {{- if $redisHa.enabled -}}
-    {{ .Release.Name }}-redis-bb-master
+    {{ .Release.Name }}-redis-bb-headless
 {{- else -}}
 {{- printf "%s-%s" (include "argo-cd.fullname" .) .Values.redis.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
