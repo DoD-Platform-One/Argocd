@@ -132,13 +132,13 @@ controller:
 
   priorityClassName: ""
 
-  resources: {}
-  #  limits:
-  #    cpu: 500m
-  #    memory: 512Mi
-  #  requests:
-  #    cpu: 250m
-  #    memory: 256Mi
+  resources:
+   limits:
+     cpu: 500m
+     memory: 2Gi
+   requests:
+     cpu: 500m
+     memory: 2Gi
 
   serviceAccount:
     create: true
@@ -296,13 +296,13 @@ dex:
     #     - all
     # readOnlyRootFilesystem: true
 
-  resources: {}
-  #  limits:
-  #    cpu: 50m
-  #    memory: 64Mi
-  #  requests:
-  #    cpu: 10m
-  #    memory: 32Mi
+  resources:
+   limits:
+     cpu: 10m
+     memory: 128Mi
+   requests:
+     cpu: 10m
+     memory: 128Mi
 
 ## Redis
 redis:
@@ -369,13 +369,13 @@ redis:
     fsGroup: 1000
     runAsNonRoot: true
 
-  resources: {}
-  #  limits:
-  #    cpu: 200m
-  #    memory: 128Mi
-  #  requests:
-  #    cpu: 100m
-  #    memory: 64Mi
+  resources:
+   limits:
+     cpu: 50m
+     memory: 64Mi
+   requests:
+     cpu: 50m
+     memory: 64Mi
 
   volumeMounts: []
   volumes: []
@@ -390,6 +390,22 @@ redis-bb:
   istio:
     redis:
       enabled: false
+  master:
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 50m
+      limits:
+        memory: 64Mi
+        cpu: 50m
+  replica:
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 50m
+      limits:
+        memory: 64Mi
+        cpu: 50m
 
 # # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # # the custom redis deployment is omitted
@@ -506,13 +522,13 @@ server:
     #     - all
     # readOnlyRootFilesystem: true
 
-  resources: {}
-  #  limits:
-  #    cpu: 100m
-  #    memory: 128Mi
-  #  requests:
-  #    cpu: 50m
-  #    memory: 64Mi
+  resources:
+   limits:
+     cpu: 20m
+     memory: 128Mi
+   requests:
+     cpu: 20m
+     memory: 128Mi
 
   ## Certificate configuration
   certificate:
@@ -900,13 +916,13 @@ repoServer:
     #     - all
     # readOnlyRootFilesystem: true
 
-  resources: {}
-  #  limits:
-  #    cpu: 50m
-  #    memory: 128Mi
-  #  requests:
-  #    cpu: 10m
-  #    memory: 64Mi
+  resources:
+   limits:
+     cpu: 50m
+     memory: 128Mi
+   requests:
+     cpu: 50m
+     memory: 128Mi
 
   ## Repo server service configuration
   service:
