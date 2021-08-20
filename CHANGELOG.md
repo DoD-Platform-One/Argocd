@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.6.8-bb.6] - 2021-08-20
+### Added/Updated
+- Added resource requests and limits for argocd pods
+- Updated redis-bb version to 14.1.0-bb.3 which sets redis resource requests/limits
+
 ## [3.6.8-bb.5] - 2021-08-11
 ### Fixes
 - redis-bb service endpoint fix
