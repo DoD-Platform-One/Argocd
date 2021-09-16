@@ -135,10 +135,10 @@ controller:
   resources:
    limits:
      cpu: 500m
-     memory: 2Gi
+     memory: 3Gi
    requests:
      cpu: 500m
-     memory: 2Gi
+     memory: 3Gi
 
   serviceAccount:
     create: true
@@ -393,19 +393,19 @@ redis-bb:
   master:
     resources:
       requests:
-        memory: 64Mi
-        cpu: 50m
+        memory: 256Mi
+        cpu: 100m
       limits:
-        memory: 64Mi
-        cpu: 50m
+        memory: 256Mi
+        cpu: 100m
   replica:
     resources:
       requests:
-        memory: 64Mi
-        cpu: 50m
+        memory: 256Mi
+        cpu: 100m
       limits:
-        memory: 64Mi
-        cpu: 50m
+        memory: 256Mi
+        cpu: 100m
 
 # # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # # the custom redis deployment is omitted
@@ -918,11 +918,11 @@ repoServer:
 
   resources:
    limits:
-     cpu: 50m
-     memory: 128Mi
+     cpu: 100m
+     memory: 1Gi
    requests:
-     cpu: 50m
-     memory: 128Mi
+     cpu: 100m
+     memory: 1Gi
 
   ## Repo server service configuration
   service:
