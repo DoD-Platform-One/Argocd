@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [3.6.8-bb.9] - 2021-09-30
+### Added
+- Ingress network policy for prometheus scraping
+
 ## [3.6.8-bb.8] - 2021-09-16
 ### Changed
 - Increased the resources for redis-bb, controller, and repoServer
