@@ -121,7 +121,7 @@ controller:
     annotations: {}
     labels: {}
     port: 8082
-    portName: https-controller
+    portName: tcp-controller
 
   ## Node selectors and tolerations for server scheduling to nodes with taints
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
@@ -550,7 +550,7 @@ server:
     nodePortHttps: 30443
     servicePortHttp: 80
     servicePortHttps: 443
-    servicePortHttpName: http
+    servicePortHttpName: tcp-server
     servicePortHttpsName: https
     namedTargetPort: true
     loadBalancerIP: ""
@@ -929,7 +929,7 @@ repoServer:
     annotations: {}
     labels: {}
     port: 8081
-    portName: https-repo-server
+    portName: tcp-repo-server
 
   ## Repo server metrics service configuration
   metrics:

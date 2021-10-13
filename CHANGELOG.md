@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [3.6.8-bb.10] - 2021-10-13
+### Changed
+- Service port names for proper istio traffic handling
+
 ## [3.6.8-bb.9] - 2021-09-30
 ### Added
 - Ingress network policy for prometheus scraping
