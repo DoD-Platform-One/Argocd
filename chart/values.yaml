@@ -1149,10 +1149,10 @@ sso:
       requestedScopes: ["openid","ArgoCD"]
 
 # Big Bang Additions
-## Your FQDN will be ${ .Values.subdomain }.${ .Values.hostname }
-hostname: bigbang.dev
+## Your FQDN will be ${ .Values.subdomain }.${ .Values.domain }
+domain: bigbang.dev
 istio:
-  # Toggle istio integration 
+  # Toggle istio integration
   enabled: false
   argocd:
     # Toggle vs creation
@@ -1162,7 +1162,7 @@ istio:
     gateways:
       - istio-system/main
     hosts:
-      - argocd.{{ .Values.hostname }}
+      - argocd.{{ .Values.domain }}
 monitoring:
   enabled: false
 networkPolicies:
