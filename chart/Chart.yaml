@@ -2,7 +2,7 @@ apiVersion: v2
 appVersion: 2.0.1
 description: A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argo-cd
-version: 3.6.8-bb.11
+version: 3.6.8-bb.12
 home: https://github.com/argoproj/argo-helm
 icon: https://raw.githubusercontent.com/argoproj/argo/master/docs/assets/argo.png
 keywords:
@@ -21,5 +21,5 @@ dependencies:
   condition: redis-bb.enabled
   alias: redis-bb
 - name: gluon
-  version: "0.1.1"
+  version: "0.2.4"
   repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
