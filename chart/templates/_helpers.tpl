@@ -69,7 +69,7 @@ Create the name of the controller service account to use
 */}}
 {{- define "argo-cd.controllerServiceAccountName" -}}
 {{- if .Values.controller.serviceAccount.create -}}
-    {{ default (include "argo-cd.fullname" .) .Values.controller.serviceAccount.name }}
+    {{ default (include "argo-cd.controller.fullname" .) .Values.controller.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.controller.serviceAccount.name }}
 {{- end -}}
@@ -80,9 +80,20 @@ Create the name of the dex service account to use
 */}}
 {{- define "argo-cd.dexServiceAccountName" -}}
 {{- if .Values.dex.serviceAccount.create -}}
-    {{ default (include "argo-cd.fullname" .) .Values.dex.serviceAccount.name }}
+    {{ default (include "argo-cd.dex.fullname" .) .Values.dex.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.dex.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the name of the redis service account to use
+*/}}
+{{- define "argo-cd.redisServiceAccountName" -}}
+{{- if .Values.redis.serviceAccount.create -}}
+    {{ default (include "argo-cd.redis.fullname" .) .Values.redis.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.redis.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 
@@ -91,7 +102,7 @@ Create the name of the ArgoCD server service account to use
 */}}
 {{- define "argo-cd.serverServiceAccountName" -}}
 {{- if .Values.server.serviceAccount.create -}}
-    {{ default (include "argo-cd.fullname" .) .Values.server.serviceAccount.name }}
+    {{ default (include "argo-cd.server.fullname" .) .Values.server.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.server.serviceAccount.name }}
 {{- end -}}
@@ -102,7 +113,7 @@ Create the name of the repo-server service account to use
 */}}
 {{- define "argo-cd.repoServerServiceAccountName" -}}
 {{- if .Values.repoServer.serviceAccount.create -}}
-    {{ default (include "argo-cd.fullname" .) .Values.repoServer.serviceAccount.name }}
+    {{ default (include "argo-cd.repoServer.fullname" .) .Values.repoServer.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.repoServer.serviceAccount.name }}
 {{- end -}}
@@ -123,6 +134,9 @@ helm.sh/chart: {{ include "argo-cd.chart" .context }}
 {{ include "argo-cd.selectorLabels" (dict "context" .context "component" .component "name" .name) }}
 app.kubernetes.io/managed-by: {{ .context.Release.Service }}
 app.kubernetes.io/part-of: argocd
+{{- with .context.Values.global.additionalLabels }}
+{{ toYaml . }}
+{{- end }}
 {{- end }}
 
 {{/*
@@ -142,7 +156,9 @@ app.kubernetes.io/component: {{ .component }}
 Return the appropriate apiVersion for ingress
 */}}
 {{- define "argo-cd.ingress.apiVersion" -}}
-{{- if semverCompare "<1.14-0" (include "argo-cd.kubeVersion" $) -}}
+{{- if .Values.apiVersionOverrides.ingress -}}
+{{- print .Values.apiVersionOverrides.ingress -}}
+{{- else if semverCompare "<1.14-0" (include "argo-cd.kubeVersion" $) -}}
 {{- print "extensions/v1beta1" -}}
 {{- else if semverCompare "<1.19-0" (include "argo-cd.kubeVersion" $) -}}
 {{- print "networking.k8s.io/v1beta1" -}}
@@ -174,4 +190,11 @@ Merge Argo Configuration with Preset Configuration
   {{- if .Values.server.configEnabled -}}
 {{- toYaml (mergeOverwrite (default dict (fromYaml (include "argo-cd.config.presets" $))) .Values.server.config) }}
   {{- end -}}
+{{- end -}}
+
+{{/*
+Return the default ArgoCD app version
+*/}}
+{{- define "argo-cd.defaultTag" -}}
+  {{- default .Chart.AppVersion .Values.global.image.tag }}
 {{- end -}}

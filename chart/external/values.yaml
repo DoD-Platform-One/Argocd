@@ -21,7 +21,7 @@ monitoring:
 # May be required on some Redis chart updates due to upstream breaking changes
 # REQUIRED for Chart v14 upgrade
 cleanUpgrade:
-  enabled: true
+  enabled: false
   image: "registry1.dso.mil/ironbank/big-bang/base:8.4"
   resources:
     requests:
