@@ -51,7 +51,7 @@ describe('ArgoCD test', function() {
         return
       } else {
         cy.task('log', 'resources are not showing up in the sync pane, closing and recursing...')
-        cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base-o').click()
+        cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base-o').last().click()
         if (h < appsyncpaneretries) {
           cy.wait(1000)
           appsyncpane()
@@ -61,28 +61,34 @@ describe('ArgoCD test', function() {
       }
     })
   }
-  // check to see if clicking on the synchronize button successfully began a sync, if not retry
+  // check to see if the synchronize button is visible and begin a sync, if not retry synch process
   const appsyncbuttonretries = 5
   let i = 0
   function appsyncbutton () {
     i++
     cy.task('log', 'synchronize() called...')
     cy.get('body').then($body => {
-      if($body.find('.fa-check-circle').length > 0 || $body.find('.fa-circle-notch').length > 0)  {
-        cy.task('log', 'app is syncing...')
-        return
-      } else {
+      cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).then($synchronize => {
+      if ($synchronize.is(':visible')){
       cy.task('log', 'clicking the synchronize button...')
       cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000})
-        .should('be.visible')
-        .click() 
+        .last()
+        .click()
+        return
+      } else {
+      cy.task('log', 'app is syncing...')
         if (i < appsyncbuttonretries) {
           cy.wait(1000)
+          cy.task('log', 'appsyncpane() called...')
+          cy.get('a[qe-id="applications-tiles-button-sync"]', {timeout: 30000})
+          .should('be.visible')
+          .click()
           appsyncbutton()
         } else {
           cy.task('log', 'hit max retries for the app sync button...')
         }
       }
+    })
    })
   }
   it('Log in, deploy and delete app in the ArgoCD UI', function() {
@@ -96,7 +102,7 @@ describe('ArgoCD test', function() {
       cy.get('button[qe-id="applications-list-button-new-app"]').click()
       cy.contains('Application Name').type('guestbook',{delay: 0})
       cy.get('input[qe-id="application-create-field-project"]').type('default',{delay: 0})
-      cy.get('input[id="sync-option-CreateNamespace"]').click()
+      cy.get('input[id="sync-option-CreateNamespace"]').last().click()
       cy.get('input[qe-id="application-create-field-path"]').type('guestbook',{delay: 0})
       cy.get('input[qe-id="application-create-field-repository-url"]').type('https://github.com/argoproj/argocd-example-apps.git',{delay: 0})
       cy.get('input[qe-id="application-create-field-cluster-url"]').type('https://kubernetes.default.svc',{delay: 0})

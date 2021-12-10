@@ -5,7 +5,7 @@ metadata:
   name: {{ template "argo-cd.repoServer.fullname" . }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.repoServer.name "name" .Values.repoServer.name) | nindent 4 }}
-    app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.repoServer.image.tag | quote }}
+    app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag | quote }}
 spec:
   selector:
     matchLabels:
@@ -16,17 +16,15 @@ spec:
   {{- end }}
   template:
     metadata:
-      {{- if .Values.repoServer.podAnnotations }}
+      {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.repoServer.podAnnotations) }}
       annotations:
-      {{- range $key, $value := .Values.repoServer.podAnnotations }}
-        {{ $key }}: {{ $value | quote }}
-      {{- end }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         {{- include "argo-cd.labels" (dict "context" . "component" .Values.repoServer.name "name" .Values.repoServer.name) | nindent 8 }}
-        app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.repoServer.image.tag | quote }}
-        {{- if .Values.repoServer.podLabels }}
-{{- toYaml .Values.repoServer.podLabels | nindent 8 }}
+        app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag | quote }}
+        {{- with (mergeOverwrite (deepCopy .Values.global.podLabels) .Values.repoServer.podLabels) }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
@@ -38,10 +36,9 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Values.repoServer.name }}
-        image: {{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default .Values.global.image.tag .Values.repoServer.image.tag }}
+        image: {{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}
         imagePullPolicy: {{ default .Values.global.image.imagePullPolicy .Values.repoServer.image.imagePullPolicy }}
-        command:
-        - uid_entrypoint.sh
+        args:
         - argocd-repo-server
         {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
         - --redis
@@ -77,8 +74,10 @@ spec:
         {{- end }}
         volumeMounts:
         {{- if .Values.repoServer.volumeMounts }}
-{{- toYaml .Values.repoServer.volumeMounts | nindent 8}}
+          {{- toYaml .Values.repoServer.volumeMounts | nindent 8 }}
         {{- end }}
+        - mountPath: /app/config/gpg/source
+          name: gpg-keys
         - mountPath: /app/config/gpg/keys
           name: gpg-keyring
         {{- if .Values.configs.knownHosts }}
@@ -119,7 +118,10 @@ spec:
           successThreshold: {{ .Values.repoServer.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.repoServer.readinessProbe.failureThreshold }}
         resources:
-{{- toYaml .Values.repoServer.resources | nindent 10 }}
+          {{- toYaml .Values.repoServer.resources | nindent 10 }}
+      {{- with .Values.repoServer.extraContainers }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
     {{- if .Values.repoServer.nodeSelector }}
       nodeSelector:
 {{- toYaml .Values.repoServer.nodeSelector | nindent 8 }}
@@ -132,15 +134,29 @@ spec:
       affinity:
 {{- toYaml .Values.repoServer.affinity | nindent 8 }}
     {{- end }}
+    {{- with .Values.repoServer.topologySpreadConstraints }}
+      topologySpreadConstraints:
+      {{- range $constraint := . }}
+      - {{ toYaml $constraint | nindent 8 | trim }}
+        {{- if not $constraint.labelSelector }}
+        labelSelector:
+          matchLabels:
+            {{- include "argo-cd.selectorLabels" (dict "context" $ "name" $.Values.repoServer.name) | nindent 12 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
       serviceAccountName: {{ template "argo-cd.repoServerServiceAccountName" . }}
-{{- with .Values.global.hostAliases }}
+      {{- with .Values.global.hostAliases }}
       hostAliases:
-{{ toYaml . | indent 6 }}
-{{- end }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
       volumes:
       {{- if .Values.repoServer.volumes }}
-{{- toYaml .Values.repoServer.volumes | nindent 6}}
+        {{- toYaml .Values.repoServer.volumes | nindent 6 }}
       {{- end }}
+      - name: gpg-keys
+        configMap:
+          name: argocd-gpg-keys-cm
       - emptyDir: {}
         name: gpg-keyring
       {{- if .Values.configs.knownHosts }}
@@ -168,7 +184,7 @@ spec:
         name: tmp-dir
       {{- if .Values.repoServer.initContainers }}
       initContainers:
-{{- toYaml .Values.repoServer.initContainers | nindent 6 }}
+      {{- toYaml .Values.repoServer.initContainers | nindent 6 }}
       {{- end }}
 {{- if .Values.repoServer.priorityClassName }}
       priorityClassName: {{ .Values.repoServer.priorityClassName }}
