@@ -6,6 +6,6 @@ upstream:
   type: git
   git:
     commit: 1468d6ded7e9f37833357e96dab09f578468fe1b
-    repo: https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis
+    repo: https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/redis
     directory: /chart
     ref: 14.1.0-bb.5
