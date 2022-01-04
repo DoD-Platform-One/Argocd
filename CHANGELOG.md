@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.27.1-bb.1] - 2022-01-03
+### Updated
+- monitoring allow networkpolicy adding 9121 redis metrics ingress whitelist
+
 ## [3.27.1-bb.0] - 2021-12-10
 ### Updated
 - Updated argocd image to 2.1.7
