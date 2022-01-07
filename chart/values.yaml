@@ -691,7 +691,7 @@ redis-bb:
         memory: 256Mi
         cpu: 100m
   commonConfiguration: |-
-    maxmemory: 200m
+    maxmemory: 200mb
     save: ""
 
 # # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
