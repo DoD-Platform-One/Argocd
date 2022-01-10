@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 3.27.1-bb.1](https://img.shields.io/badge/Version-3.27.1--bb.1-informational?style=flat-square) ![AppVersion: v2.1.7](https://img.shields.io/badge/AppVersion-v2.1.7-informational?style=flat-square)
+![Version: 3.27.1-bb.2](https://img.shields.io/badge/Version-3.27.1--bb.2-informational?style=flat-square) ![AppVersion: v2.1.7](https://img.shields.io/badge/AppVersion-v2.1.7-informational?style=flat-square)
 
 A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -251,6 +251,7 @@ helm install argo-cd chart/
 | redis-bb.replica.resources.requests.cpu | string | `"100m"` |  |
 | redis-bb.replica.resources.limits.memory | string | `"256Mi"` |  |
 | redis-bb.replica.resources.limits.cpu | string | `"100m"` |  |
+| redis-bb.commonConfiguration | string | `"maxmemory: 200m"` |  |
 | server.name | string | `"server"` | Argo CD server name |
 | server.replicas | int | `1` | The number of server pods to run |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
@@ -480,7 +481,7 @@ helm install argo-cd chart/
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
 # redis
 
-![Version: 14.1.0-bb.5](https://img.shields.io/badge/Version-14.1.0--bb.5-informational?style=flat-square) ![AppVersion: 6.2.2](https://img.shields.io/badge/AppVersion-6.2.2-informational?style=flat-square)
+![Version: 14.1.0-bb.7](https://img.shields.io/badge/Version-14.1.0--bb.7-informational?style=flat-square) ![AppVersion: 6.2.2](https://img.shields.io/badge/AppVersion-6.2.2-informational?style=flat-square)
 
 Open source, advanced key-value store. It is often referred to as a data structure server since keys can contain strings, hashes, lists, sets and sorted sets.
 
@@ -833,7 +834,24 @@ helm install redis chart/
 | metrics.prometheusRule.enabled | bool | `false` |  |
 | metrics.prometheusRule.namespace | string | `nil` |  |
 | metrics.prometheusRule.additionalLabels | object | `{}` |  |
-| metrics.prometheusRule.rules | list | `[]` |  |
+| metrics.prometheusRule.rules[0].alert | string | `"RedisDown"` |  |
+| metrics.prometheusRule.rules[0].expr | string | `"redis_up{service=\"{{ template \"common.names.fullname\" . }}-metrics\"} == 0"` |  |
+| metrics.prometheusRule.rules[0].for | string | `"2m"` |  |
+| metrics.prometheusRule.rules[0].labels.severity | string | `"error"` |  |
+| metrics.prometheusRule.rules[0].annotations.summary | string | `"Redis(TM) instance {{ \"{{ $labels.instance }}\" }} down"` |  |
+| metrics.prometheusRule.rules[0].annotations.description | string | `"Redis(TM) instance {{ \"{{ $labels.instance }}\" }} is down"` |  |
+| metrics.prometheusRule.rules[1].alert | string | `"RedisMemoryHigh"` |  |
+| metrics.prometheusRule.rules[1].expr | string | `"redis_memory_used_bytes{service=\"{{ template \"common.names.fullname\" . }}-metrics\"} * 100 / redis_memory_max_bytes{service=\"{{ template \"common.names.fullname\" . }}-metrics\"} > 90\n"` |  |
+| metrics.prometheusRule.rules[1].for | string | `"2m"` |  |
+| metrics.prometheusRule.rules[1].labels.severity | string | `"error"` |  |
+| metrics.prometheusRule.rules[1].annotations.summary | string | `"Redis(TM) instance {{ \"{{ $labels.instance }}\" }} is using too much memory"` |  |
+| metrics.prometheusRule.rules[1].annotations.description | string | `"Redis(TM) instance {{ \"{{ $labels.instance }}\" }} is using {{ \"{{ $value }}\" }}% of its available memory.\n"` |  |
+| metrics.prometheusRule.rules[2].alert | string | `"RedisKeyEviction"` |  |
+| metrics.prometheusRule.rules[2].expr | string | `"increase(redis_evicted_keys_total{service=\"{{ template \"common.names.fullname\" . }}-metrics\"}[5m]) > 0\n"` |  |
+| metrics.prometheusRule.rules[2].for | string | `"1s"` |  |
+| metrics.prometheusRule.rules[2].labels.severity | string | `"error"` |  |
+| metrics.prometheusRule.rules[2].annotations.summary | string | `"Redis(TM) instance {{ \"{{ $labels.instance }}\" }} has evicted keys"` |  |
+| metrics.prometheusRule.rules[2].annotations.description | string | `"Redis(TM) instance {{ \"{{ $labels.instance }}\" }} has evicted {{ \"{{ $value }}\" }} keys in the last 5 minutes.\n"` |  |
 | volumePermissions.enabled | bool | `false` |  |
 | volumePermissions.image.registry | string | `"docker.io"` |  |
 | volumePermissions.image.repository | string | `"bitnami/bitnami-shell"` |  |
