@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 3.27.1-bb.2](https://img.shields.io/badge/Version-3.27.1--bb.2-informational?style=flat-square) ![AppVersion: v2.1.7](https://img.shields.io/badge/AppVersion-v2.1.7-informational?style=flat-square)
+![Version: 3.27.1-bb.3](https://img.shields.io/badge/Version-3.27.1--bb.3-informational?style=flat-square) ![AppVersion: v2.1.7](https://img.shields.io/badge/AppVersion-v2.1.7-informational?style=flat-square)
 
 A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -251,7 +251,7 @@ helm install argo-cd chart/
 | redis-bb.replica.resources.requests.cpu | string | `"100m"` |  |
 | redis-bb.replica.resources.limits.memory | string | `"256Mi"` |  |
 | redis-bb.replica.resources.limits.cpu | string | `"100m"` |  |
-| redis-bb.commonConfiguration | string | `"maxmemory: 200m"` |  |
+| redis-bb.commonConfiguration | string | `"maxmemory 200mb\nsave \"\""` |  |
 | server.name | string | `"server"` | Argo CD server name |
 | server.replicas | int | `1` | The number of server pods to run |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
