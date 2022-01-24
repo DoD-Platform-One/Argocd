@@ -4,12 +4,7 @@ configs:
     argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
 bbtests:
   enabled: true
-  cypress:
-    artifacts: true
-    envs:
-      cypress_url: "http://argocd-server:80"
-      cypress_user: "admin"
-      cypress_password: "Password123"
+
 networkPolicies:
   enabled: true
 

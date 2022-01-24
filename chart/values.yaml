@@ -1742,3 +1742,12 @@ networkPolicies:
     istio: ingressgateway
   # See `kubectl cluster-info` and then resolve to IP
   controlPlaneCidr: 0.0.0.0/0
+
+bbtests:
+  enabled: false
+  cypress:
+    artifacts: true
+    envs:
+      cypress_url: "http://argocd-server:80"
+      cypress_user: "admin"
+      cypress_password: "Password123"
