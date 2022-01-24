@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 3.27.1-bb.3](https://img.shields.io/badge/Version-3.27.1--bb.3-informational?style=flat-square) ![AppVersion: v2.1.7](https://img.shields.io/badge/AppVersion-v2.1.7-informational?style=flat-square)
+![Version: 3.27.1-bb.4](https://img.shields.io/badge/Version-3.27.1--bb.4-informational?style=flat-square) ![AppVersion: v2.1.7](https://img.shields.io/badge/AppVersion-v2.1.7-informational?style=flat-square)
 
 A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -475,6 +475,11 @@ helm install argo-cd chart/
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
+| bbtests.enabled | bool | `false` |  |
+| bbtests.cypress.artifacts | bool | `true` |  |
+| bbtests.cypress.envs.cypress_url | string | `"http://argocd-server:80"` |  |
+| bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
+| bbtests.cypress.envs.cypress_password | string | `"Password123"` |  |
 
 ## Contributing
 
