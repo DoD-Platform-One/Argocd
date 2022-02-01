@@ -18,7 +18,7 @@ awsCredentials:
 global:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.7
+    tag: v2.1.8
     imagePullPolicy: IfNotPresent
   # -- Annotations for the all deployed pods
   podAnnotations: {}
@@ -67,7 +67,7 @@ controller:
   - name: private-registry
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.7
+    tag: v2.1.8
     imagePullPolicy: # IfNotPresent
 
   # If changing the number of replicas you must pass the number as ARGOCD_CONTROLLER_REPLICAS as an environment variable
@@ -346,7 +346,7 @@ dex:
 
   image:
     repository: registry1.dso.mil/ironbank/opensource/dexidp/dex
-    tag: v2.30.0
+    tag: v2.30.2
     imagePullPolicy: IfNotPresent
   initImage:
     # -- Argo CD init image repository
@@ -737,7 +737,7 @@ server:
 
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.7
+    tag: v2.1.8
     imagePullPolicy: Always
 
   ## Additional command line arguments to pass to argocd-server
@@ -1270,6 +1270,33 @@ server:
   #    name: custom-tools
   #    subPath: helm
 
+  extensions:
+    # -- Enable support for extensions
+    ## This function in tech preview stage, do expect unstability or breaking changes in newer versions. Bump image.tag if necessary.
+    enabled: false
+
+    image:
+      # -- Repository to use for extensions image
+      repository: "ghcr.io/argoproj-labs/argocd-extensions"
+      # -- Tag to use for extensions image
+      tag: "v0.1.0"
+      # -- Image pull policy for extensions
+      imagePullPolicy: IfNotPresent
+
+    # -- Resource limits and requests for the argocd-extensions container
+    resources: {}
+    #  limits:
+    #    cpu: 50m
+    #    memory: 128Mi
+    #  requests:
+    #    cpu: 10m
+    #    memory: 64Mi
+
+    # -- Extensions to be loaded into the server
+    contents: []
+    # - name: argo-rollouts
+    #   url: https://github.com/argoproj-labs/rollout-extension/releases/download/v0.1.0/extension.tar
+
 ## Repo Server
 repoServer:
   # -- Repo server name
@@ -1292,7 +1319,7 @@ repoServer:
 
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.7
+    tag: v2.1.8
     imagePullPolicy: # IfNotPresent
 
   ## Additional command line arguments to pass to argocd-repo-server

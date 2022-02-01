@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 3.27.1-bb.5](https://img.shields.io/badge/Version-3.27.1--bb.5-informational?style=flat-square) ![AppVersion: v2.1.7](https://img.shields.io/badge/AppVersion-v2.1.7-informational?style=flat-square)
+![Version: 3.28.1-bb.0](https://img.shields.io/badge/Version-3.28.1--bb.0-informational?style=flat-square) ![AppVersion: v2.1.8](https://img.shields.io/badge/AppVersion-v2.1.8-informational?style=flat-square)
 
 A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -40,7 +40,7 @@ helm install argo-cd chart/
 | awsCredentials.awsSecretAccessKey | string | `""` |  |
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.1.7"` |  |
+| global.image.tag | string | `"v2.1.8"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
@@ -56,7 +56,7 @@ helm install argo-cd chart/
 | controller.name | string | `"application-controller"` | Application controller name string |
 | controller.imagePullSecrets[0].name | string | `"private-registry"` |  |
 | controller.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| controller.image.tag | string | `"v2.1.7"` |  |
+| controller.image.tag | string | `"v2.1.8"` |  |
 | controller.image.imagePullPolicy | string | `nil` |  |
 | controller.replicas | int | `1` |  |
 | controller.enableStatefulSet | bool | `false` | Deploy the application controller as a StatefulSet instead of a Deployment, this is required for HA capability. This is a feature flag that will become the default in chart version 3.x |
@@ -137,7 +137,7 @@ helm install argo-cd chart/
 | dex.metrics.serviceMonitor.namespace | string | `""` | Prometheus ServiceMonitor namespace |
 | dex.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
 | dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` |  |
-| dex.image.tag | string | `"v2.30.0"` |  |
+| dex.image.tag | string | `"v2.30.2"` |  |
 | dex.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | dex.initImage.repository | string | `""` (defaults to global.image.repository) | Argo CD init image repository |
 | dex.initImage.tag | string | `""` (defaults to global.image.tag) | Argo CD init image tag |
@@ -217,7 +217,7 @@ helm install argo-cd chart/
 | redis.resources.requests.memory | string | `"64Mi"` |  |
 | redis.volumeMounts | list | `[]` | Additional volumeMounts to the redis container |
 | redis.volumes | list | `[]` | Additional volumes to the redis pod |
-| redis.extraContainers | list | `[]` | Additional containers to be added to the redis pod  |
+| redis.extraContainers | list | `[]` |  |
 | redis.initContainers | list | `[]` | Init containers to add to the redis pod |
 | redis.service.annotations | object | `{}` | Redis service annotations |
 | redis.service.labels | object | `{}` | Additional redis service labels |
@@ -260,7 +260,7 @@ helm install argo-cd chart/
 | server.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the Argo CD server [HPA] |
 | server.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| server.image.tag | string | `"v2.1.7"` |  |
+| server.image.tag | string | `"v2.1.8"` |  |
 | server.image.imagePullPolicy | string | `"Always"` |  |
 | server.extraArgs[0] | string | `"--insecure"` |  |
 | server.staticAssets.enabled | bool | `true` | Disable deprecated flag `--staticassets` |
@@ -371,6 +371,12 @@ helm install argo-cd chart/
 | server.GKEbackendConfig.spec | object | `{}` | [BackendConfigSpec] |
 | server.extraContainers | list | `[]` | Additional containers to be added to the server pod |
 | server.initContainers | list | `[]` | Init containers to add to the server pod |
+| server.extensions.enabled | bool | `false` | Enable support for extensions |
+| server.extensions.image.repository | string | `"ghcr.io/argoproj-labs/argocd-extensions"` | Repository to use for extensions image |
+| server.extensions.image.tag | string | `"v0.1.0"` | Tag to use for extensions image |
+| server.extensions.image.imagePullPolicy | string | `"IfNotPresent"` | Image pull policy for extensions |
+| server.extensions.resources | object | `{}` | Resource limits and requests for the argocd-extensions container |
+| server.extensions.contents | list | `[]` | Extensions to be loaded into the server |
 | repoServer.name | string | `"repo-server"` | Repo server name |
 | repoServer.replicas | int | `1` | The number of repo server pods to run |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
@@ -379,7 +385,7 @@ helm install argo-cd chart/
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
 | repoServer.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| repoServer.image.tag | string | `"v2.1.7"` |  |
+| repoServer.image.tag | string | `"v2.1.8"` |  |
 | repoServer.image.imagePullPolicy | string | `nil` |  |
 | repoServer.extraArgs | list | `[]` |  |
 | repoServer.env | list | `[]` | Environment variables to pass to repo server |
