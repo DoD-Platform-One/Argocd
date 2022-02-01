@@ -7,7 +7,7 @@
     "draftPR": true,
     "enabledManagers": ["regex"],
     "ignorePaths": ["chart/charts/**"],
-    "labels": ["ArgoCD","renovate"],
+    "labels": ["argocd","renovate"],
     "packageRules": [
         {
             "matchDatasources": ["docker"],
