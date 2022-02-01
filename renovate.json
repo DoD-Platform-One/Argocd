@@ -22,6 +22,14 @@
                 "image:\\s+repository:\\s+[^/]+/(?<depName>.+)\\s+tag:\\s+(?<currentValue>.+)"
             ],
             "datasourceTemplate": "docker"
+        },
+        {
+            "fileMatch": ["^chart/Chart\\.yaml$"],
+            "matchStrings": [
+                "- Argocd:\\s+(?<currentValue>.+)"
+            ],
+            "depNameTemplate": "ironbank/big-bang/argocd",
+            "datasourceTemplate": "docker"
         }
     ],
     "separateMajorMinor": false
