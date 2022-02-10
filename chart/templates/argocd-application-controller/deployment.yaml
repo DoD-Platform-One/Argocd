@@ -1,4 +1,4 @@
-{{- $redisHa := (index .Values "redis-bb") -}}
+{{- $redisHa := (index .Values "redis-ha") -}}
 apiVersion: apps/v1
 kind: {{ .Values.controller.enableStatefulSet | ternary "StatefulSet" "Deployment" }}
 metadata:
@@ -19,7 +19,9 @@ spec:
     metadata:
       {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.controller.podAnnotations) }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- range $key, $value := . }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       {{- end }}
       labels:
         {{- include "argo-cd.labels" (dict "context" . "component" .Values.controller.name "name" .Values.controller.name) | nindent 8 }}
@@ -60,7 +62,7 @@ spec:
         - {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- end }}
-        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
+        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
         {{- end }}

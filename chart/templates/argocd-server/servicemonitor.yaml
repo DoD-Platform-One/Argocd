@@ -1,4 +1,4 @@
-{{- if or (.Values.monitoring.enabled) (and .Values.server.metrics.enabled .Values.server.metrics.serviceMonitor.enabled) }}
+{{- if and .Values.server.metrics.enabled .Values.server.metrics.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:

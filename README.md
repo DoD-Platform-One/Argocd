@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 3.28.1-bb.0](https://img.shields.io/badge/Version-3.28.1--bb.0-informational?style=flat-square) ![AppVersion: v2.1.8](https://img.shields.io/badge/AppVersion-v2.1.8-informational?style=flat-square)
+![Version: 3.33.5-bb.0](https://img.shields.io/badge/Version-3.33.5--bb.0-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
 
 A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -40,25 +40,26 @@ helm install argo-cd chart/
 | awsCredentials.awsSecretAccessKey | string | `""` |  |
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.1.8"` |  |
+| global.image.tag | string | `"v2.2.5"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
 | global.securityContext | object | `{}` | Toggle and define securityContext. See [values.yaml] |
 | global.imagePullSecrets[0].name | string | `"private-registry"` |  |
-| global.hostAliases | list | `[]` |  |
+| global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
 | global.additionalLabels | object | `{}` | Additional labels to add to all resources |
 | global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
 | apiVersionOverrides.certmanager | string | `""` | String to override apiVersion of certmanager resources rendered by this helm chart |
 | apiVersionOverrides.ingress | string | `""` | String to override apiVersion of ingresses rendered by this helm chart |
 | createAggregateRoles | bool | `false` | Create clusterroles that extend existing clusterroles to interact with argo-cd crds |
+| extraObjects | list | `[]` | Array of extra K8s manifests to deploy |
 | controller.name | string | `"application-controller"` | Application controller name string |
+| controller.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the application controller |
+| controller.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the application controller |
+| controller.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the application controller |
 | controller.imagePullSecrets[0].name | string | `"private-registry"` |  |
-| controller.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| controller.image.tag | string | `"v2.1.8"` |  |
-| controller.image.imagePullPolicy | string | `nil` |  |
-| controller.replicas | int | `1` |  |
+| controller.replicas | int | `1` | The number of application controller pods to run. If changing the number of replicas you must pass the number as `ARGOCD_CONTROLLER_REPLICAS` as an environment variable |
 | controller.enableStatefulSet | bool | `false` | Deploy the application controller as a StatefulSet instead of a Deployment, this is required for HA capability. This is a feature flag that will become the default in chart version 3.x |
 | controller.args.statusProcessors | string | `"20"` | define the application controller `--status-processors` |
 | controller.args.operationProcessors | string | `"10"` | define the application controller `--operation-processors` |
@@ -89,16 +90,13 @@ helm install argo-cd chart/
 | controller.service.annotations | object | `{}` | Application controller service annotations |
 | controller.service.labels | object | `{}` | Application controller service labels |
 | controller.service.port | int | `8082` | Application controller service port |
-| controller.service.portName | string | `"tcp-controller"` |  |
+| controller.service.portName | string | `"https-controller"` | Application controller service port name |
 | controller.nodeSelector | object | `{}` | [Node selector] |
 | controller.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | controller.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | controller.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the application controller |
 | controller.priorityClassName | string | `""` | Priority class for the application controller pods |
-| controller.resources.limits.cpu | string | `"500m"` |  |
-| controller.resources.limits.memory | string | `"3Gi"` |  |
-| controller.resources.requests.cpu | string | `"500m"` |  |
-| controller.resources.requests.memory | string | `"3Gi"` |  |
+| controller.resources | object | `{"limits":{"cpu":"500m","memory":"3Gi"},"requests":{"cpu":"500m","memory":"3Gi"}}` | Resource limits and requests for the application controller pods |
 | controller.serviceAccount.create | bool | `true` | Create a service account for the application controller |
 | controller.serviceAccount.name | string | `"argocd-application-controller"` | Service account name |
 | controller.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -123,6 +121,9 @@ helm install argo-cd chart/
 | controller.clusterRoleRules.rules | list | `[]` | List of custom rules for the application controller's ClusterRole resource |
 | controller.extraContainers | list | `[]` | Additional containers to be added to the application controller pod |
 | controller.initContainers | list | `[]` | Init containers to add to the application controller pod |
+| controller.pdb.labels | object | `{}` | Labels to be added to application controller pdb |
+| controller.pdb.annotations | object | `{}` | Annotations to be added to application controller pdb |
+| controller.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the application controller |
 | dex.enabled | bool | `true` | Enable dex |
 | dex.name | string | `"dex-server"` | Dex name |
 | dex.imagePullSecrets[0].name | string | `"private-registry"` |  |
@@ -136,9 +137,9 @@ helm install argo-cd chart/
 | dex.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
 | dex.metrics.serviceMonitor.namespace | string | `""` | Prometheus ServiceMonitor namespace |
 | dex.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
-| dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` |  |
-| dex.image.tag | string | `"v2.30.2"` |  |
-| dex.image.imagePullPolicy | string | `"IfNotPresent"` |  |
+| dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` | Dex image repository |
+| dex.image.tag | string | `"v2.30.3"` | Dex image tag |
+| dex.image.imagePullPolicy | string | `"IfNotPresent"` | Dex imagePullPolicy |
 | dex.initImage.repository | string | `""` (defaults to global.image.repository) | Argo CD init image repository |
 | dex.initImage.tag | string | `""` (defaults to global.image.tag) | Argo CD init image tag |
 | dex.initImage.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Argo CD init image imagePullPolicy |
@@ -180,19 +181,18 @@ helm install argo-cd chart/
 | dex.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to dex |
 | dex.priorityClassName | string | `""` | Priority class for dex |
 | dex.containerSecurityContext | object | `{}` | Dex container-level security context |
-| dex.resources.limits.cpu | string | `"10m"` |  |
-| dex.resources.limits.memory | string | `"128Mi"` |  |
-| dex.resources.requests.cpu | string | `"10m"` |  |
-| dex.resources.requests.memory | string | `"128Mi"` |  |
+| dex.resources | object | `{"limits":{"cpu":"10m","memory":"128Mi"},"requests":{"cpu":"10m","memory":"128Mi"}}` | Resource limits and requests for dex |
 | dex.extraContainers | list | `[]` | Additional containers to be added to the dex pod |
 | dex.initContainers | list | `[]` | Init containers to add to the dex pod |
+| dex.pdb.labels | object | `{}` | Labels to be added to Dex server pdb |
+| dex.pdb.annotations | object | `{}` | Annotations to be added to Dex server pdb |
+| dex.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the Dex server |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.name | string | `"redis"` | Redis name |
+| redis.image.repository | string | `"registry1.dso.mil/ironbank/opensource/redis/redis6"` | Redis repository |
+| redis.image.tag | string | `"6.2.6"` | Redis tag |
+| redis.image.imagePullPolicy | string | `"IfNotPresent"` | Redis imagePullPolicy |
 | redis.imagePullSecrets[0].name | string | `"private-registry"` |  |
-| redis.image.registry | string | `"registry1.dso.mil"` |  |
-| redis.image.repository | string | `"ironbank/opensource/redis/redis6"` |  |
-| redis.image.tag | string | `"6.2.6"` |  |
-| redis.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | redis.extraArgs | list | `[]` | Additional command line arguments to pass to redis-server |
 | redis.containerPort | int | `6379` | Redis container port |
 | redis.servicePort | int | `6379` | Redis service port |
@@ -211,13 +211,10 @@ helm install argo-cd chart/
 | redis.serviceAccount.name | string | `""` | Service account name for redis pod |
 | redis.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | redis.serviceAccount.automountServiceAccountToken | bool | `false` | Automount API credentials for the Service Account |
-| redis.resources.limits.cpu | string | `"50m"` |  |
-| redis.resources.limits.memory | string | `"64Mi"` |  |
-| redis.resources.requests.cpu | string | `"50m"` |  |
-| redis.resources.requests.memory | string | `"64Mi"` |  |
+| redis.resources | object | `{"limits":{"cpu":"50m","memory":"64Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}` | Resource limits and requests for redis |
 | redis.volumeMounts | list | `[]` | Additional volumeMounts to the redis container |
 | redis.volumes | list | `[]` | Additional volumes to the redis pod |
-| redis.extraContainers | list | `[]` |  |
+| redis.extraContainers | list | `[]` | Additional containers to be added to the redis pod |
 | redis.initContainers | list | `[]` | Init containers to add to the redis pod |
 | redis.service.annotations | object | `{}` | Redis service annotations |
 | redis.service.labels | object | `{}` | Additional redis service labels |
@@ -240,18 +237,10 @@ helm install argo-cd chart/
 | redis.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
 | redis.metrics.serviceMonitor.namespace | string | `""` | Prometheus ServiceMonitor namespace |
 | redis.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
-| redis-bb.enabled | bool | `false` |  |
-| redis-bb.auth.enabled | bool | `false` |  |
-| redis-bb.istio.redis.enabled | bool | `false` |  |
-| redis-bb.master.resources.requests.memory | string | `"256Mi"` |  |
-| redis-bb.master.resources.requests.cpu | string | `"100m"` |  |
-| redis-bb.master.resources.limits.memory | string | `"256Mi"` |  |
-| redis-bb.master.resources.limits.cpu | string | `"100m"` |  |
-| redis-bb.replica.resources.requests.memory | string | `"256Mi"` |  |
-| redis-bb.replica.resources.requests.cpu | string | `"100m"` |  |
-| redis-bb.replica.resources.limits.memory | string | `"256Mi"` |  |
-| redis-bb.replica.resources.limits.cpu | string | `"100m"` |  |
-| redis-bb.commonConfiguration | string | `"maxmemory 200mb\nsave \"\""` |  |
+| redis.pdb.labels | object | `{}` | Labels to be added to Redis server pdb |
+| redis.pdb.annotations | object | `{}` | Annotations to be added to Redis server pdb |
+| redis.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the Redis server |
+| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":false,"imagePullSecrets":[{"name":"private-registry"}],"istio":{"redis":{"enabled":false}},"master":{"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"replica":{"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
 | server.name | string | `"server"` | Argo CD server name |
 | server.replicas | int | `1` | The number of server pods to run |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
@@ -259,10 +248,10 @@ helm install argo-cd chart/
 | server.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the Argo CD server [HPA] |
 | server.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the Argo CD server [HPA] |
-| server.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| server.image.tag | string | `"v2.1.8"` |  |
-| server.image.imagePullPolicy | string | `"Always"` |  |
-| server.extraArgs[0] | string | `"--insecure"` |  |
+| server.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the Argo CD server |
+| server.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the Argo CD server |
+| server.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the Argo CD server |
+| server.extraArgs | list | `["--insecure"]` | Additional command line arguments to pass to Argo CD server |
 | server.staticAssets.enabled | bool | `true` | Disable deprecated flag `--staticassets` |
 | server.env | list | `[]` | Environment variables to pass to Argo CD server |
 | server.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to Argo CD server |
@@ -290,10 +279,7 @@ helm install argo-cd chart/
 | server.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the Argo CD server |
 | server.priorityClassName | string | `""` | Priority class for the Argo CD server |
 | server.containerSecurityContext | object | `{}` | Servers container-level security context |
-| server.resources.limits.cpu | string | `"20m"` |  |
-| server.resources.limits.memory | string | `"128Mi"` |  |
-| server.resources.requests.cpu | string | `"20m"` |  |
-| server.resources.requests.memory | string | `"128Mi"` |  |
+| server.resources | object | `{"limits":{"cpu":"20m","memory":"128Mi"},"requests":{"cpu":"20m","memory":"128Mi"}}` | Resource limits and requests for the Argo CD server |
 | server.certificate.enabled | bool | `false` | Enables a certificate manager certificate |
 | server.certificate.domain | string | `"argocd.example.com"` | Certificate manager domain |
 | server.certificate.issuer.kind | string | `nil` | Certificate manager issuer |
@@ -307,8 +293,8 @@ helm install argo-cd chart/
 | server.service.nodePortHttps | int | `30443` | Server service https port for NodePort service type (only if `server.service.type` is set to "NodePort") |
 | server.service.servicePortHttp | int | `80` | Server service http port |
 | server.service.servicePortHttps | int | `443` | Server service https port |
-| server.service.servicePortHttpName | string | `"tcp-server"` |  |
-| server.service.servicePortHttpsName | string | `"https"` |  |
+| server.service.servicePortHttpName | string | `"tcp-server"` | Server service http port name, can be used to route traffic via istio |
+| server.service.servicePortHttpsName | string | `"https"` | Server service https port name, can be used to route traffic via istio |
 | server.service.namedTargetPort | bool | `true` | Use named target port for argocd |
 | server.service.loadBalancerIP | string | `""` | LoadBalancer will get created with the IP specified in this field |
 | server.service.loadBalancerSourceRanges | list | `[]` | Source IP ranges to allow access to service from |
@@ -369,6 +355,10 @@ helm install argo-cd chart/
 | server.clusterAdminAccess.enabled | bool | `true` | Enable RBAC for local cluster deployments |
 | server.GKEbackendConfig.enabled | bool | `false` | Enable BackendConfig custom resource for Google Kubernetes Engine |
 | server.GKEbackendConfig.spec | object | `{}` | [BackendConfigSpec] |
+| server.GKEmanagedCertificate.enabled | bool | `false` | Enable ManagedCertificate custom resource for Google Kubernetes Engine. |
+| server.GKEmanagedCertificate.domains | list | `["argocd.example.com"]` | Domains for the Google Managed Certificate |
+| server.GKEfrontendConfig.enabled | bool | `false` | Enable FrontConfig custom resource for Google Kubernetes Engine |
+| server.GKEfrontendConfig.spec | object | `{}` | [FrontendConfigSpec] |
 | server.extraContainers | list | `[]` | Additional containers to be added to the server pod |
 | server.initContainers | list | `[]` | Init containers to add to the server pod |
 | server.extensions.enabled | bool | `false` | Enable support for extensions |
@@ -377,6 +367,9 @@ helm install argo-cd chart/
 | server.extensions.image.imagePullPolicy | string | `"IfNotPresent"` | Image pull policy for extensions |
 | server.extensions.resources | object | `{}` | Resource limits and requests for the argocd-extensions container |
 | server.extensions.contents | list | `[]` | Extensions to be loaded into the server |
+| server.pdb.labels | object | `{}` | Labels to be added to server pdb |
+| server.pdb.annotations | object | `{}` | Annotations to be added to server pdb |
+| server.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the server |
 | repoServer.name | string | `"repo-server"` | Repo server name |
 | repoServer.replicas | int | `1` | The number of repo server pods to run |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
@@ -384,10 +377,10 @@ helm install argo-cd chart/
 | repoServer.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the repo server [HPA] |
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
-| repoServer.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| repoServer.image.tag | string | `"v2.1.8"` |  |
-| repoServer.image.imagePullPolicy | string | `nil` |  |
-| repoServer.extraArgs | list | `[]` |  |
+| repoServer.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the repo server |
+| repoServer.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the repo server |
+| repoServer.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the repo server |
+| repoServer.extraArgs | list | `[]` | Additional command line arguments to pass to repo server |
 | repoServer.env | list | `[]` | Environment variables to pass to repo server |
 | repoServer.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to repo server |
 | repoServer.logFormat | string | `"text"` | Repo server log format: Either `text` or `json` |
@@ -413,14 +406,11 @@ helm install argo-cd chart/
 | repoServer.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the repo server |
 | repoServer.priorityClassName | string | `""` | Priority class for the repo server |
 | repoServer.containerSecurityContext | object | `{}` | Repo server container-level security context |
-| repoServer.resources.limits.cpu | string | `"100m"` |  |
-| repoServer.resources.limits.memory | string | `"1Gi"` |  |
-| repoServer.resources.requests.cpu | string | `"100m"` |  |
-| repoServer.resources.requests.memory | string | `"1Gi"` |  |
+| repoServer.resources | object | `{"limits":{"cpu":"100m","memory":"1Gi"},"requests":{"cpu":"100m","memory":"1Gi"}}` | Resource limits and requests for the repo server pods |
 | repoServer.service.annotations | object | `{}` | Repo server service annotations |
 | repoServer.service.labels | object | `{}` | Repo server service labels |
 | repoServer.service.port | int | `8081` | Repo server service port |
-| repoServer.service.portName | string | `"tcp-repo-server"` |  |
+| repoServer.service.portName | string | `"tcp-repo-server"` | Repo server service port name |
 | repoServer.metrics.enabled | bool | `false` | Deploy metrics service |
 | repoServer.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | repoServer.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -441,7 +431,11 @@ helm install argo-cd chart/
 | repoServer.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | repoServer.extraContainers | list | `[]` | Additional containers to be added to the repo server pod |
 | repoServer.rbac | list | `[]` | Repo server rbac rules |
+| repoServer.copyutil.resources | object | `{}` | Resource limits and requests for the copyutil initContainer |
 | repoServer.initContainers | list | `[]` | Init containers to add to the repo server pods |
+| repoServer.pdb.labels | object | `{}` | Labels to be added to Repo server pdb |
+| repoServer.pdb.annotations | object | `{}` | Annotations to be added to Repo server pdb |
+| repoServer.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the Repo server |
 | configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] |
 | configs.gpgKeysAnnotations | object | `{}` | GnuPG key ring annotations |
 | configs.gpgKeys | object | `{}` (See [values.yaml]) | [GnuPG](https://argoproj.github.io/argo-cd/user-guide/gpg-verification/) keys to add to the key ring |
@@ -470,17 +464,17 @@ helm install argo-cd chart/
 | sso.keycloakClientSecret | string | `"this-can-be-anything-for-dev"` |  |
 | sso.config."oidc.config" | string | `"name: Keycloak\nissuer: https://login.dso.mil/auth/realms/baby-yoda\nclientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd\nclientSecret: $oidc.keycloak.clientSecret\nrequestedScopes: [\"openid\",\"ArgoCD\"]\n"` |  |
 | domain | string | `"bigbang.dev"` |  |
-| istio.enabled | bool | `false` |  |
-| istio.argocd.enabled | bool | `true` |  |
-| istio.argocd.annotations | object | `{}` |  |
-| istio.argocd.labels | object | `{}` |  |
-| istio.argocd.gateways[0] | string | `"istio-system/main"` |  |
-| istio.argocd.hosts[0] | string | `"argocd.{{ .Values.domain }}"` |  |
-| monitoring.enabled | bool | `false` |  |
-| networkPolicies.enabled | bool | `false` |  |
+| istio.enabled | bool | `false` | Toggle BigBang istio integration |
+| istio.argocd.enabled | bool | `true` | Toggle Istio VirtualService creation |
+| istio.argocd.annotations | object | `{}` | Set Annotations for VirtualService |
+| istio.argocd.labels | object | `{}` | Set Labels for VirtualService |
+| istio.argocd.gateways | list | `["istio-system/main"]` | Set Gateway for VirtualService |
+| istio.argocd.hosts | list | `["argocd.{{ .Values.domain }}"]` | Set Hosts for VirtualService |
+| monitoring.enabled | bool | `false` | Toggle BigBang monitoring integration |
+| networkPolicies.enabled | bool | `false` | Toggle BigBang networkPolicies integration |
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
-| networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` |  |
+| networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` | Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints) Used by package NetworkPolicies to allow Kube API access |
 | bbtests.enabled | bool | `false` |  |
 | bbtests.cypress.artifacts | bool | `true` |  |
 | bbtests.cypress.envs.cypress_url | string | `"http://argocd-server:80"` |  |

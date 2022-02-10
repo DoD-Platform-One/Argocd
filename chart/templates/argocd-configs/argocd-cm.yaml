@@ -12,7 +12,4 @@ metadata:
   {{- end }}
   {{- end }}
 data: {{- include "argo-cd.config" $ | nindent 4 }}
-{{- if .Values.sso.enabled }}
-{{- toYaml .Values.sso.config | nindent 4}}
-{{- end }}
 {{- end }}

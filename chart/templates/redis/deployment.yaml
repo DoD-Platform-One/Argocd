@@ -1,5 +1,5 @@
-{{- $redisHa := (index .Values "redis-bb") -}}
-{{- if and (.Values.redis.enabled) (not $redisHa.enabled) -}}
+{{- $redisHa := (index .Values "redis-ha") -}}
+{{- if and .Values.redis.enabled (not $redisHa.enabled) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,7 +15,9 @@ spec:
     metadata:
       {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.redis.podAnnotations) }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- range $key, $value := . }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       {{- end }}
       labels:
         {{- include "argo-cd.labels" (dict "context" . "component" .Values.redis.name "name" .Values.redis.name) | nindent 8 }}
@@ -43,7 +45,7 @@ spec:
         {{- with .Values.redis.extraArgs }}
         {{- . | toYaml | nindent 8 }}
         {{- end }}
-        image: {{.Values.redis.image.registry}}/{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
+        image: {{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}
         imagePullPolicy: {{ .Values.redis.image.imagePullPolicy}}
         {{- if .Values.redis.containerSecurityContext }}
         securityContext: {{- toYaml .Values.redis.containerSecurityContext | nindent 10 }}
