@@ -1,4 +1,4 @@
-{{- $redisHa := (index .Values "redis-ha") -}}
+{{- $redisHa := (index .Values "redis-bb") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,7 +42,7 @@ spec:
         imagePullPolicy: {{ default .Values.global.image.imagePullPolicy .Values.repoServer.image.imagePullPolicy }}
         args:
         - argocd-repo-server
-        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
+        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
         {{- end }}
@@ -101,7 +101,7 @@ spec:
         - name: repo-server
           containerPort: {{ .Values.repoServer.containerPort }}
           protocol: TCP
-        {{ if .Values.repoServer.metrics.enabled }}
+        {{ if or (.Values.repoServer.metrics.enabled) (.Values.monitoring.enabled) }}
         - name: metrics
           containerPort: 8084
           protocol: TCP
