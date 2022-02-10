@@ -1,4 +1,4 @@
-{{- $redisHa := (index .Values "redis-ha") -}}
+{{- $redisHa := (index .Values "redis-bb") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -56,7 +56,7 @@ spec:
         - {{ .Values.server.logFormat }}
         - --loglevel
         - {{ .Values.server.logLevel }}
-        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
+        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
         {{- end }}
@@ -108,7 +108,7 @@ spec:
         - name: {{ .Values.server.name }}
           containerPort: {{ .Values.server.containerPort }}
           protocol: TCP
-        {{ if .Values.server.metrics.enabled }}
+        {{ if or (.Values.server.metrics.enabled) (.Values.monitoring.enabled) }}
         - name: metrics
           containerPort: 8083
           protocol: TCP

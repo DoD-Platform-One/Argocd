@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.33.5-bb.1] - 2022-02-10
+### Fixed
+- Fixed SSO, monitoring values passthroughs, and redis-bb
+
 ## [3.33.5-bb.0] - 2022-02-09
 ### Updated
 - Updated to latest IB image 2.2.5

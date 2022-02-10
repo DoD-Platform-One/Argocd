@@ -1,5 +1,5 @@
-{{- $redisHa := (index .Values "redis-ha") -}}
-{{- if and .Values.redis.enabled (not $redisHa.enabled) -}}
+{{- $redisHa := (index .Values "redis-bb") -}}
+{{- if and (.Values.redis.enabled) (not $redisHa.enabled) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

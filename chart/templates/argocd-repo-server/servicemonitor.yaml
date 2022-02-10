@@ -1,4 +1,4 @@
-{{- if and .Values.repoServer.metrics.enabled .Values.repoServer.metrics.serviceMonitor.enabled }}
+{{- if or (.Values.monitoring.enabled) (and .Values.repoServer.metrics.enabled .Values.repoServer.metrics.serviceMonitor.enabled) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
