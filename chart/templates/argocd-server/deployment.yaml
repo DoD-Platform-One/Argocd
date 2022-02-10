@@ -1,4 +1,4 @@
-{{- $redisHa := (index .Values "redis-bb") -}}
+{{- $redisHa := (index .Values "redis-ha") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +18,9 @@ spec:
     metadata:
       {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.server.podAnnotations) }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- range $key, $value := . }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       {{- end }}
       labels:
         {{- include "argo-cd.labels" (dict "context" . "component" .Values.server.name "name" .Values.server.name) | nindent 8 }}
@@ -54,7 +56,7 @@ spec:
         - {{ .Values.server.logFormat }}
         - --loglevel
         - {{ .Values.server.logLevel }}
-        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
+        {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
         {{- end }}
@@ -98,13 +100,15 @@ spec:
         - mountPath: /home/argocd/.aws
           name: aws-config
         {{- end }}
+        - mountPath: /home/argocd
+          name: plugins-home
         - mountPath: /tmp
           name: tmp-dir
         ports:
         - name: {{ .Values.server.name }}
           containerPort: {{ .Values.server.containerPort }}
           protocol: TCP
-        {{ if or (.Values.server.metrics.enabled) (.Values.monitoring.enabled) }}
+        {{ if .Values.server.metrics.enabled }}
         - name: metrics
           containerPort: 8083
           protocol: TCP
@@ -216,6 +220,8 @@ spec:
             path: ca.crt
           optional: true
           secretName: argocd-repo-server-tls
+      - emptyDir: {}
+        name: plugins-home
       {{- if .Values.server.initContainers }}
       initContainers:
       {{- toYaml .Values.server.initContainers | nindent 6 }}

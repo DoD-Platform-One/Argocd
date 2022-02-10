@@ -43,10 +43,9 @@ describe('ArgoCD test', function() {
     .should('be.visible')
     .click()
     // this is just to wait for the panel to slide out
-    cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base')
-    .should('be.visible')
+    cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__close').should('be.visible')
     cy.get('body').then($body => {
-      if($body.find(':nth-child(5) > :nth-child(2) > label').length > 0)  {
+      if($body.find('.application-sync-panel__resource').length > 0)  {
         cy.task('log', 'resources are showing up in the bottom of the sync pane...')
         return
       } else {
@@ -70,17 +69,15 @@ describe('ArgoCD test', function() {
     cy.get('body').then($body => {
       cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).then($synchronize => {
       if ($synchronize.is(':visible')){
-      cy.task('log', 'clicking the synchronize button...')
-      cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000})
-        .last()
-        .click()
+        cy.task('log', 'clicking the synchronize button...')
+        cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).last().click()
         return
       } else {
-      cy.task('log', 'app is syncing...')
+        cy.task('log', 'sync button not visible...')
         if (i < appsyncbuttonretries) {
           cy.wait(1000)
           cy.task('log', 'appsyncpane() called...')
-          cy.get('a[qe-id="applications-tiles-button-sync"]', {timeout: 30000})
+          cy.get('a[qe-id="application-sync-panel-button-synchronize"]', {timeout: 30000})
           .should('be.visible')
           .click()
           appsyncbutton()

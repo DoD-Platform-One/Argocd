@@ -18,7 +18,7 @@ awsCredentials:
 global:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.8
+    tag: v2.2.5
     imagePullPolicy: IfNotPresent
   # -- Annotations for the all deployed pods
   podAnnotations: {}
@@ -31,6 +31,7 @@ global:
   #  fsGroup: 999
   imagePullSecrets: 
   - name: private-registry
+  # -- Mapping between IP and hostnames that will be injected as entries in the pod's hosts files
   hostAliases: []
   # - ip: 10.20.30.40
   #   hostnames:
@@ -59,18 +60,54 @@ apiVersionOverrides:
 ## Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles
 createAggregateRoles: false
 
+# -- Array of extra K8s manifests to deploy
+extraObjects: []
+  # - apiVersion: secrets-store.csi.x-k8s.io/v1
+  #   kind: SecretProviderClass
+  #   metadata:
+  #     name: argocd-secrets-store
+  #   spec:
+  #     provider: aws
+  #     parameters:
+  #       objects: |
+  #         - objectName: "argocd"
+  #           objectType: "secretsmanager"
+  #           jmesPath:
+  #               - path: "client_id"
+  #                 objectAlias: "client_id"
+  #               - path: "client_secret"
+  #                 objectAlias: "client_secret"
+  #     secretObjects:
+  #     - data:
+  #       - key: client_id
+  #         objectName: client_id
+  #       - key: client_secret
+  #         objectName: client_secret
+  #       secretName: argocd-secrets-store
+  #       type: Opaque
+  #       labels:
+  #         app.kubernetes.io/part-of: argocd
+
 ## Controller
 controller:
   # -- Application controller name string
   name: application-controller
+
+  image:
+    # -- Repository to use for the application controller
+    # @default -- `""` (defaults to global.image.repository)
+    repository: ""
+    # -- Tag to use for the application controller
+    # @default -- `""` (defaults to global.image.tag)
+    tag: ""
+    # -- Image pull policy for the application controller
+    # @default -- `""` (defaults to global.image.imagePullPolicy)
+    imagePullPolicy: ""
   imagePullSecrets:
   - name: private-registry
-  image:
-    repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.8
-    imagePullPolicy: # IfNotPresent
 
-  # If changing the number of replicas you must pass the number as ARGOCD_CONTROLLER_REPLICAS as an environment variable
+  # -- The number of application controller pods to run.
+  # If changing the number of replicas you must pass the number as `ARGOCD_CONTROLLER_REPLICAS` as an environment variable
   replicas: 1
 
   # -- Deploy the application controller as a StatefulSet instead of a Deployment, this is required for HA capability.
@@ -170,7 +207,8 @@ controller:
     labels: {}
     # -- Application controller service port
     port: 8082
-    portName: tcp-controller
+    # -- Application controller service port name
+    portName: https-controller
 
   # -- [Node selector]
   nodeSelector: {}
@@ -190,13 +228,14 @@ controller:
   # -- Priority class for the application controller pods
   priorityClassName: ""
 
+  # -- Resource limits and requests for the application controller pods
   resources:
-   limits:
-     cpu: 500m
-     memory: 3Gi
-   requests:
-     cpu: 500m
-     memory: 3Gi
+    limits:
+      cpu: 500m
+      memory: 3Gi
+    requests:
+      cpu: 500m
+      memory: 3Gi
 
   serviceAccount:
     # -- Create a service account for the application controller
@@ -310,6 +349,17 @@ controller:
   #    name: custom-tools
   #    subPath: helm
 
+  pdb:
+    # -- Labels to be added to application controller pdb
+    labels: {}
+    # -- Annotations to be added to application controller pdb
+    annotations: {}
+
+    # -- Deploy a Poddisruptionbudget for the application controller
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 0
+
 ## Dex
 dex:
   # -- Enable dex
@@ -345,8 +395,11 @@ dex:
       additionalLabels: {}
 
   image:
+    # -- Dex image repository
     repository: registry1.dso.mil/ironbank/opensource/dexidp/dex
-    tag: v2.30.2
+    # -- Dex image tag
+    tag: v2.30.3
+    # -- Dex imagePullPolicy
     imagePullPolicy: IfNotPresent
   initImage:
     # -- Argo CD init image repository
@@ -474,13 +527,14 @@ dex:
     #     - all
     # readOnlyRootFilesystem: true
 
+  # -- Resource limits and requests for dex
   resources:
-   limits:
-     cpu: 10m
-     memory: 128Mi
-   requests:
-     cpu: 10m
-     memory: 128Mi
+    limits:
+      cpu: 10m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 128Mi
 
   # -- Additional containers to be added to the dex pod
   extraContainers: []
@@ -501,20 +555,33 @@ dex:
   #    name: custom-tools
   #    subPath: helm
 
+  pdb:
+    # -- Labels to be added to Dex server pdb
+    labels: {}
+    # -- Annotations to be added to Dex server pdb
+    annotations: {}
+
+    # -- Deploy a Poddisruptionbudget for the Dex server
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 0
+
 ## Redis
 redis:
   # -- Enable redis
   enabled: true
   # -- Redis name
   name: redis
+  image:
+    # -- Redis repository
+    repository: registry1.dso.mil/ironbank/opensource/redis/redis6
+    # -- Redis tag
+    tag: 6.2.6
+    # -- Redis imagePullPolicy
+    imagePullPolicy: IfNotPresent
+
   imagePullSecrets:
   - name: private-registry
-
-  image:
-    registry: registry1.dso.mil
-    repository: ironbank/opensource/redis/redis6
-    tag: 6.2.6
-    imagePullPolicy: IfNotPresent
 
   # -- Additional command line arguments to pass to redis-server
   extraArgs: []
@@ -584,19 +651,21 @@ redis:
     # -- Automount API credentials for the Service Account
     automountServiceAccountToken: false
 
+  # -- Resource limits and requests for redis
   resources:
-   limits:
-     cpu: 50m
-     memory: 64Mi
-   requests:
-     cpu: 50m
-     memory: 64Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
 
   # -- Additional volumeMounts to the redis container
   volumeMounts: []
   # -- Additional volumes to the redis pod
   volumes: []
-#   -- Additional containers to be added to the redis pod 
+
+  # -- Additional containers to be added to the redis pod
   extraContainers: []
 
   # -- Init containers to add to the redis pod
@@ -607,6 +676,14 @@ redis:
   #    args:
   #      - wget -qO- https://get.helm.sh/helm-v2.16.1-linux-amd64.tar.gz | tar -xvzf - &&
   #        mv linux-amd64/helm /custom-tools/
+  #    volumeMounts:
+  #      - mountPath: /custom-tools
+  #        name: custom-tools
+  #  volumeMounts:
+  #  - mountPath: /usr/local/bin/helm
+  #    name: custom-tools
+  #    subPath: helm
+
   service:
     # -- Redis service annotations
     annotations: {}
@@ -662,9 +739,20 @@ redis:
       # -- Prometheus ServiceMonitor namespace
       namespace: "" # "monitoring"
       # -- Prometheus ServiceMonitor labels
-      additionalLabels: {}  
+      additionalLabels: {}
 
-## BigBang HA Redis
+  pdb:
+    # -- Labels to be added to Redis server pdb
+    labels: {}
+    # -- Annotations to be added to Redis server pdb
+    annotations: {}
+
+    # -- Deploy a Poddisruptionbudget for the Redis server
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 0
+
+# -- BigBang HA Redis Passthrough
 redis-bb:
   enabled: false
   # pass throughs to BigBang's redis
@@ -674,6 +762,9 @@ redis-bb:
   istio:
     redis:
       enabled: false
+  imagePullSecrets:
+  - name: private-registry
+
   master:
     resources:
       requests:
@@ -694,26 +785,36 @@ redis-bb:
     maxmemory 200mb
     save ""
 
-# # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
-# # the custom redis deployment is omitted
+
+# This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
+# the custom redis deployment is omitted
+# Check the redis-ha chart for more properties
 # redis-ha:
+#   # -- Enables the Redis HA subchart and disables the custom Redis single node deployment
 #   enabled: false
-#   # Check the redis-ha chart for more properties
-  
 #   exporter:
+#     # -- If `true`, the prometheus exporter sidecar is enabled
 #     enabled: true
 #   persistentVolume:
+#     # -- Configures persistency on Redis nodes
 #     enabled: false
 #   redis:
+#     # -- Redis convention for naming the cluster group: must match `^[\\w-\\.]+$` and can be templated
 #     masterGroupName: argocd
+#     # -- Any valid redis config options in this section will be applied to each server (see `redis-ha` chart)
+#     # @default -- See [values.yaml]
 #     config:
+#       # -- Will save the DB if both the given number of seconds and the given number of write operations against the DB occurred. `""`  is disabled
 #       save: '""'
 #   haproxy:
+#     # -- Enabled HAProxy LoadBalancing/Proxy
 #     enabled: true
 #     metrics:
+#       # -- HAProxy enable prometheus metric scraping
 #       enabled: true
 #   image:
-#     tag: 6.2.4-alpine
+#     # -- Redis tag
+#     tag: 6.2.6-alpine
 
 ## Server
 server:
@@ -736,12 +837,17 @@ server:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.8
-    imagePullPolicy: Always
+    # -- Repository to use for the Argo CD server
+    # @default -- `""` (defaults to global.image.repository)
+    repository: ""
+    # -- Tag to use for the Argo CD server
+    # @default -- `""` (defaults to global.image.tag)
+    tag: ""
+    # -- Image pull policy for the Argo CD server
+    # @default -- `""` (defaults to global.image.imagePullPolicy)
+    imagePullPolicy: ""
 
-  ## Additional command line arguments to pass to argocd-server
-  ##
+  # -- Additional command line arguments to pass to Argo CD server
   extraArgs:
    - --insecure
 
@@ -836,13 +942,14 @@ server:
     #     - all
     # readOnlyRootFilesystem: true
 
+  # -- Resource limits and requests for the Argo CD server
   resources:
-   limits:
-     cpu: 20m
-     memory: 128Mi
-   requests:
-     cpu: 20m
-     memory: 128Mi
+    limits:
+      cpu: 20m
+      memory: 128Mi
+    requests:
+      cpu: 20m
+      memory: 128Mi
 
   ## Certificate configuration
   certificate:
@@ -876,8 +983,9 @@ server:
     servicePortHttp: 80
     # -- Server service https port
     servicePortHttps: 443
+    # -- Server service http port name, can be used to route traffic via istio
     servicePortHttpName: tcp-server
-    # # -- Server service https port name, can be used to route traffic via istio
+    # -- Server service https port name, can be used to route traffic via istio
     servicePortHttpsName: https
     # -- Use named target port for argocd
     ## Named target ports are not supported by GCE health checks, so when deploying argocd on GKE
@@ -1227,6 +1335,27 @@ server:
   #      oauthclientCredentials:
   #        secretName: argocd-secret
 
+  ## Create a Google Managed Certificate for use with the GKE Ingress Controller
+  ## https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
+  GKEmanagedCertificate:
+    # -- Enable ManagedCertificate custom resource for Google Kubernetes Engine.
+    enabled: false
+    # -- Domains for the Google Managed Certificate
+    domains:
+    - argocd.example.com
+
+  ## Create a Google FrontendConfig Custom Resource, for use with the GKE Ingress Controller
+  ## https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
+  GKEfrontendConfig:
+    # -- Enable FrontConfig custom resource for Google Kubernetes Engine
+    enabled: false
+    # -- [FrontendConfigSpec]
+    spec: {}
+  # spec:
+  #   redirectToHttps:
+  #     enabled: true
+  #     responseCodeName: RESPONSE_CODE
+
   # -- Additional containers to be added to the server pod
   ## See https://github.com/lemonldap-ng-controller/lemonldap-ng-controller as example.
   extraContainers: []
@@ -1297,6 +1426,17 @@ server:
     # - name: argo-rollouts
     #   url: https://github.com/argoproj-labs/rollout-extension/releases/download/v0.1.0/extension.tar
 
+  pdb:
+    # -- Labels to be added to server pdb
+    labels: {}
+    # -- Annotations to be added to server pdb
+    annotations: {}
+
+    # -- Deploy a Poddisruptionbudget for the server
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 0
+
 ## Repo Server
 repoServer:
   # -- Repo server name
@@ -1318,12 +1458,17 @@ repoServer:
     targetMemoryUtilizationPercentage: 50
 
   image:
-    repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.1.8
-    imagePullPolicy: # IfNotPresent
+    # -- Repository to use for the repo server
+    # @default -- `""` (defaults to global.image.repository)
+    repository: "" # defaults to global.image.repository
+    # -- Tag to use for the repo server
+    # @default -- `""` (defaults to global.image.tag)
+    tag: "" # defaults to global.image.tag
+    # -- Image pull policy for the repo server
+    # @default -- `""` (defaults to global.image.imagePullPolicy)
+    imagePullPolicy: "" # IfNotPresent
 
-  ## Additional command line arguments to pass to argocd-repo-server
-  ##
+  # -- Additional command line arguments to pass to repo server
   extraArgs: []
 
   # -- Environment variables to pass to repo server
@@ -1414,13 +1559,14 @@ repoServer:
     #     - all
     # readOnlyRootFilesystem: true
 
+  # -- Resource limits and requests for the repo server pods
   resources:
-   limits:
-     cpu: 100m
-     memory: 1Gi
-   requests:
-     cpu: 100m
-     memory: 1Gi
+    limits:
+      cpu: 100m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 1Gi
 
   ## Repo server service configuration
   service:
@@ -1430,6 +1576,7 @@ repoServer:
     labels: {}
     # -- Repo server service port
     port: 8081
+    # -- Repo server service port name
     portName: tcp-repo-server
 
   ## Repo server metrics service configuration
@@ -1501,6 +1648,17 @@ repoServer:
   #     - list
   #     - watch
 
+  # Init container to copy argocd binary
+  copyutil:
+    # -- Resource limits and requests for the copyutil initContainer
+    resources: {}
+    #  limits:
+    #    cpu: 50m
+    #    memory: 64Mi
+    #  requests:
+    #    cpu: 10m
+    #    memory: 32Mi
+
   # -- Init containers to add to the repo server pods
   initContainers: []
   #  - name: download-tools
@@ -1516,6 +1674,17 @@ repoServer:
   #  - mountPath: /usr/local/bin/helm
   #    name: custom-tools
   #    subPath: helm
+
+  pdb:
+    # -- Labels to be added to Repo server pdb
+    labels: {}
+    # -- Annotations to be added to Repo server pdb
+    annotations: {}
+
+    # -- Deploy a Poddisruptionbudget for the Repo server
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 0
 
 ## Argo Configs
 configs:
@@ -1749,27 +1918,36 @@ sso:
 ## Your FQDN will be ${ .Values.subdomain }.${ .Values.domain }
 domain: bigbang.dev
 istio:
-  # Toggle istio integration
+  # -- Toggle BigBang istio integration
   enabled: false
   argocd:
-    # Toggle vs creation
+    # -- Toggle Istio VirtualService creation
     enabled: true
+    # -- Set Annotations for VirtualService
     annotations: {}
+    # -- Set Labels for VirtualService
     labels: {}
+    # -- Set Gateway for VirtualService
     gateways:
       - istio-system/main
+    # -- Set Hosts for VirtualService
     hosts:
       - argocd.{{ .Values.domain }}
 monitoring:
+  # -- Toggle BigBang monitoring integration
   enabled: false
 networkPolicies:
+  # -- Toggle BigBang networkPolicies integration
   enabled: false
   ingressLabels: 
     app: istio-ingressgateway
     istio: ingressgateway
-  # See `kubectl cluster-info` and then resolve to IP
+  # -- Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster
+  # Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints)
+  # Used by package NetworkPolicies to allow Kube API access
   controlPlaneCidr: 0.0.0.0/0
 
+# Big Bang Continuous Integration Testing Only
 bbtests:
   enabled: false
   cypress:

@@ -11,13 +11,8 @@ metadata:
     {{ $key }}: {{ $value | quote }}
   {{- end }}
   {{- end }}
-{{- if or .Values.server.rbacConfig .Values.sso.enabled }}
-data:
 {{- if .Values.server.rbacConfig }}
+data:
 {{- toYaml .Values.server.rbacConfig | nindent 4 }}
-{{- end }}
-{{- if .Values.sso.enabled }}
-{{- toYaml .Values.sso.rbac | nindent 4}}
-{{- end }}
 {{- end }}
 {{- end }}
