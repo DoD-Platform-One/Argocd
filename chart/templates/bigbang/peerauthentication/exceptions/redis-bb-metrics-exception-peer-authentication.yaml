@@ -1,0 +1,24 @@
+# Conditional with the normal conditional + only apply the exception when set to STRICT mode
+# In this case, also added the condition on redis-bb since the exception is for redis-bb
+{{ $redisHa := (index .Values "redis-bb") }}
+{{- if and .Values.istio.enabled $redisHa.enabled (eq .Values.istio.mtls.mode "STRICT") }}
+apiVersion: "security.istio.io/v1beta1"
+kind: PeerAuthentication
+metadata:
+  # Name with the package, "description", and exception
+  name: redis-bb-metrcis-exception
+  namespace: {{ .Release.Namespace }}
+spec:
+  mtls:
+    # Default here is still `mtls.mode`, this allows us to set `PERMISSIVE` just for the metrics port
+    mode: {{ .Values.istio.mtls.mode }}
+  selector:
+    matchLabels:
+      # Label selector to ONLY the pods that need the exception
+      app.kubernetes.io/name: redis-bb
+  # Allow permissive mTLS to redis-bb metrics
+  portLevelMtls:
+    # Port number (in quotes due to Flux getting angry about a number as a yaml key)
+    "9121":
+      mode: PERMISSIVE
+{{- end }}
