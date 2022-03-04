@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.33.5-bb.5] - 2022-03-01
+### Added
+- Added network policy for Redis clients
+
 ## [3.33.5-bb.4] - 2022-03-01
 ### Changed
 - Added AWS credentials mounting for repo server
