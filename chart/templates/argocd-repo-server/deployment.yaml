@@ -46,6 +46,10 @@ spec:
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
         {{- end }}
+        {{- if .Values.redis.externalEndpoint }}
+        - --redis
+        - {{ .Values.redis.externalEndpoint }}
+        {{- end }}
         - --logformat
         - {{ .Values.repoServer.logFormat }}
         - --loglevel

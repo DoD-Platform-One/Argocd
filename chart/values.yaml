@@ -568,6 +568,9 @@ dex:
 
 ## Redis
 redis:
+  # -- Endpoint URL for external Redis
+  # For use with BigBang passthrough
+  externalEndpoint: ""
   # -- Enable redis
   enabled: true
   # -- Redis name
