@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 3.33.5-bb.5](https://img.shields.io/badge/Version-3.33.5--bb.5-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
+![Version: 3.33.5-bb.6](https://img.shields.io/badge/Version-3.33.5--bb.6-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
 
 A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -187,6 +187,7 @@ helm install argo-cd chart/
 | dex.pdb.labels | object | `{}` | Labels to be added to Dex server pdb |
 | dex.pdb.annotations | object | `{}` | Annotations to be added to Dex server pdb |
 | dex.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the Dex server |
+| redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.name | string | `"redis"` | Redis name |
 | redis.image.repository | string | `"registry1.dso.mil/ironbank/opensource/redis/redis6"` | Redis repository |

@@ -66,6 +66,10 @@ spec:
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
         {{- end }}
+        {{- if .Values.redis.externalEndpoint }}
+        - --redis
+        - {{ .Values.redis.externalEndpoint }}
+        {{- end }}
         {{- with .Values.controller.extraArgs }}
         {{- . | toYaml | nindent 8 }}
         {{- end }}
