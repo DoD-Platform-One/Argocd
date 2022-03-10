@@ -3,9 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.33.5-bb.7] - 2022-03-10
+### Changed
+- Updated Redis networkPolicies to have better conditionals
+
 ## [3.33.5-bb.6] - 2022-03-02
 ### Changed
 - Added ability to overide the default argocd redis fullname
+
 ## [3.33.5-bb.5] - 2022-03-01
 ### Added
 - Added network policy for Redis clients

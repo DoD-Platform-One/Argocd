@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 3.33.5-bb.6](https://img.shields.io/badge/Version-3.33.5--bb.6-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
+![Version: 3.33.5-bb.7](https://img.shields.io/badge/Version-3.33.5--bb.7-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
 
 A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
