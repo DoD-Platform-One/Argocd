@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [3.33.5-bb.8] - 2022-03-15
+### Fixed
+- Fixed duplicate envFrom key in repo server deployment
+
 ## [3.33.5-bb.7] - 2022-03-10
 ### Changed
 - Updated Redis networkPolicies to have better conditionals
