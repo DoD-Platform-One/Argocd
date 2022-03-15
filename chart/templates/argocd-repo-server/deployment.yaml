@@ -60,11 +60,6 @@ spec:
         {{- if .Values.repoServer.containerSecurityContext }}
         securityContext: {{- toYaml .Values.repoServer.containerSecurityContext | nindent 10 }}
         {{- end }}
-        {{- if and (.Values.awsCredentials.awsAccessKeyId) (.Values.awsCredentials.awsSecretAccessKey) (.Values.awsCredentials.awsDefaultRegion) }}
-        envFrom:
-        - secretRef:
-            name: argocd-iam-secret
-        {{- end }}
         env:
         - name: HELM_CACHE_HOME
           value: /helm-working-dir
@@ -79,8 +74,15 @@ spec:
         - name: USER_NAME
           value: argocd
         {{- end }}
-        {{- with .Values.repoServer.envFrom }}
-        envFrom: {{- toYaml . | nindent 8 }}
+        {{- if or (and (.Values.awsCredentials.awsAccessKeyId) (.Values.awsCredentials.awsSecretAccessKey) (.Values.awsCredentials.awsDefaultRegion)) .Values.repoServer.envFrom }}
+        envFrom:
+        {{- if and (.Values.awsCredentials.awsAccessKeyId) (.Values.awsCredentials.awsSecretAccessKey) (.Values.awsCredentials.awsDefaultRegion) }}
+        - secretRef:
+            name: argocd-iam-secret
+        {{- end }}
+        {{- if .Values.repoServer.envFrom }}
+        {{- toYaml .Values.repoServer.envFrom | nindent 8 }}
+        {{- end }}
         {{- end }}
         volumeMounts:
         {{- if .Values.repoServer.volumeMounts }}
