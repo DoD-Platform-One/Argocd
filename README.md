@@ -1,33 +1,26 @@
 # argo-cd
 
-![Version: 3.33.5-bb.8](https://img.shields.io/badge/Version-3.33.5--bb.8-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
+![Version: 4.2.2-bb.0](https://img.shields.io/badge/Version-4.2.2--bb.0-informational?style=flat-square) ![AppVersion: v2.3.2](https://img.shields.io/badge/AppVersion-v2.3.2-informational?style=flat-square)
 
-A Helm chart for ArgoCD, a declarative, GitOps continuous delivery tool for Kubernetes.
+A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
-## Upstream References
-* <https://github.com/argoproj/argo-helm>
+**Homepage:** <https://github.com/argoproj/argo-helm>
 
-## Learn More
-* [Application Overview](docs/overview.md)
-* [Other Documentation](docs/)
+## Maintainers
 
-## Pre-Requisites
+| Name | Email | Url |
+| ---- | ------ | --- |
+| alexec |  |  |
+| alexmt |  |  |
+| jessesuen |  |  |
+| seanson |  |  |
 
-* Kubernetes Cluster deployed
-* Kubernetes config installed in `~/.kube/config`
-* Helm installed
+## Requirements
 
-Install Helm
-
-https://helm.sh/docs/intro/install/
-
-## Deployment
-
-* Clone down the repository
-* cd into directory
-```bash
-helm install argo-cd chart/
-```
+| Repository | Name | Version |
+|------------|------|---------|
+| file://external | redis-bb(redis) | 14.1.0-bb.7 |
+| oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon | gluon | 0.2.4 |
 
 ## Values
 
@@ -40,7 +33,7 @@ helm install argo-cd chart/
 | awsCredentials.awsSecretAccessKey | string | `""` |  |
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.2.5"` |  |
+| global.image.tag | string | `"v2.3.1"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
@@ -60,7 +53,7 @@ helm install argo-cd chart/
 | controller.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the application controller |
 | controller.imagePullSecrets[0].name | string | `"private-registry"` |  |
 | controller.replicas | int | `1` | The number of application controller pods to run. If changing the number of replicas you must pass the number as `ARGOCD_CONTROLLER_REPLICAS` as an environment variable |
-| controller.enableStatefulSet | bool | `false` | Deploy the application controller as a StatefulSet instead of a Deployment, this is required for HA capability. This is a feature flag that will become the default in chart version 3.x |
+| controller.enableStatefulSet | bool | `true` | Deploy the application controller as a StatefulSet instead of a Deployment, this is required for HA capability. |
 | controller.args.statusProcessors | string | `"20"` | define the application controller `--status-processors` |
 | controller.args.operationProcessors | string | `"10"` | define the application controller `--operation-processors` |
 | controller.args.appResyncPeriod | string | `"180"` | define the application controller `--app-resync` |
@@ -103,7 +96,7 @@ helm install argo-cd chart/
 | controller.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | controller.metrics.enabled | bool | `false` | Deploy metrics service |
 | controller.metrics.applicationLabels.enabled | bool | `false` | Enables additional labels in argocd_app_labels metric |
-| controller.metrics.applicationLabels.labels | object | `{}` | Additional labels |
+| controller.metrics.applicationLabels.labels | list | `[]` | Additional labels |
 | controller.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | controller.metrics.service.labels | object | `{}` | Metrics service labels |
 | controller.metrics.service.servicePort | int | `8082` | Metrics service port |
@@ -127,6 +120,7 @@ helm install argo-cd chart/
 | dex.enabled | bool | `true` | Enable dex |
 | dex.name | string | `"dex-server"` | Dex name |
 | dex.imagePullSecrets[0].name | string | `"private-registry"` |  |
+| dex.extraArgs | list | `[]` | Additional command line arguments to pass to the Dex server |
 | dex.metrics.enabled | bool | `false` | Deploy metrics service |
 | dex.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | dex.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -345,14 +339,14 @@ helm install argo-cd chart/
 | server.route.hostname | string | `""` | Hostname of OpenShift Route |
 | server.route.termination_type | string | `"passthrough"` | Termination type of Openshift Route |
 | server.route.termination_policy | string | `"None"` | Termination policy of Openshift Route |
-| server.configEnabled | bool | `true` | Manage ArgoCD configmap (Declarative Setup) |
+| server.configEnabled | bool | `true` | Manage Argo CD configmap (Declarative Setup) |
 | server.config | object | See [values.yaml] | [General Argo CD configuration] |
-| server.configAnnotations | object | `{}` | Annotations to be added to ArgoCD ConfigMap |
-| server.rbacConfig | object | `{}` | ArgoCD rbac config ([ArgoCD RBAC policy]) |
-| server.rbacConfigAnnotations | object | `{}` | Annotations to be added to ArgoCD rbac ConfigMap |
-| server.rbacConfigCreate | bool | `true` | Whether or not to create the configmap. If false, it is expected the configmap will be created by something else. ArgoCD will not work if there is no configMap created with the name above. |
-| server.additionalApplications | list | `[]` (See [values.yaml]) | Deploy ArgoCD Applications within this helm release |
-| server.additionalProjects | list | `[]` (See [values.yaml]) | Deploy ArgoCD Projects within this helm release |
+| server.configAnnotations | object | `{}` | Annotations to be added to Argo CD ConfigMap |
+| server.rbacConfig | object | `{}` | Argo CD rbac config ([Argo CD RBAC policy]) |
+| server.rbacConfigAnnotations | object | `{}` | Annotations to be added to Argo CD rbac ConfigMap |
+| server.rbacConfigCreate | bool | `true` | Whether or not to create the configmap. If false, it is expected the configmap will be created by something else. Argo CD will not work if there is no configMap created with the name above. |
+| server.additionalApplications | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications within this helm release |
+| server.additionalProjects | list | `[]` (See [values.yaml]) | Deploy Argo CD Projects within this helm release |
 | server.clusterAdminAccess.enabled | bool | `true` | Enable RBAC for local cluster deployments |
 | server.GKEbackendConfig.enabled | bool | `false` | Enable BackendConfig custom resource for Google Kubernetes Engine |
 | server.GKEbackendConfig.spec | object | `{}` | [BackendConfigSpec] |
@@ -426,7 +420,7 @@ helm install argo-cd chart/
 | repoServer.clusterAdminAccess.enabled | bool | `false` | Enable RBAC for local cluster deployments |
 | repoServer.clusterRoleRules.enabled | bool | `false` | Enable custom rules for the Repo server's Cluster Role resource |
 | repoServer.clusterRoleRules.rules | list | `[]` | List of custom rules for the Repo server's Cluster Role resource |
-| repoServer.serviceAccount.create | bool | `false` | Create repo server service account |
+| repoServer.serviceAccount.create | bool | `true` | Create repo server service account |
 | repoServer.serviceAccount.name | string | `""` | Repo server service account name |
 | repoServer.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | repoServer.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
@@ -483,43 +477,149 @@ helm install argo-cd chart/
 | bbtests.cypress.envs.cypress_url | string | `"http://argocd-server:80"` |  |
 | bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
 | bbtests.cypress.envs.cypress_password | string | `"Password123"` |  |
+| applicationSet.enabled | bool | `false` | Enable Application Set controller |
+| applicationSet.name | string | `"applicationset-controller"` | Application Set controller name string |
+| applicationSet.replicaCount | int | `1` | The number of controller pods to run |
+| applicationSet.image.repository | string | `"quay.io/argoproj/argocd-applicationset"` | Repository to use for the application set controller |
+| applicationSet.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the application set controller |
+| applicationSet.image.tag | string | `"v0.4.1"` | Tag to use for the application set controller |
+| applicationSet.args.metricsAddr | string | `":8080"` | The default metric address |
+| applicationSet.args.probeBindAddr | string | `":8081"` | The default health check port |
+| applicationSet.args.enableLeaderElection | bool | `false` | The default leader election setting |
+| applicationSet.args.policy | string | `"sync"` | How application is synced between the generator and the cluster |
+| applicationSet.args.debug | bool | `false` | Print debug logs |
+| applicationSet.args.dryRun | bool | `false` | Enable dry run mode |
+| applicationSet.extraContainers | list | `[]` | Additional containers to be added to the applicationset controller pod |
+| applicationSet.metrics.enabled | bool | `false` | Deploy metrics service |
+| applicationSet.metrics.service.annotations | object | `{}` | Metrics service annotations |
+| applicationSet.metrics.service.labels | object | `{}` | Metrics service labels |
+| applicationSet.metrics.service.servicePort | int | `8085` | Metrics service port |
+| applicationSet.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
+| applicationSet.metrics.serviceMonitor.interval | string | `"30s"` | Prometheus ServiceMonitor interval |
+| applicationSet.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
+| applicationSet.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
+| applicationSet.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
+| applicationSet.metrics.serviceMonitor.namespace | string | `""` | Prometheus ServiceMonitor namespace |
+| applicationSet.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
+| applicationSet.imagePullSecrets | list | `[]` | If defined, uses a Secret to pull an image from a private Docker registry or repository. |
+| applicationSet.service.annotations | object | `{}` | Application set service annotations |
+| applicationSet.service.labels | object | `{}` | Application set service labels |
+| applicationSet.service.port | int | `7000` | Application set service port |
+| applicationSet.service.portName | string | `"webhook"` | Application set service port name |
+| applicationSet.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| applicationSet.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
+| applicationSet.serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| applicationSet.podAnnotations | object | `{}` | Annotations for the controller pods |
+| applicationSet.podLabels | object | `{}` | Labels for the controller pods |
+| applicationSet.podSecurityContext | object | `{}` | Pod Security Context |
+| applicationSet.securityContext | object | `{}` | Security Context |
+| applicationSet.resources | object | `{}` | Resource limits and requests for the controller pods. |
+| applicationSet.nodeSelector | object | `{}` | [Node selector] |
+| applicationSet.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| applicationSet.affinity | object | `{}` | Assign custom [affinity] rules |
+| applicationSet.priorityClassName | string | `""` | If specified, indicates the pod's priority. If not specified, the pod priority will be default or zero if there is no default. |
+| applicationSet.extraVolumeMounts | list | `[]` | List of extra mounts to add (normally used with extraVolumes) |
+| applicationSet.extraVolumes | list | `[]` | List of extra volumes to add |
+| applicationSet.extraArgs | list | `[]` | List of extra cli args to add |
+| applicationSet.extraEnv | list | `[]` | Environment variables to pass to the controller |
+| applicationSet.extraEnvFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the controller |
+| applicationSet.webhook.ingress.enabled | bool | `false` | Enable an ingress resource for Webhooks |
+| applicationSet.webhook.ingress.annotations | object | `{}` | Additional ingress annotations |
+| applicationSet.webhook.ingress.labels | object | `{}` | Additional ingress labels |
+| applicationSet.webhook.ingress.ingressClassName | string | `""` | Defines which ingress controller will implement the resource |
+| applicationSet.webhook.ingress.hosts | list | `[]` | List of ingress hosts |
+| applicationSet.webhook.ingress.paths | list | `["/api/webhook"]` | List of ingress paths |
+| applicationSet.webhook.ingress.pathType | string | `"Prefix"` | Ingress path type. One of `Exact`, `Prefix` or `ImplementationSpecific` |
+| applicationSet.webhook.ingress.extraPaths | list | `[]` | Additional ingress paths |
+| applicationSet.webhook.ingress.tls | list | `[]` | Ingress TLS configuration |
+| notifications.enabled | bool | `false` | Enable Notifications controller |
+| notifications.name | string | `"notifications-controller"` | Notifications controller name string |
+| notifications.affinity | object | `{}` | Assign custom [affinity] rules |
+| notifications.argocdUrl | string | `nil` | Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates |
+| notifications.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the notifications controller |
+| notifications.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the notifications controller |
+| notifications.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the notifications controller |
+| notifications.imagePullSecrets | list | `[]` | Secrets with credentials to pull images from a private registry |
+| notifications.nodeSelector | object | `{}` | [Node selector] |
+| notifications.updateStrategy | object | `{"type":"Recreate"}` | The deployment strategy to use to replace existing pods with new ones |
+| notifications.context | object | `{}` | Define user-defined context |
+| notifications.secret.create | bool | `true` | Whether helm chart creates controller secret |
+| notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
+| notifications.secret.name | string | `""` | The name of the secret to use. |
+| notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret |
+| notifications.logLevel | string | `"info"` | Set the logging level. (One of: `debug`, `info`, `warn`, `error`) |
+| notifications.extraArgs | list | `[]` | Extra arguments to provide to the controller |
+| notifications.extraEnv | list | `[]` | Additional container environment variables |
+| notifications.extraVolumeMounts | list | `[]` | List of extra mounts to add (normally used with extraVolumes) |
+| notifications.extraVolumes | list | `[]` | List of extra volumes to add |
+| notifications.metrics.enabled | bool | `false` | Enables prometheus metrics server |
+| notifications.metrics.port | int | `9001` | Metrics port |
+| notifications.metrics.service.annotations | object | `{}` | Metrics service annotations |
+| notifications.metrics.service.labels | object | `{}` | Metrics service labels |
+| notifications.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
+| notifications.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
+| notifications.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
+| notifications.notifiers | object | See [values.yaml] | Configures notification services |
+| notifications.podAnnotations | object | `{}` | Annotations to be applied to the controller Pods |
+| notifications.podLabels | object | `{}` | Labels to be applied to the controller Pods |
+| notifications.securityContext | object | `{"runAsNonRoot":true}` | Pod Security Context |
+| notifications.containerSecurityContext | object | `{}` | Container Security Context |
+| notifications.resources | object | `{}` | Resource limits and requests for the controller |
+| notifications.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | The name of the service account to use. |
+| notifications.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
+| notifications.cm.create | bool | `true` | Whether helm chart creates controller config map |
+| notifications.cm.name | string | `""` | The name of the config map to use. |
+| notifications.subscriptions | object | `{}` | Contains centrally managed global application subscriptions |
+| notifications.templates | object | `{}` | The notification template is used to generate the notification content |
+| notifications.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| notifications.triggers | object | `{}` | The trigger defines the condition when the notification should be sent |
+| notifications.bots.slack.enabled | bool | `false` | Enable slack bot |
+| notifications.bots.slack.updateStrategy | object | `{"type":"Recreate"}` | The deployment strategy to use to replace existing pods with new ones |
+| notifications.bots.slack.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the Slack bot |
+| notifications.bots.slack.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the Slack bot |
+| notifications.bots.slack.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the Slack bot |
+| notifications.bots.slack.imagePullSecrets | list | `[]` | Secrets with credentials to pull images from a private registry |
+| notifications.bots.slack.service.annotations | object | `{}` | Service annotations for Slack bot |
+| notifications.bots.slack.service.port | int | `80` | Service port for Slack bot |
+| notifications.bots.slack.service.type | string | `"LoadBalancer"` | Service type for Slack bot |
+| notifications.bots.slack.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| notifications.bots.slack.serviceAccount.name | string | `"argocd-notifications-bot"` | The name of the service account to use. |
+| notifications.bots.slack.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
+| notifications.bots.slack.securityContext | object | `{"runAsNonRoot":true}` | Pod Security Context |
+| notifications.bots.slack.containerSecurityContext | object | `{}` | Container Security Context |
+| notifications.bots.slack.resources | object | `{}` | Resource limits and requests for the Slack bot |
+| notifications.bots.slack.affinity | object | `{}` | Assign custom [affinity] rules |
+| notifications.bots.slack.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| notifications.bots.slack.nodeSelector | object | `{}` | [Node selector] |
 
-## Contributing
-
-Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.7.0](https://github.com/norwoodj/helm-docs/releases/v1.7.0)
 # redis
 
 ![Version: 14.1.0-bb.7](https://img.shields.io/badge/Version-14.1.0--bb.7-informational?style=flat-square) ![AppVersion: 6.2.2](https://img.shields.io/badge/AppVersion-6.2.2-informational?style=flat-square)
 
 Open source, advanced key-value store. It is often referred to as a data structure server since keys can contain strings, hashes, lists, sets and sorted sets.
 
-## Upstream References
-* <https://github.com/bitnami/charts/tree/master/bitnami/redis>
+**Homepage:** <https://github.com/bitnami/charts/tree/master/bitnami/redis>
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Bitnami | containers@bitnami.com |  |
+| desaintmartin | cedric@desaintmartin.fr |  |
+
+## Source Code
 
 * <https://github.com/bitnami/bitnami-docker-redis>
 * <http://redis.io/>
 
-## Learn More
-* [Application Overview](docs/overview.md)
-* [Other Documentation](docs/)
+## Requirements
 
-## Pre-Requisites
-
-* Kubernetes Cluster deployed
-* Kubernetes config installed in `~/.kube/config`
-* Helm installed
-
-Install Helm
-
-https://helm.sh/docs/intro/install/
-
-## Deployment
-
-* Clone down the repository
-* cd into directory
-```bash
-helm install redis chart/
-```
+| Repository | Name | Version |
+|------------|------|---------|
+| https://charts.bitnami.com/bitnami | common | 1.x.x |
 
 ## Values
 
@@ -884,6 +984,5 @@ helm install redis chart/
 | sysctl.resources.limits.memory | string | `"256Mi"` |  |
 | sysctl.resources.limits.cpu | string | `"100m"` |  |
 
-## Contributing
-
-Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.7.0](https://github.com/norwoodj/helm-docs/releases/v1.7.0)
