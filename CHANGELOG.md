@@ -3,10 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [3.33.6-bb.0] - 2022-03-22
+## [4.2.3-bb.0] - 2022-03-28
+### Updated
+- Updated to latest IB image 2.3.2
+- Updated to latest upstream chart 4.2.3
+
+## [4.2.2-bb.0] - 2022-03-22
 ### Updated
 - Updated to latest IB image 2.3.1
-- Updated to latest upstream chart for 2.3.1 images, chart version 3.33.6-bb.0
+- Updated to latest upstream chart for 2.3.1 images, chart version 4.2.2
 
 ## [3.33.5-bb.8] - 2022-03-15
 ### Fixed
