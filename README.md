@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 4.2.3-bb.1](https://img.shields.io/badge/Version-4.2.3--bb.1-informational?style=flat-square) ![AppVersion: v2.3.2](https://img.shields.io/badge/AppVersion-v2.3.2-informational?style=flat-square)
+![Version: 4.2.3-bb.2](https://img.shields.io/badge/Version-4.2.3--bb.2-informational?style=flat-square) ![AppVersion: v2.3.2](https://img.shields.io/badge/AppVersion-v2.3.2-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -565,7 +565,7 @@ helm install argo-cd chart/
 | notifications.metrics.service.labels | object | `{}` | Metrics service labels |
 | notifications.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
 | notifications.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
-| notifications.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
+| notifications.metrics.serviceMonitor.additionalLabels | object | `{}` |  |
 | notifications.notifiers | object | See [values.yaml] | Configures notification services |
 | notifications.podAnnotations | object | `{}` | Annotations to be applied to the controller Pods |
 | notifications.podLabels | object | `{}` | Labels to be applied to the controller Pods |

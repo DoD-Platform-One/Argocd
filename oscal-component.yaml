@@ -1,0 +1,138 @@
+component-definition:
+  uuid: A4E415F9-DD22-4E4A-B26E-64ABF999E28B
+  metadata: 
+    title: ArgoCD
+    last-modified: '2022-04-07T12:00:00Z'
+    version: "20220407"
+    oscal-version: 1.0.0
+    parties:
+      # Should be consistent across all of the packages, but where is ground truth?
+    - uuid: 72134592-08C2-4A77-ABAD-C880F109367A 
+      type: organization
+      name: Platform One
+      links:
+      - href: <https://p1.dso.mil>
+        rel: website
+  components:
+  - uuid: 660B7C27-2997-4EB7-BA61-C66FEC2D1602
+    type: software
+    title: ArgoCD
+    description: |
+      A declarative GitOps continuous delivery tool for Kubernetes
+    purpose: GitOps continuous delivery
+    responsible-roles:
+    - role-id: provider
+      party-uuids: 
+      - 72134592-08C2-4A77-8BAD-C880F109367A # matches parties entry for p1
+    control-implementations:
+    - uuid: 909C0D05-5BF7-4D89-B82F-38488A02CC85
+      source: https://raw.githubusercontent.com/usnistgov/oscal-content/master/nist.gov/SP800-53/rev5/json/NIST_SP-800-53_rev5_catalog.json
+      description:
+        Controls implemented by ArgoCD for inheritance by applications
+      implemented-requirements:
+      - uuid: 4F924345-FED4-496B-91E3-5361F2B2F2DA
+        control-id: AC-5
+        description: >-
+          ArgoCD can be configured for granular user access to certain application deployments.
+      - uuid: 27C176A6-BF99-4BE9-9748-63C99C75328E
+        control-id: AC-6
+        description: >-
+          ArgoCD can be configured per user with the least privilige needed.
+      - uuid: EC3BC1CA-4E31-4130-A246-D15857F1A6E7
+        control-id: AU-2
+        description: >-
+          ArgoCD logs events related to the applicaction state itself, i.e. start/stop failures.
+      - uuid: ACC00F83-5C88-44FA-A6CA-0AD68AD9E09F
+        control-id: AU-3
+        description: >-
+          ArgoCD has a natural audit log for what changes were made to an applications configuration, 
+          when they were made, and by who. This is provided by the Git commit history in the GitOps workflow.
+      - uuid: C4E89AE2-3959-4828-B15F-7D4AD1BDB4BC
+        control-id: AC-7
+        description: >-
+          ArgoCD rejects login attemps after too many failed in order to prevent passsword brute-forcing. 
+          Proceted by the following components, max fail count, failure window, max entry cache size, and max concurrent login requests.
+      - uuid: 8B181052-6E36-4A12-A58B-4049F035021D
+        control-id: CM-2.2
+        description: >-
+          ArgoCD provides the configuration management engine to ensure CM-2 is met
+      - uuid: 48DBC6A1-28E4-4AF0-95F1-CB70EB818B3C
+        control-id: CM-2.3
+        description: >-
+          ArgoCD / Git provides history for releases
+      - uuid: 21F72DBE-EA11-4E27-9AE3-82B08C4E16EA
+        control-id: CM-3
+        description: >-
+          ArgoCD / Git enable teams to do this as part of their workflow
+      - uuid: A89D4C6B-C885-43A4-85A0-7BB1B33E20DF
+        control-id: CM-3.1
+        description: >-
+          ArgoCD / Git provide automation of documentation, notifications of upgrades to BB
+      - uuid: E3C277C6-A058-4595-B034-3BEE1D74AE51
+        control-id: CM-3.2
+        description: >-
+          ArgoCD allows for workflows to be created by end users to deploy exact configurations 
+          into stage/dev environment that mirror production.
+      - uuid: ADF0F06E-F773-43A2-BA91-109D4C3B8AF5
+        control-id: CM-4
+        description: >-
+          BB/Git provides changelogs which identify changes to system via upgrades
+      - uuid: A202F34E-1689-47A2-A55C-406C0437C7DD
+        control-id: CM-4.2
+        description: >-
+          This current effort will provide controls explicitly as part of the product to track how controls will change with upgrades
+      - uuid: 373DC91F-E590-44B5-B4B1-8DF8453EB9B9
+        control-id: CM-5.1
+        description: >-
+          Use of ArgoCD/GitOps allows this to be inherited by management in GitLab
+      - uuid: D2B04238-01DB-49B0-A787-069BE6D962C7
+        control-id: CM-6
+        description: >-
+          ArgoCD manages application configuration settings controlled in GitLab and ensures they match the expected state.
+      - uuid: 4EC8B133-3118-4429-A4F7-A1AF3737F5AD
+        control-id: CM-6.1
+        description: >-
+          ArgoCD manages/applies and verifies configuration as code
+      - uuid: 8B027EED-6484-473A-B4F6-BADF9F55978D
+        control-id: CM-8
+        description: >-
+          ArgoCD provides visualization of the deployed application and configurations.
+      - uuid: 0323639F-85B3-4858-99A8-C69C0D6DA16F
+        control-id: CM-8.1
+        description: >-
+          ArgoCD automatically updates its inventory when changes occur to cluster resources.
+      - uuid: 53E65314-43DB-4464-B9B8-6075AA6B96AB
+        control-id: CM-8.2
+        description: >-
+          ArgoCD maintains the currency, completeness, accuracy, and availability of cluster resources by 
+          continuously reconciling the desired state in Git to the actual state in Kubernetes.
+      - uuid: 593D198A-E5DF-429F-9BCB-EE5561B50522
+        control-id: CM-8.4
+        description: >-
+          ArgoCD displays the name of an individual who made a Git commit that resulted in changes to the system component inventory
+      - uuid: 6379A5B5-C5AC-4A30-AAC1-A40BB7AAABFC
+        control-id: CP-2
+        description: >-
+          ArgoCD will restore applications it manages to the known GitOps state in GitLab
+      - uuid: 4753C850-EC7C-47F2-AE55-541B73D3D957
+        control-id: CP-10
+        description: >-
+          ArgoCD will restore applications it manages to the known GitOps state in GitLab
+      - uuid: CBCC3D5C-03FE-4F6F-A587-6776813AA87B
+        control-id: CP-10.2
+        description: >-
+          ArgoCD will restore applications it manages to the known GitOps state in GitLab
+      - uuid: 28D7704A-7859-4A7E-9967-4E564D94BA93
+        control-id: CP-10.4
+        description: >-
+          ArgoCD will restore applications it manages to the known GitOps state in GitLab
+  back-matter: 
+    resources:
+    - uuid: 8D689E90-794E-43A1-A38F-CFD248A2F046
+      title: ArgoCD Helm
+      rlinks:
+      - href: https://github.com/argoproj/argo-helm
+    - uuid: 85143CFD-C8D0-4727-BE1E-55E32BFB5CBD
+      title: Big Bang ArgoCD package
+      rlinks:
+        - href: https://repo1.dso.mil/platform-one/big-bang/apps/core/argocd
