@@ -30,6 +30,15 @@
             ],
             "depNameTemplate": "ironbank/big-bang/argocd",
             "datasourceTemplate": "docker"
+        },
+        {
+            "fileMatch": ["^chart/external/Chart\\.yaml$"],
+            "matchStrings": [
+                "version:\\s+(?<currentValue>.+)"
+            ],
+            "depNameTemplate": "https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/redis.git",
+            "datasourceTemplate": "git-tags",
+            "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-bb\\.(?<build>\\d+)$"
         }
     ],
     "separateMajorMinor": false
