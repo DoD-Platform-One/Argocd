@@ -29,7 +29,7 @@ global:
   #  runAsUser: 999
   #  runAsGroup: 999
   #  fsGroup: 999
-  imagePullSecrets: 
+  imagePullSecrets:
   - name: private-registry
   # -- Mapping between IP and hostnames that will be injected as entries in the pod's hosts files
   hostAliases: []
@@ -587,7 +587,7 @@ redis:
     imagePullPolicy: IfNotPresent
 
   imagePullSecrets:
-  - name: private-registry
+    - private-registry
 
   # -- Additional command line arguments to pass to redis-server
   extraArgs: []
@@ -760,7 +760,7 @@ redis:
 
 # -- BigBang HA Redis Passthrough
 redis-bb:
-  enabled: false
+  enabled: true
   # pass throughs to BigBang's redis
   # https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis/-/blob/main/chart/values.yaml
   auth:
@@ -768,8 +768,9 @@ redis-bb:
   istio:
     redis:
       enabled: false
-  imagePullSecrets:
-  - name: private-registry
+  image:
+    pullSecrets:
+      - private-registry
 
   master:
     resources:
