@@ -262,6 +262,8 @@ controller:
       labels: {}
       # -- Metrics service port
       servicePort: 8082
+      # -- Metrics service port name
+      portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
       enabled: false
@@ -275,6 +277,10 @@ controller:
       selector: {}
         # prometheus: kube-prometheus
 
+      # -- Prometheus ServiceMonitor scheme
+      scheme: ""
+      # -- Prometheus ServiceMonitor tlsConfig
+      tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
       namespace: "" # "monitoring"
       # -- Prometheus ServiceMonitor labels
@@ -359,6 +365,9 @@ controller:
     # minAvailable: 1
     # maxUnavailable: 0
 
+  # -- Secrets with credentials to pull images from a private registry
+  imagePullSecrets: []
+
 ## Dex
 dex:
   # -- Enable dex
@@ -379,6 +388,8 @@ dex:
       annotations: {}
       # -- Metrics service labels
       labels: {}
+      # -- Metrics service port name
+      portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
       enabled: false
@@ -392,6 +403,10 @@ dex:
       selector: {}
         # prometheus: kube-prometheus
 
+      # -- Prometheus ServiceMonitor scheme
+      scheme: ""
+      # -- Prometheus ServiceMonitor tlsConfig
+      tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
       namespace: "" # "monitoring"
       # -- Prometheus ServiceMonitor labels
@@ -403,7 +418,8 @@ dex:
     # -- Dex image tag
     tag: v2.30.3
     # -- Dex imagePullPolicy
-    imagePullPolicy: IfNotPresent
+    # @default -- `""` (defaults to global.image.imagePullPolicy)
+    imagePullPolicy: ""
   initImage:
     # -- Argo CD init image repository
     # @default -- `""` (defaults to global.image.repository)
@@ -569,6 +585,9 @@ dex:
     # minAvailable: 1
     # maxUnavailable: 0
 
+  # -- Secrets with credentials to pull images from a private registry
+  imagePullSecrets: []
+
 ## Redis
 redis:
   # -- Endpoint URL for external Redis
@@ -582,7 +601,7 @@ redis:
     # -- Redis repository
     repository: registry1.dso.mil/ironbank/opensource/redis/redis6
     # -- Redis tag
-    tag: 6.2.6
+    tag: 6.2.7
     # -- Redis imagePullPolicy
     imagePullPolicy: IfNotPresent
 
@@ -701,7 +720,7 @@ redis:
     enabled: false
     image:
       # -- redis-exporter image repository
-      repository: quay.io/bitnami/redis-exporter
+      repository: bitnami/redis-exporter
       # -- redis-exporter image tag
       tag: 1.26.0-debian-10-r2
       # -- redis-exporter image PullPolicy
@@ -742,6 +761,10 @@ redis:
       selector: {}
         # prometheus: kube-prometheus
 
+      # -- Prometheus ServiceMonitor scheme
+      scheme: ""
+      # -- Prometheus ServiceMonitor tlsConfig
+      tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
       namespace: "" # "monitoring"
       # -- Prometheus ServiceMonitor labels
@@ -792,7 +815,6 @@ redis-bb:
     maxmemory 200mb
     save ""
 
-
 # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # the custom redis deployment is omitted
 # Check the redis-ha chart for more properties
@@ -822,6 +844,19 @@ redis-bb:
 #   image:
 #     # -- Redis tag
 #     tag: 6.2.6-alpine
+# External Redis parameters
+externalRedis:
+  # -- External Redis server host
+  host: ""
+  # -- External Redis password
+  password: ""
+  # -- External Redis server port
+  port: 6379
+  # -- The name of an existing secret with Redis credentials (must contain key `redis-password`).
+  # When it's set, the `externalRedis.password` parameter is ignored
+  existingSecret: ""
+  # -- External Redis Secret annotations
+  secretAnnotations: {}
 
 ## Server
 server:
@@ -960,18 +995,24 @@ server:
 
   ## Certificate configuration
   certificate:
-    # -- Enables a certificate manager certificate
+    # -- Deploy a Certificate resource (requires cert-manager)
     enabled: false
-    # -- Certificate manager domain
+    # -- Certificate primary domain (commonName)
     domain: argocd.example.com
+    # -- The requested 'duration' (i.e. lifetime) of the Certificate. Value must be in units accepted by Go time.ParseDuration
+    duration: ""
+    # -- How long before the currently issued certificate's expiry cert-manager should renew the certificate. Value must be in units accepted by Go time.ParseDuration
+    renewBefore: ""
     issuer:
-      # -- Certificate manager issuer
-      kind: # ClusterIssuer
-      # -- Certificate manager name
-      name: # letsencrypt
+      # -- Certificate issuer group. Set if using an external issuer. Eg. `cert-manager.io`
+      group: ""
+      # -- Certificate issuer kind. Either `Issuer` or `ClusterIssuer`
+      kind: ""
+      # -- Certificate isser name. Eg. `letsencrypt`
+      name: ""
     # -- Certificate manager additional hosts
     additionalHosts: []
-    # -- Certificate manager secret name
+    # -- The name of the Secret that will be automatically created and managed by this Certificate resource
     secretName: argocd-server-tls
 
   ## Server service configuration
@@ -1020,6 +1061,8 @@ server:
       labels: {}
       # -- Metrics service port
       servicePort: 8083
+      # -- Metrics service port name
+      portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
       enabled: false
@@ -1033,6 +1076,10 @@ server:
       selector: {}
         # prometheus: kube-prometheus
 
+      # -- Prometheus ServiceMonitor scheme
+      scheme: ""
+      # -- Prometheus ServiceMonitor tlsConfig
+      tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
       namespace: ""  # monitoring
       # -- Prometheus ServiceMonitor labels
@@ -1098,7 +1145,7 @@ server:
     https: false
 
   # dedicated ingress for gRPC as documented at
-  # Ref: https://argoproj.github.io/argo-cd/operator-manual/ingress/
+  # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/
   ingressGrpc:
     # -- Enable an ingress resource for the Argo CD server for dedicated [gRPC-ingress]
     enabled: false
@@ -1189,6 +1236,14 @@ server:
     url: https://argocd.bigbang.dev
     # Argo CD instance label key
     application.instanceLabelKey: argocd.argoproj.io/instance
+
+    # Enabled logs RBAC enforcement
+    # Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/upgrading/2.3-2.4/#enable-logs-rbac-enforcement
+    server.rbac.log.enforce.enable: "false"
+
+    # exec.enabled indicates whether the UI exec feature is enabled. It is disabled by default.
+    # Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/rbac/#exec-resource
+    exec.enabled: "false"
 
     # DEPRECATED: Please instead use configs.credentialTemplates and configs.repositories
     # repositories: |
@@ -1299,6 +1354,7 @@ server:
   #   - namespace: guestbook
   #     server: https://kubernetes.default.svc
   #   clusterResourceWhitelist: []
+  #   clusterResourceBlacklist: []
   #   namespaceResourceBlacklist:
   #   - group: ''
   #     kind: ResourceQuota
@@ -1444,6 +1500,9 @@ server:
     # minAvailable: 1
     # maxUnavailable: 0
 
+  # -- Secrets with credentials to pull images from a private registry
+  imagePullSecrets: []
+
 ## Repo Server
 repoServer:
   # -- Repo server name
@@ -1535,7 +1594,7 @@ repoServer:
   # -- Additional volumes to the repo server pod
   volumes: []
   ## Use init containers to configure custom tooling
-  ## https://argoproj.github.io/argo-cd/operator-manual/custom_tools/
+  ## https://argo-cd.readthedocs.io/en/stable/operator-manual/custom_tools/
   ## When using the volumes & volumeMounts section bellow, please comment out those above.
   #  - name: custom-tools
   #    emptyDir: {}
@@ -1597,6 +1656,8 @@ repoServer:
       labels: {}
       # -- Metrics service port
       servicePort: 8084
+      # -- Metrics service port name
+      portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
       enabled: false
@@ -1610,6 +1671,10 @@ repoServer:
       selector: {}
         # prometheus: kube-prometheus
 
+      # -- Prometheus ServiceMonitor scheme
+      scheme: ""
+      # -- Prometheus ServiceMonitor tlsConfig
+      tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
       namespace: "" # "monitoring"
       # -- Prometheus ServiceMonitor labels
@@ -1693,13 +1758,16 @@ repoServer:
     # minAvailable: 1
     # maxUnavailable: 0
 
+  # -- Secrets with credentials to pull images from a private registry
+  imagePullSecrets: []
+
 ## Argo Configs
 configs:
   # -- Provide one or multiple [external cluster credentials]
   # @default -- `[]` (See [values.yaml])
   ## Ref:
-  ## - https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/#clusters
-  ## - https://argoproj.github.io/argo-cd/operator-manual/security/#external-cluster-credentials
+  ## - https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters
+  ## - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials
   clusterCredentials: []
     # - name: mycluster
     #   server: https://mycluster.com
@@ -1724,7 +1792,7 @@ configs:
 
   # -- GnuPG key ring annotations
   gpgKeysAnnotations: {}
-  # -- [GnuPG](https://argoproj.github.io/argo-cd/user-guide/gpg-verification/) keys to add to the key ring
+  # -- [GnuPG](https://argo-cd.readthedocs.io/en/stable/user-guide/gpg-verification/) keys to add to the key ring
   # @default -- `{}` (See [values.yaml])
   gpgKeys: {}
     # 4AEE18F83AFDEB23: |
@@ -1831,6 +1899,9 @@ configs:
     #    ...
     #    -----END OPENSSH PRIVATE KEY-----
 
+  # -- Annotations to be added to `configs.credentialTemplates` Secret
+  credentialTemplatesAnnotations: {}
+
   # -- Repositories list to be used by applications
   ## Creates a secret for each key/value specified below to create repositories
   ## Note: the last example in the list would use a repository credential template, configured under "configs.repositoryCredentials".
@@ -1847,6 +1918,9 @@ configs:
     #   username: my-username
     # private-repo:
     #   url: https://github.com/argoproj/private-repo
+
+  # -- Annotations to be added to `configs.repositories` Secret
+  repositoriesAnnotations: {}
 
   secret:
     # -- Create the argocd-secret
@@ -1867,7 +1941,7 @@ configs:
 
     # -- add additional secrets to be added to argocd-secret
     ## Custom secrets. Useful for injecting SSO secrets into environment variables.
-    ## Ref: https://argoproj.github.io/argo-cd/operator-manual/sso/
+    ## Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets
     ## Note that all values must be non-empty.
     extra:
       {}
@@ -1981,11 +2055,14 @@ applicationSet:
 
   image:
     # -- Repository to use for the application set controller
-    repository: quay.io/argoproj/argocd-applicationset
-    # -- Image pull policy for the application set controller
-    pullPolicy: IfNotPresent
+    # @default -- `""` (defaults to global.image.repository)
+    repository: ""
     # -- Tag to use for the application set controller
-    tag: "v0.4.1"
+    # @default -- `""` (defaults to global.image.tag)
+    tag: ""
+    # -- Image pull policy for the application set controller
+    # @default -- `""` (defaults to global.image.imagePullPolicy)
+    imagePullPolicy: ""
 
   args:
     # -- The default metric address
@@ -2004,7 +2081,7 @@ applicationSet:
   # -- Additional containers to be added to the applicationset controller pod
   extraContainers: []
 
-    ## Metrics service configuration
+  ## Metrics service configuration
   metrics:
     # -- Deploy metrics service
     enabled: false
@@ -2015,6 +2092,8 @@ applicationSet:
       labels: {}
       # -- Metrics service port
       servicePort: 8085
+      # -- Metrics service port name
+      portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
       enabled: false
@@ -2028,6 +2107,10 @@ applicationSet:
       selector: {}
         # prometheus: kube-prometheus
 
+      # -- Prometheus ServiceMonitor scheme
+      scheme: ""
+      # -- Prometheus ServiceMonitor tlsConfig
+      tlsConfig: {}
       # -- Prometheus ServiceMonitor namespace
       namespace: ""  # monitoring
       # -- Prometheus ServiceMonitor labels
@@ -2241,6 +2324,8 @@ notifications:
 
   # -- Set the logging level. (One of: `debug`, `info`, `warn`, `error`)
   logLevel: info
+  # -- Application controller log format. Either `text` or `json`
+  logFormat: text
 
   # -- Extra arguments to provide to the controller
   extraArgs: []
@@ -2268,6 +2353,8 @@ notifications:
       annotations: {}
       # -- Metrics service labels
       labels: {}
+      # -- Metrics service port name
+      portName: http-metrics
     serviceMonitor:
       # -- Enable a prometheus ServiceMonitor
       enabled: false
@@ -2279,13 +2366,17 @@ notifications:
       # namespace: monitoring
       # interval: 30s
       # scrapeTimeout: 10s
+      # -- Prometheus ServiceMonitor scheme
+      scheme: ""
+      # -- Prometheus ServiceMonitor tlsConfig
+      tlsConfig: {}
 
-  # -- Configures notification services
+  # -- Configures notification services such as slack, email or custom webhook
   # @default -- See [values.yaml]
   ## For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/
-  notifiers:
-    service.slack: |
-      token: $slack-token
+  notifiers: {}
+    # service.slack: |
+    #   token: $slack-token
 
   # -- Annotations to be applied to the controller Pods
   podAnnotations: {}
@@ -2533,7 +2624,33 @@ notifications:
     #     {{if eq .serviceType "slack"}}:white_check_mark:{{end}} Application {{.app.metadata.name}} has been successfully synced at {{.app.status.operationState.finishedAt}}.
     #     Sync operation details are available at: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true .
     #   slack:
-    #     attachments: "[{\n  \"title\": \"{{ .app.metadata.name}}\",\n  \"title_link\":\"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}\",\n  \"color\": \"#18be52\",\n  \"fields\": [\n  {\n    \"title\": \"Sync Status\",\n    \"value\": \"{{.app.status.sync.status}}\",\n    \"short\": true\n  },\n  {\n    \"title\": \"Repository\",\n    \"value\": \"{{.app.spec.source.repoURL}}\",\n    \"short\": true\n  }\n  {{range $index, $c := .app.status.conditions}}\n  {{if not $index}},{{end}}\n  {{if $index}},{{end}}\n  {\n    \"title\": \"{{$c.type}}\",\n    \"value\": \"{{$c.message}}\",\n    \"short\": true\n  }\n  {{end}}\n  ]\n}]    "
+    #     attachments: |-
+    #       [{
+    #         "title": "{{ .app.metadata.name}}",
+    #         "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+    #         "color": "#18be52",
+    #         "fields": [
+    #         {
+    #           "title": "Sync Status",
+    #           "value": "{{.app.status.sync.status}}",
+    #           "short": true
+    #         },
+    #         {
+    #           "title": "Repository",
+    #           "value": "{{.app.spec.source.repoURL}}",
+    #           "short": true
+    #         }
+    #         {{range $index, $c := .app.status.conditions}}
+    #         {{if not $index}},{{end}}
+    #         {{if $index}},{{end}}
+    #         {
+    #           "title": "{{$c.type}}",
+    #           "value": "{{$c.message}}",
+    #           "short": true
+    #         }
+    #         {{end}}
+    #         ]
+    #       }]
 
   # -- [Tolerations] for use with node taints
   tolerations: []

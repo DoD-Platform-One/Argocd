@@ -30,7 +30,7 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.global.imagePullSecrets }}
+      {{- with .Values.controller.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -65,6 +65,9 @@ spec:
         {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
+        {{- else if and .Values.externalRedis.host .Values.externalRedis.port }}
+        - --redis
+        - {{ .Values.externalRedis.host }}:{{ .Values.externalRedis.port }}
         {{- end }}
         {{- if .Values.redis.externalEndpoint }}
         - --redis
@@ -79,9 +82,12 @@ spec:
         {{- if .Values.controller.containerSecurityContext }}
         securityContext: {{- toYaml .Values.controller.containerSecurityContext | nindent 10 }}
         {{- end }}
-        {{- if .Values.controller.env }}
+        {{- if or .Values.controller.env .Values.externalRedis.password .Values.externalRedis.existingSecret  }}
         env:
-{{- toYaml .Values.controller.env | nindent 8 }}
+          {{- include "argo-cd.redisPasswordEnv" . | nindent 8 }}
+          {{- with .Values.controller.env }}
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
         {{- end }}
         {{- with .Values.controller.envFrom }}
         envFrom: {{- toYaml . | nindent 8 }}

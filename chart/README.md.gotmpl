@@ -2,11 +2,11 @@
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
-Source code can be found [here](https://argoproj.github.io/argo-cd/)
+Source code can be found [here](https://argo-cd.readthedocs.io/en/stable/)
 
 ## Additional Information
 
-This is a **community maintained** chart. This chart installs [argo-cd](https://argoproj.github.io/argo-cd/), a declarative, GitOps continuous delivery tool for Kubernetes.
+This is a **community maintained** chart. This chart installs [argo-cd](https://argo-cd.readthedocs.io/en/stable/), a declarative, GitOps continuous delivery tool for Kubernetes.
 
 The default installation is intended to be similar to the provided Argo CD [releases](https://github.com/argoproj/argo-cd/releases).
 
@@ -16,7 +16,7 @@ For instance, rather than adding repositories and their keys in your Helm values
 ## High Availability
 
 This chart installs the non-HA version of Argo CD by default. If you want to run Argo CD in HA mode, you can use one of the example values in the next sections.
-Please also have a look into the upstream [Operator Manual regarding High Availability](https://argoproj.github.io/argo-cd/operator-manual/high_availability/) to understand how scaling of Argo CD works in detail.
+Please also have a look into the upstream [Operator Manual regarding High Availability](https://argo-cd.readthedocs.io/en/stable/operator-manual/high_availability/) to understand how scaling of Argo CD works in detail.
 
 > **Warning:**
 > You need at least 3 worker nodes as the HA mode of redis enforces Pods to run on separate nodes.
@@ -81,6 +81,27 @@ git diff v1.8.7 v2.0.0 -- manifests/install.yaml
 Changes in the `CustomResourceDefinition` resources shall be fixed easily by copying 1:1 from the [`manifests/crds` folder](https://github.com/argoproj/argo-cd/tree/master/manifests/crds) into this [`charts/argo-cd/crds` folder](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd/crds).
 
 ## Upgrading
+
+### Custom resource definitions
+
+Helm cannot upgrade custom resource definitions [by design](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations).
+
+Please use `kubectl` to upgrade CRDs manually from [crds](crds/) folder or via the manifests from the upstream project repo:
+
+```bash
+kubectl apply -k https://github.com/argoproj/argo-cd/manifests/crds\?ref\=<appVersion>
+
+# Eg. version v2.4.2
+kubectl apply -k https://github.com/argoproj/argo-cd/manifests/crds\?ref\=v2.4.2
+```
+
+### 4.9.0
+
+This version starts to use upstream image with applicationset binary. Start command was changed from `applicationset-controller` to `argocd-applicationset-controller`
+
+### 4.3.*
+
+With this minor version, the notification notifier's `service.slack` is no longer configured by default.
 
 ### 4.0.0 and above
 
@@ -194,7 +215,7 @@ NAME: my-release
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 {{- range .Values }}
-  {{- if not (or (hasPrefix "controller" .Key) (hasPrefix "repoServer" .Key) (hasPrefix "server" .Key) (hasPrefix "dex" .Key) (hasPrefix "redis" .Key) (hasPrefix "applicationSet" .Key) (hasPrefix "notifications" .Key) ) }}
+  {{- if not (or (hasPrefix "controller" .Key) (hasPrefix "repoServer" .Key) (hasPrefix "server" .Key) (hasPrefix "dex" .Key) (hasPrefix "redis" .Key) (hasPrefix "externalRedis" .Key) (hasPrefix "applicationSet" .Key) (hasPrefix "notifications" .Key) ) }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
   {{- if hasPrefix "server.additional" .Key }}
@@ -244,6 +265,8 @@ NAME: my-release
 
 ## Redis
 
+### Option 1 - Single Redis instance (default option)
+
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 {{- range .Values }}
@@ -251,8 +274,29 @@ NAME: my-release
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
+
+### Option 2 - Redis HA
+
+This option uses the following third-party chart to bootstrap a clustered Redis: https://github.com/DandyDeveloper/charts/tree/master/charts/redis-ha.
+For all available configuration options, please read upstream README and/or chart source.
+The main options are listed here:
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
 {{- range .Values }}
   {{- if hasPrefix "redis-ha" .Key }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Option 3 - External Redis
+
+If you want to use an existing Redis (eg. a managed service from a cloud provider), you can use these parameters:
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- range .Values }}
+  {{- if hasPrefix "externalRedis" .Key }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
@@ -304,14 +348,14 @@ server:
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs](https://github.com/norwoodj/helm-docs)
 
-[Argo CD RBAC policy]: https://argoproj.github.io/argo-cd/operator-manual/rbac/
+[Argo CD RBAC policy]: https://argo-cd.readthedocs.io/en/stable/operator-manual/rbac/
 [affinity]: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 [BackendConfigSpec]: https://cloud.google.com/kubernetes-engine/docs/concepts/backendconfig#backendconfigspec_v1beta1_cloudgooglecom
 [CSS styles]: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/
-[external cluster credentials]: https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/#clusters
+[external cluster credentials]: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters
 [FrontendConfigSpec]: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
-[General Argo CD configuration]: https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/#repositories
-[gRPC-ingress]: https://argoproj.github.io/argo-cd/operator-manual/ingress/
+[General Argo CD configuration]: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories
+[gRPC-ingress]: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/
 [HPA]: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 [MetricRelabelConfigs]: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs
 [Node selector]: https://kubernetes.io/docs/user-guide/node-selection/
