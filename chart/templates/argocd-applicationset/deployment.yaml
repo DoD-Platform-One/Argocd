@@ -13,9 +13,11 @@ spec:
       {{- include "argo-cd.selectorLabels" (dict "context" . "name" .Values.applicationSet.name) | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.applicationSet.podAnnotations }}
+      {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.applicationSet.podAnnotations) }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- range $key, $value := . }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
       {{- end }}
       labels:
         {{- include "argo-cd.labels" (dict "context" . "component" .Values.applicationSet.name "name" .Values.applicationSet.name) | nindent 8 }}
@@ -24,19 +26,20 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.applicationSet.imagePullSecrets }}
+      {{- with .Values.applicationSet.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "argo-cd.applicationSetServiceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.applicationSet.podSecurityContext | nindent 8 }}
+        {{- toYaml (mergeOverwrite (deepCopy .Values.global.securityContext) .Values.applicationSet.podSecurityContext) | nindent 8 }}
       containers:
         - name: {{ .Values.applicationSet.name }}
           securityContext:
             {{- toYaml .Values.applicationSet.securityContext | nindent 12 }}
           command:
-            - applicationset-controller
+            - entrypoint.sh
+            - argocd-applicationset-controller
             - --metrics-addr={{ .Values.applicationSet.args.metricsAddr }}
             - --probe-addr={{ .Values.applicationSet.args.probeBindAddr }}
             {{- if or (gt ( .Values.applicationSet.replicaCount | int64) 1) .Values.applicationSet.args.enableLeaderElection }}

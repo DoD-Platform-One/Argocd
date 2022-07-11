@@ -26,9 +26,11 @@ If release name contains chart name it will be used as a full name.
 
 {{/*
 Create controller name and version as used by the chart label.
+Truncated at 52 chars because StatefulSet label 'controller-revision-hash' is limited
+to 63 chars and it includes 10 chars of hash and a separating '-'.
 */}}
 {{- define "argo-cd.controller.fullname" -}}
-{{- printf "%s-%s" (include "argo-cd.fullname" .) .Values.controller.name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" (include "argo-cd.fullname" .) .Values.controller.name | trunc 52 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -265,5 +267,30 @@ Create the name of the configmap to use
     {{ default (printf "%s-cm" (include "argo-cd.notifications.fullname" .)) .Values.notifications.cm.name }}
 {{- else -}}
     {{ default "argocd-notifications-cm" .Values.notifications.cm.name }}
+{{- end -}}
+{{- end -}}
+
+{{- define "argo-cd.redisPasswordEnv" -}}
+  {{- if or .Values.externalRedis.password .Values.externalRedis.existingSecret }}
+- name: REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+    {{- if .Values.externalRedis.existingSecret }}
+      name: {{ .Values.externalRedis.existingSecret }}
+    {{- else }}
+      name: {{ template "argo-cd.redis.fullname" . }}
+    {{- end }}
+      key: redis-password
+  {{- end }}
+{{- end -}}
+
+{{/*
+Return the appropriate apiVersion for pod disruption budget
+*/}}
+{{- define "argo-cd.podDisruptionBudget.apiVersion" -}}
+{{- if semverCompare "<1.21-0" (include "argo-cd.kubeVersion" $) -}}
+{{- print "policy/v1beta1" -}}
+{{- else -}}
+{{- print "policy/v1" -}}
 {{- end -}}
 {{- end -}}

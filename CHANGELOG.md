@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [4.9.12-bb.0] - 2022-07-11
+### Updated
+- Redis dependency version bump to `16.12.3-bb.1` appVersion `6.2.7`
+- kpt'd upstream chart to `argo-cd-4.9.12`
+- Updated argo to `v2.4.4`
+
 ## [4.2.3-bb.3] - 2022-05-31
 ### Changed
 - Redis dependency version bump to `16.9.2-bb.0` appVersion `6.2.6`
