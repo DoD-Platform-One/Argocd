@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 4.9.12-bb.0](https://img.shields.io/badge/Version-4.9.12--bb.0-informational?style=flat-square) ![AppVersion: v2.4.4](https://img.shields.io/badge/AppVersion-v2.4.4-informational?style=flat-square)
+![Version: 4.9.12-bb.1](https://img.shields.io/badge/Version-4.9.12--bb.1-informational?style=flat-square) ![AppVersion: v2.4.4](https://img.shields.io/badge/AppVersion-v2.4.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -40,7 +40,7 @@ helm install argo-cd chart/
 | awsCredentials.awsSecretAccessKey | string | `""` |  |
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.3.2"` |  |
+| global.image.tag | string | `"v2.4.4"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |

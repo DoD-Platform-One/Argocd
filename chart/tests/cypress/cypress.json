@@ -2,6 +2,5 @@
   "pluginsFile": "/test/cypress/integration/plugins.js",
   "supportFile": false,
   "fixturesFolder": false,
-  "videoCompression": 45,
   "defaultCommandTimeout": 12000
 }
