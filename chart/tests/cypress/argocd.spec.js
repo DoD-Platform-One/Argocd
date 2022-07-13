@@ -39,9 +39,10 @@ describe('ArgoCD test', function() {
   function appsyncpane () { 
     h++
     cy.task('log', 'appsyncpane() called...')
-    cy.get('a[qe-id="applications-tiles-button-sync"]', {timeout: 30000})
+    cy.get('a[qe-id="applications-tiles-button-sync"]', {timeout: 60000})
     .should('be.visible')
     .click()
+    cy.wait(1000)
     // this is just to wait for the panel to slide out
     cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__close').should('be.visible')
     cy.get('body').then($body => {
