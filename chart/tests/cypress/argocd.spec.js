@@ -68,10 +68,10 @@ describe('ArgoCD test', function() {
     i++
     cy.task('log', 'synchronize() called...')
     cy.get('body').then($body => {
-      cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).then($synchronize => {
+      cy.get('.sliding-panel--opened > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).then($synchronize => {
       if ($synchronize.is(':visible')){
         cy.task('log', 'clicking the synchronize button...')
-        cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).last().click()
+        cy.get('.sliding-panel--opened > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).last().click()
         return
       } else {
         cy.task('log', 'sync button not visible...')
@@ -109,6 +109,7 @@ describe('ArgoCD test', function() {
       cy.task('log', 'pressed create on the test app...')
       appsyncpane ()
       appsyncbutton()
+      cy.wait(2000)
       cy.get('.applications-list__title', {timeout: 15000})
         .should('be.visible')
         .contains('guestbook')
