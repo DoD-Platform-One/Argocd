@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 4.9.12-bb.1](https://img.shields.io/badge/Version-4.9.12--bb.1-informational?style=flat-square) ![AppVersion: v2.4.4](https://img.shields.io/badge/AppVersion-v2.4.4-informational?style=flat-square)
+![Version: 4.9.12-bb.2](https://img.shields.io/badge/Version-4.9.12--bb.2-informational?style=flat-square) ![AppVersion: v2.4.4](https://img.shields.io/badge/AppVersion-v2.4.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -73,7 +73,7 @@ helm install argo-cd chart/
 | controller.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to application controller |
 | controller.podAnnotations | object | `{}` | Annotations to be added to application controller pods |
 | controller.podLabels | object | `{}` | Labels to be added to application controller pods |
-| controller.containerSecurityContext | object | `{}` | Application controller container-level security context |
+| controller.containerSecurityContext | object | `{"capabilities":{"drop":["ALL"]},"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | Application controller container-level security context |
 | controller.containerPort | int | `8082` | Application controller listening port |
 | controller.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | controller.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
@@ -188,7 +188,7 @@ helm install argo-cd chart/
 | dex.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | dex.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | dex.priorityClassName | string | `""` | Priority class for dex |
-| dex.containerSecurityContext | object | `{}` | Dex container-level security context |
+| dex.containerSecurityContext | object | `{"capabilities":{"drop":["ALL"]},"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | Dex container-level security context |
 | dex.resources | object | `{"limits":{"cpu":"10m","memory":"128Mi"},"requests":{"cpu":"10m","memory":"128Mi"}}` | Resource limits and requests for dex |
 | dex.extraContainers | list | `[]` | Additional containers to be added to the dex pod |
 | dex.initContainers | list | `[]` | Init containers to add to the dex pod |
@@ -252,7 +252,7 @@ helm install argo-cd chart/
 | redis.pdb.labels | object | `{}` | Labels to be added to Redis server pdb |
 | redis.pdb.annotations | object | `{}` | Annotations to be added to Redis server pdb |
 | redis.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the Redis server |
-| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"replica":{"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
+| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
 | externalRedis.host | string | `""` | External Redis server host |
 | externalRedis.password | string | `""` | External Redis password |
 | externalRedis.port | int | `6379` | External Redis server port |
@@ -295,7 +295,7 @@ helm install argo-cd chart/
 | server.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | server.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the Argo CD server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | server.priorityClassName | string | `""` | Priority class for the Argo CD server |
-| server.containerSecurityContext | object | `{}` | Servers container-level security context |
+| server.containerSecurityContext | object | `{"capabilities":{"drop":["ALL"]},"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | Servers container-level security context |
 | server.resources | object | `{"limits":{"cpu":"20m","memory":"128Mi"},"requests":{"cpu":"20m","memory":"128Mi"}}` | Resource limits and requests for the Argo CD server |
 | server.certificate.enabled | bool | `false` | Deploy a Certificate resource (requires cert-manager) |
 | server.certificate.domain | string | `"argocd.example.com"` | Certificate primary domain (commonName) |
@@ -429,7 +429,7 @@ helm install argo-cd chart/
 | repoServer.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | repoServer.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the repo server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | repoServer.priorityClassName | string | `""` | Priority class for the repo server |
-| repoServer.containerSecurityContext | object | `{}` | Repo server container-level security context |
+| repoServer.containerSecurityContext | object | `{"capabilities":{"drop":["ALL"]},"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000}` | Repo server container-level security context |
 | repoServer.resources | object | `{"limits":{"cpu":"100m","memory":"1Gi"},"requests":{"cpu":"100m","memory":"1Gi"}}` | Resource limits and requests for the repo server pods |
 | repoServer.service.annotations | object | `{}` | Repo server service annotations |
 | repoServer.service.labels | object | `{}` | Repo server service labels |
@@ -638,4 +638,3 @@ helm install argo-cd chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
-

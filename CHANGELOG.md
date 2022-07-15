@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [4.9.12-bb.2] - 2022-07-13
+### Updated
+- Updated `containerSecurityContext` for controller,dex,server,reposerver and redis to explicitly set `runAsUser`/`runAsGroup`/`runAsNonRoot`, and capabilities drop all
+
 ## [4.9.12-bb.1] - 2022-07-13
 ### Fixed
 - argo to `v2.4.4`

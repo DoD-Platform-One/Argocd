@@ -156,7 +156,12 @@ controller:
 
   # -- Application controller container-level security context
   containerSecurityContext:
-    {}
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL
     # capabilities:
     #   drop:
     #     - all
@@ -540,7 +545,12 @@ dex:
 
   # -- Dex container-level security context
   containerSecurityContext:
-    {}
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL
     # capabilities:
     #   drop:
     #     - all
@@ -803,6 +813,13 @@ redis-bb:
       limits:
         memory: 256Mi
         cpu: 100m
+    containerSecurityContext:
+      runAsUser: 1001
+      runAsGroup: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop:
+          - ALL
   replica:
     resources:
       requests:
@@ -811,6 +828,13 @@ redis-bb:
       limits:
         memory: 256Mi
         cpu: 100m
+    containerSecurityContext:
+      runAsUser: 1001
+      runAsGroup: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop:
+          - ALL
   commonConfiguration: |-
     maxmemory 200mb
     save ""
@@ -978,7 +1002,12 @@ server:
 
   # -- Servers container-level security context
   containerSecurityContext:
-    {}
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL
     # capabilities:
     #   drop:
     #     - all
@@ -1619,7 +1648,12 @@ repoServer:
 
   # -- Repo server container-level security context
   containerSecurityContext:
-    {}
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    capabilities:
+      drop:
+        - ALL
     # capabilities:
     #   drop:
     #     - all
