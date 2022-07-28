@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 4.9.12-bb.2](https://img.shields.io/badge/Version-4.9.12--bb.2-informational?style=flat-square) ![AppVersion: v2.4.4](https://img.shields.io/badge/AppVersion-v2.4.4-informational?style=flat-square)
+![Version: 4.9.12-bb.3](https://img.shields.io/badge/Version-4.9.12--bb.3-informational?style=flat-square) ![AppVersion: v2.4.7](https://img.shields.io/badge/AppVersion-v2.4.7-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -40,7 +40,7 @@ helm install argo-cd chart/
 | awsCredentials.awsSecretAccessKey | string | `""` |  |
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.4.4"` |  |
+| global.image.tag | string | `"v2.4.7"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
@@ -52,6 +52,7 @@ helm install argo-cd chart/
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
 | apiVersionOverrides.certmanager | string | `""` | String to override apiVersion of certmanager resources rendered by this helm chart |
 | apiVersionOverrides.ingress | string | `""` | String to override apiVersion of ingresses rendered by this helm chart |
+| apiVersionOverrides.autoscaling | string | `""` | String to override apiVersion of autoscaling rendered by this helm chart |
 | createAggregateRoles | bool | `false` | Create clusterroles that extend existing clusterroles to interact with argo-cd crds # Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy |
 | controller.name | string | `"application-controller"` | Application controller name string |
