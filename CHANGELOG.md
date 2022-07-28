@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [4.9.12-bb.3] - 2022-07-22
+### Updated
+- argocd image upgrade `v2.4.4` --> `v2.4.7`
+- redis dependency chart upgrade `16.12.3-bb.1` --> `16.12.3-bb.2` 
+
 ## [4.9.12-bb.2] - 2022-07-13
 ### Updated
 - Updated `containerSecurityContext` for controller,dex,server,reposerver and redis to explicitly set `runAsUser`/`runAsGroup`/`runAsNonRoot`, and capabilities drop all
