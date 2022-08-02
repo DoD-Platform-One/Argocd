@@ -5,6 +5,10 @@ configs:
 bbtests:
   enabled: true
 
+sso:
+  rbac:
+    policy.default: role:admin
+
 networkPolicies:
   enabled: true
 
