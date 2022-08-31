@@ -18,7 +18,7 @@ awsCredentials:
 global:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v2.4.7
+    tag: v2.4.10
     imagePullPolicy: IfNotPresent
   # -- Annotations for the all deployed pods
   podAnnotations: {}
@@ -613,7 +613,7 @@ redis:
     # -- Redis repository
     repository: registry1.dso.mil/ironbank/opensource/redis/redis6
     # -- Redis tag
-    tag: 6.2.7
+    tag: 7.0.4
     # -- Redis imagePullPolicy
     imagePullPolicy: IfNotPresent
 
@@ -732,7 +732,7 @@ redis:
     enabled: false
     image:
       # -- redis-exporter image repository
-      repository: bitnami/redis-exporter
+      repository: public.ecr.aws/bitnami/redis-exporter
       # -- redis-exporter image tag
       tag: 1.26.0-debian-10-r2
       # -- redis-exporter image PullPolicy
@@ -844,32 +844,48 @@ redis-bb:
 # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # the custom redis deployment is omitted
 # Check the redis-ha chart for more properties
-# redis-ha:
-#   # -- Enables the Redis HA subchart and disables the custom Redis single node deployment
-#   enabled: false
-#   exporter:
-#     # -- If `true`, the prometheus exporter sidecar is enabled
-#     enabled: true
-#   persistentVolume:
-#     # -- Configures persistency on Redis nodes
-#     enabled: false
-#   redis:
-#     # -- Redis convention for naming the cluster group: must match `^[\\w-\\.]+$` and can be templated
-#     masterGroupName: argocd
-#     # -- Any valid redis config options in this section will be applied to each server (see `redis-ha` chart)
-#     # @default -- See [values.yaml]
-#     config:
-#       # -- Will save the DB if both the given number of seconds and the given number of write operations against the DB occurred. `""`  is disabled
-#       save: '""'
-#   haproxy:
-#     # -- Enabled HAProxy LoadBalancing/Proxy
-#     enabled: true
-#     metrics:
-#       # -- HAProxy enable prometheus metric scraping
-#       enabled: true
-#   image:
-#     # -- Redis tag
-#     tag: 6.2.6-alpine
+#redis-ha:
+#  # -- Enables the Redis HA subchart and disables the custom Redis single node deployment
+#  enabled: false
+#  exporter:
+#    # -- If `true`, the prometheus exporter sidecar is enabled
+#    enabled: true
+#  persistentVolume:
+#    # -- Configures persistency on Redis nodes
+#    enabled: false
+#  redis:
+#    # -- Redis convention for naming the cluster group: must match `^[\\w-\\.]+$` and can be templated
+#    masterGroupName: argocd
+#    # -- Any valid redis config options in this section will be applied to each server (see `redis-ha` chart)
+#    # @default -- See [values.yaml]
+#    config:
+#      # -- Will save the DB if both the given number of seconds and the given number of write operations against the DB occurred. `""`  is disabled
+#      # @default -- `'""'`
+#      save: '""'
+#  haproxy:
+#    # -- Enabled HAProxy LoadBalancing/Proxy
+#    enabled: true
+#    metrics:
+#      # -- HAProxy enable prometheus metric scraping
+#      enabled: true
+#  image:
+#    # -- Redis tag
+#    tag: 7.0.4-alpine
+#
+#  ## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+#  topologySpreadConstraints:
+#    # -- Enable Redis HA topology spread constraints
+#    enabled: false
+#    # -- Max skew of pods tolerated
+#    # @default -- `""` (defaults to `1`)
+#    maxSkew: ""
+#    # -- Topology key for spread
+#    # @default -- `""` (defaults to `topology.kubernetes.io/zone`)
+#    topologyKey: ""
+#    # -- Enforcement policy, hard or soft
+#    # @default -- `""` (defaults to `ScheduleAnyway`)
+#    whenUnsatisfiable: ""
+
 # External Redis parameters
 externalRedis:
   # -- External Redis server host
@@ -1268,7 +1284,7 @@ server:
     # Argo CD instance label key
     application.instanceLabelKey: argocd.argoproj.io/instance
 
-    # Enabled logs RBAC enforcement
+    # Enable logs RBAC enforcement
     # Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/upgrading/2.3-2.4/#enable-logs-rbac-enforcement
     server.rbac.log.enforce.enable: "false"
 
@@ -1288,6 +1304,22 @@ server:
     #   - type: helm
     #     url: https://argoproj.github.io/argo-helm
     #     name: argo
+
+    # admin.enabled indicates whether the admin user is enabled. It is enabled by default.
+    # https://argo-cd.readthedocs.io/en/latest/faq/#how-to-disable-admin-user
+    admin.enabled: "true"
+
+    # dex.config: |
+    #   connectors:
+    #     # GitHub example
+    #     - type: github
+    #       id: github
+    #       name: GitHub
+    #       config:
+    #         clientID: aabbccddeeff00112233
+    #         clientSecret: $dex.github.clientSecret # Alternatively $<some_K8S_secret>:dex.github.clientSecret
+    #         orgs:
+    #         - name: your-github-org
 
     # oidc.config: |
     #   name: AzureAD
