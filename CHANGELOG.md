@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [4.10.8-bb.0] - 2022-08-29
+### Updated
+- Upstream chart updated to 4.10.8
+- ArgoCD image to 2.4.10
+- redis updated to 7.0.4
+
 ## [4.10.0-bb.1] - 2022-08-01
 ### Added
 - Keycloak SSO integration cypress test
