@@ -27,6 +27,15 @@
         {
             "fileMatch": ["^chart/Chart\\.yaml$"],
             "matchStrings": [
+                "appVersion:[^\\S\\r\\n]+(?<currentValue>.+)"
+            ],
+            "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/argocd",
+            "datasourceTemplate": "docker"
+        },
+
+        {
+            "fileMatch": ["^chart/Chart\\.yaml$"],
+            "matchStrings": [
                 "- Argocd:\\s+(?<currentValue>.+)"
             ],
             "depNameTemplate": "ironbank/big-bang/argocd",
