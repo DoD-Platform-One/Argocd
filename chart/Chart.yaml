@@ -1,19 +1,20 @@
 apiVersion: v2
-appVersion: v2.4.10
+appVersion: v2.4.12
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argo-cd
-version: 4.10.8-bb.0
+version: 5.5.7-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
+sources:
+  - https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd
+  - https://github.com/argoproj/argo-cd
 keywords:
   - argoproj
   - argocd
   - gitops
 maintainers:
-  - name: alexec
-  - name: alexmt
-  - name: jessesuen
-  - name: seanson
+  - name: argoproj
+    url: https://argoproj.github.io/
 dependencies:
 - name: redis
   version: 16.12.3-bb.2
@@ -25,6 +26,6 @@ dependencies:
   repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.4.10
+    - Argocd: v2.4.12
   artifacthub.io/changes: |
-    - "[Changed]: Improved documentation"
+    - "[Fixed]: v5.5.0 Upgrade guide heading in README"

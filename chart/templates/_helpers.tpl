@@ -53,6 +53,18 @@ Create redis name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Return Redis server endpoint
+*/}}
+{{- define "argo-cd.redis.server" -}}
+{{- $redisHa := (index .Values "redis-ha") -}}
+{{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
+    {{- printf "%s:%s" (include "argo-cd.redis.fullname" .)  (toString .Values.redis.servicePort) }}
+{{- else if and .Values.externalRedis.host .Values.externalRedis.port }}
+    {{- printf "%s:%s" .Values.externalRedis.host (toString .Values.externalRedis.port) }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Create argocd server name and version as used by the chart label.
 */}}
 {{- define "argo-cd.server.fullname" -}}
@@ -255,46 +267,38 @@ Merge Argo Configuration with Preset Configuration
 {{- end -}}
 
 {{/*
+Argo Params Default Configuration Presets
+*/}}
+{{- define "argo-cd.config.params.presets" -}}
+repo.server: "{{ include "argo-cd.repoServer.fullname" . }}:{{ .Values.repoServer.service.port }}"
+{{- with include "argo-cd.redis.server" . }}
+redis.server: {{ . | quote }}
+{{- end }}
+{{- if .Values.dex.enabled }}
+server.dex.server: "http://{{ include "argo-cd.dex.fullname" . }}:{{ .Values.dex.servicePortHttp }}"
+{{- end }}
+{{- range $component := tuple "controller" "server" "reposerver" }}
+{{ $component }}.log.format: {{ $.Values.global.logging.format | quote }}
+{{ $component }}.log.level: {{ $.Values.global.logging.level | quote }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Merge Argo Params Configuration with Preset Configuration
+*/}}
+{{- define "argo-cd.config.params" -}}
+{{- $config := omit .Values.configs.params "annotations" }}
+{{- $preset := include "argo-cd.config.params.presets" $ | fromYaml | default dict -}}
+{{- range $key, $value := mergeOverwrite $preset $config }}
+{{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Return the default Argo CD app version
 */}}
 {{- define "argo-cd.defaultTag" -}}
   {{- default .Chart.AppVersion .Values.global.image.tag }}
-{{- end -}}
-
-{{/*
-Create the name of the notifications controller secret to use
-*/}}
-{{- define "argo-cd.notifications.secretName" -}}
-{{- if .Values.notifications.secret.create -}}
-    {{ default (printf "%s-secret" (include "argo-cd.notifications.fullname" .)) .Values.notifications.secret.name }}
-{{- else -}}
-    {{ default "argocd-notifications-secret" .Values.notifications.secret.name }}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Create the name of the configmap to use
-*/}}
-{{- define "argo-cd.notifications.configMapName" -}}
-{{- if .Values.notifications.cm.create -}}
-    {{ default (printf "%s-cm" (include "argo-cd.notifications.fullname" .)) .Values.notifications.cm.name }}
-{{- else -}}
-    {{ default "argocd-notifications-cm" .Values.notifications.cm.name }}
-{{- end -}}
-{{- end -}}
-
-{{- define "argo-cd.redisPasswordEnv" -}}
-  {{- if or .Values.externalRedis.password .Values.externalRedis.existingSecret }}
-- name: REDIS_PASSWORD
-  valueFrom:
-    secretKeyRef:
-    {{- if .Values.externalRedis.existingSecret }}
-      name: {{ .Values.externalRedis.existingSecret }}
-    {{- else }}
-      name: {{ template "argo-cd.redis.fullname" . }}
-    {{- end }}
-      key: redis-password
-  {{- end }}
 {{- end -}}
 
 {{/*

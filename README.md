@@ -1,11 +1,14 @@
 # argo-cd
 
-![Version: 4.10.8-bb.0](https://img.shields.io/badge/Version-4.10.8--bb.0-informational?style=flat-square) ![AppVersion: v2.4.10](https://img.shields.io/badge/AppVersion-v2.4.10-informational?style=flat-square)
+![Version: 5.5.7-bb.0](https://img.shields.io/badge/Version-5.5.7--bb.0-informational?style=flat-square) ![AppVersion: v2.4.12](https://img.shields.io/badge/AppVersion-v2.4.12-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
 ## Upstream References
 * <https://github.com/argoproj/argo-helm>
+
+* <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
+* <https://github.com/argoproj/argo-cd>
 
 ## Learn More
 * [Application Overview](docs/overview.md)
@@ -36,12 +39,22 @@ helm install argo-cd chart/
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
+| apiVersionOverrides.certmanager | string | `""` | String to override apiVersion of certmanager resources rendered by this helm chart |
+| apiVersionOverrides.ingress | string | `""` | String to override apiVersion of ingresses rendered by this helm chart |
+| apiVersionOverrides.autoscaling | string | `""` | String to override apiVersion of autoscaling rendered by this helm chart |
+| createAggregateRoles | bool | `false` | Create clusterroles that extend existing clusterroles to interact with argo-cd crds # Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles |
+| openshift.enabled | bool | `false` | enables using arbitrary uid for argo repo server |
+| crds.install | bool | `true` | Install and upgrade CRDs |
+| crds.keep | bool | `true` | Keep CRDs on chart uninstall |
+| crds.annotations | object | `{}` | Annotations to be added to all CRDs |
 | awsCredentials.awsAccessKeyId | string | `""` |  |
 | awsCredentials.awsSecretAccessKey | string | `""` |  |
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.4.10"` |  |
+| global.image.tag | string | `"v2.4.12"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
+| global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
+| global.logging.level | string | `"info"` | Set the global logging level. One of: `debug`, `info`, `warn` or `error` |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
 | global.securityContext | object | `{}` | Toggle and define securityContext. See [values.yaml] |
@@ -50,25 +63,53 @@ helm install argo-cd chart/
 | global.additionalLabels | object | `{}` | Additional labels to add to all resources |
 | global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
-| apiVersionOverrides.certmanager | string | `""` | String to override apiVersion of certmanager resources rendered by this helm chart |
-| apiVersionOverrides.ingress | string | `""` | String to override apiVersion of ingresses rendered by this helm chart |
-| apiVersionOverrides.autoscaling | string | `""` | String to override apiVersion of autoscaling rendered by this helm chart |
-| createAggregateRoles | bool | `false` | Create clusterroles that extend existing clusterroles to interact with argo-cd crds # Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles |
+| configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] # Ref: # - https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters # - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials |
+| configs.gpgKeysAnnotations | object | `{}` | GnuPG key ring annotations |
+| configs.gpgKeys | object | `{}` (See [values.yaml]) | [GnuPG](https://argo-cd.readthedocs.io/en/stable/user-guide/gpg-verification/) keys to add to the key ring |
+| configs.knownHostsAnnotations | object | `{}` | Known Hosts configmap annotations |
+| configs.knownHosts.data.ssh_known_hosts | string | See [values.yaml] | Known Hosts |
+| configs.tlsCertsAnnotations | object | `{}` | TLS certificate configmap annotations |
+| configs.tlsCerts | object | See [values.yaml] | TLS certificate |
+| configs.credentialTemplates | object | `{}` | Repository credentials to be used as Templates for other repos # Creates a secret for each key/value specified below to create repository credentials |
+| configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
+| configs.repositories | object | `{}` | Repositories list to be used by applications # Creates a secret for each key/value specified below to create repositories # Note: the last example in the list would use a repository credential template, configured under "configs.repositoryCredentials". |
+| configs.repositoriesAnnotations | object | `{}` | Annotations to be added to `configs.repositories` Secret |
+| configs.secret.createSecret | bool | `true` | Create the argocd-secret |
+| configs.secret.annotations | object | `{}` | Annotations to be added to argocd-secret |
+| configs.secret.githubSecret | string | `""` | Shared secret for authenticating GitHub webhook events |
+| configs.secret.gitlabSecret | string | `""` | Shared secret for authenticating GitLab webhook events |
+| configs.secret.bitbucketServerSecret | string | `""` | Shared secret for authenticating BitbucketServer webhook events |
+| configs.secret.bitbucketUUID | string | `""` | UUID for authenticating Bitbucket webhook events |
+| configs.secret.gogsSecret | string | `""` | Shared secret for authenticating Gogs webhook events |
+| configs.secret.extra | object | `{}` | add additional secrets to be added to argocd-secret # Custom secrets. Useful for injecting SSO secrets into environment variables. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets # Note that all values must be non-empty. |
+| configs.secret.argocdServerTlsConfig | object | `{}` | Argo TLS Data |
+| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'` |
+| configs.secret.argocdServerAdminPasswordMtime | string | `""` (defaults to current time) | Admin password modification time. Eg. `"2006-01-02T15:04:05Z"` |
+| configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/ |
+| configs.params.annotations | object | `{}` | Annotations to be added to the argocd-cmd-params-cm ConfigMap |
+| configs.params."otlp.address" | string | `""` | Open-Telemetry collector address: (e.g. "otel-collector:4317") |
+| configs.params."timeout.reconciliation" | int | `180` | Time period in seconds for application resync |
+| configs.params."timeout.hard.reconciliation" | int | `0` | Time period in seconds for application hard resync |
+| configs.params."controller.status.processors" | int | `20` | Number of application status processors |
+| configs.params."controller.operation.processors" | int | `10` | Number of application operation processors |
+| configs.params."controller.self.heal.timeout.seconds" | int | `5` | Specifies timeout between application self heal attempts |
+| configs.params."controller.repo.server.timeout.seconds" | int | `60` | Repo server RPC call timeout seconds. |
+| configs.params."server.insecure" | bool | `true` | Run server without TLS |
+| configs.params."server.basehref" | string | `"/"` | Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from / |
+| configs.params."server.rootpath" | string | `""` | Used if Argo CD is running behind reverse proxy under subpath different from / |
+| configs.params."server.staticassets" | string | `"/shared/app"` | Directory path that contains additional static assets |
+| configs.params."server.disable.auth" | bool | `false` | Disable Argo CD RBAC for user authentication |
+| configs.params."server.enable.gzip" | bool | `false` | Enable GZIP compression |
+| configs.params."server.x.frame.options" | string | `"sameorigin"` | Set X-Frame-Options header in HTTP responses to value. To disable, set to "". |
+| configs.params."reposerver.parallelism.limit" | int | `0` | Limit on number of concurrent manifests generate requests. Any value less the 1 means no limit. |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy |
 | controller.name | string | `"application-controller"` | Application controller name string |
 | controller.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the application controller |
 | controller.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the application controller |
 | controller.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the application controller |
 | controller.imagePullSecrets[0].name | string | `"private-registry"` |  |
-| controller.replicas | int | `1` | The number of application controller pods to run. If changing the number of replicas you must pass the number as `ARGOCD_CONTROLLER_REPLICAS` as an environment variable |
-| controller.enableStatefulSet | bool | `true` | Deploy the application controller as a StatefulSet instead of a Deployment, this is required for HA capability. |
-| controller.args.statusProcessors | string | `"20"` | define the application controller `--status-processors` |
-| controller.args.operationProcessors | string | `"10"` | define the application controller `--operation-processors` |
-| controller.args.appResyncPeriod | string | `"180"` | define the application controller `--app-resync` |
-| controller.args.selfHealTimeout | string | `"5"` | define the application controller `--self-heal-timeout-seconds` |
-| controller.args.repoServerTimeoutSeconds | string | `"60"` | define the application controller `--repo-server-timeout-seconds` |
-| controller.logFormat | string | `"text"` | Application controller log format. Either `text` or `json` |
-| controller.logLevel | string | `"info"` | Application controller log level |
+| controller.replicas | int | `1` | The number of application controller pods to run. Additional replicas will cause sharding of managed clusters across number of replicas. |
+| controller.args | object | `{}` | DEPRECATED - Application controller commandline flags |
 | controller.extraArgs | list | `[]` | Additional command line arguments to pass to application controller |
 | controller.env | list | `[]` | Environment variables to pass to application controller |
 | controller.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to application controller |
@@ -172,10 +213,8 @@ helm install argo-cd chart/
 | dex.serviceAccount.name | string | `"argocd-dex-server"` | Dex service account name |
 | dex.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | dex.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
-| dex.volumeMounts | list | `[{"mountPath":"/shared","name":"static-files"}]` | Additional volumeMounts to the dex main container |
-| dex.volumes | list | `[{"emptyDir":{},"name":"static-files"}]` | Additional volumes to the dex pod |
-| dex.extraVolumes | list | `[]` | Extra volumes to the dex pod |
-| dex.extraVolumeMounts | list | `[]` | Extra volumeMounts to the dex pod |
+| dex.volumeMounts | list | `[]` | Additional volumeMounts to the dex main container |
+| dex.volumes | list | `[]` | Additional volumes to the dex pod |
 | dex.containerPortHttp | int | `5556` | Container port for HTTP access |
 | dex.servicePortHttp | int | `5556` | Service port for HTTP access |
 | dex.servicePortHttpName | string | `"http"` | Service port name for HTTP access |
@@ -255,6 +294,7 @@ helm install argo-cd chart/
 | redis.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the Redis server |
 | redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
 | externalRedis.host | string | `""` | External Redis server host |
+| externalRedis.username | string | `""` | External Redis username |
 | externalRedis.password | string | `""` | External Redis password |
 | externalRedis.port | int | `6379` | External Redis server port |
 | externalRedis.existingSecret | string | `""` | The name of an existing secret with Redis credentials (must contain key `redis-password`). When it's set, the `externalRedis.password` parameter is ignored |
@@ -266,16 +306,14 @@ helm install argo-cd chart/
 | server.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the Argo CD server [HPA] |
 | server.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the Argo CD server [HPA] |
+| server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | server.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the Argo CD server |
 | server.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the Argo CD server |
 | server.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the Argo CD server |
-| server.extraArgs | list | `["--insecure"]` | Additional command line arguments to pass to Argo CD server |
-| server.staticAssets.enabled | bool | `true` | Disable deprecated flag `--staticassets` |
+| server.extraArgs | list | `[]` | Additional command line arguments to pass to Argo CD server |
 | server.env | list | `[]` | Environment variables to pass to Argo CD server |
 | server.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to Argo CD server |
 | server.lifecycle | object | `{}` | Specify postStart and preStop lifecycle hooks for your argo-cd-server container |
-| server.logFormat | string | `"text"` | Argo CD server log format: Either `text` or `json` |
-| server.logLevel | string | `"info"` | Argo CD server log level |
 | server.podAnnotations | object | `{}` | Annotations to be added to server pods |
 | server.podLabels | object | `{}` | Labels to be added to server pods |
 | server.containerPort | int | `8080` | Configures the server port |
@@ -302,6 +340,10 @@ helm install argo-cd chart/
 | server.certificate.domain | string | `"argocd.example.com"` | Certificate primary domain (commonName) |
 | server.certificate.duration | string | `""` | The requested 'duration' (i.e. lifetime) of the Certificate. Value must be in units accepted by Go time.ParseDuration |
 | server.certificate.renewBefore | string | `""` | How long before the currently issued certificate's expiry cert-manager should renew the certificate. Value must be in units accepted by Go time.ParseDuration |
+| server.certificate.privateKey.rotationPolicy | string | `"Never"` | Rotation policy of private key when certificate is re-issued. Either: `Never` or `Always` |
+| server.certificate.privateKey.encoding | string | `"PKCS1"` | The private key cryptography standards (PKCS) encoding for private key. Either: `PCKS1` or `PKCS8` |
+| server.certificate.privateKey.algorithm | string | `"RSA"` | Algorithm used to generate certificate private key. One of: `RSA`, `Ed25519` or `ECDSA` |
+| server.certificate.privateKey.size | int | `2048` | Key bit size of the private key. If algorithm is set to `Ed25519`, size is ignored. |
 | server.certificate.issuer.group | string | `""` | Certificate issuer group. Set if using an external issuer. Eg. `cert-manager.io` |
 | server.certificate.issuer.kind | string | `""` | Certificate issuer kind. Either `Issuer` or `ClusterIssuer` |
 | server.certificate.issuer.name | string | `""` | Certificate isser name. Eg. `letsencrypt` |
@@ -374,8 +416,6 @@ helm install argo-cd chart/
 | server.rbacConfig | object | `{}` | Argo CD rbac config ([Argo CD RBAC policy]) # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/rbac.md |
 | server.rbacConfigAnnotations | object | `{}` | Annotations to be added to Argo CD rbac ConfigMap |
 | server.rbacConfigCreate | bool | `true` | Whether or not to create the configmap. If false, it is expected the configmap will be created by something else. Argo CD will not work if there is no configMap created with the name above. |
-| server.additionalApplications | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
-| server.additionalProjects | list | `[]` (See [values.yaml]) | Deploy Argo CD Projects within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
 | server.clusterAdminAccess.enabled | bool | `true` | Enable RBAC for local cluster deployments |
 | server.GKEbackendConfig.enabled | bool | `false` | Enable BackendConfig custom resource for Google Kubernetes Engine |
 | server.GKEbackendConfig.spec | object | `{}` | [BackendConfigSpec] |
@@ -402,14 +442,13 @@ helm install argo-cd chart/
 | repoServer.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the repo server [HPA] |
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
+| repoServer.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | repoServer.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the repo server |
 | repoServer.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the repo server |
 | repoServer.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the repo server |
 | repoServer.extraArgs | list | `[]` | Additional command line arguments to pass to repo server |
 | repoServer.env | list | `[]` | Environment variables to pass to repo server |
 | repoServer.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to repo server |
-| repoServer.logFormat | string | `"text"` | Repo server log format: Either `text` or `json` |
-| repoServer.logLevel | string | `"info"` | Repo server log level |
 | repoServer.podAnnotations | object | `{}` | Annotations to be added to repo server pods |
 | repoServer.podLabels | object | `{}` | Labels to be added to repo server pods |
 | repoServer.containerPort | int | `8081` | Configures the repo server port |
@@ -465,31 +504,6 @@ helm install argo-cd chart/
 | repoServer.pdb.annotations | object | `{}` | Annotations to be added to Repo server pdb |
 | repoServer.pdb.enabled | bool | `false` | Deploy a Poddisruptionbudget for the Repo server |
 | repoServer.imagePullSecrets | list | `[]` | Secrets with credentials to pull images from a private registry |
-| configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] # Ref: # - https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters # - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials |
-| configs.gpgKeysAnnotations | object | `{}` | GnuPG key ring annotations |
-| configs.gpgKeys | object | `{}` (See [values.yaml]) | [GnuPG](https://argo-cd.readthedocs.io/en/stable/user-guide/gpg-verification/) keys to add to the key ring |
-| configs.knownHostsAnnotations | object | `{}` | Known Hosts configmap annotations |
-| configs.knownHosts.data.ssh_known_hosts | string | See [values.yaml] | Known Hosts |
-| configs.tlsCertsAnnotations | object | `{}` | TLS certificate configmap annotations |
-| configs.tlsCerts | object | See [values.yaml] | TLS certificate |
-| configs.repositoryCredentials | object | `{}` | *DEPRECATED:* Instead, use `configs.credentialTemplates` and/or `configs.repositories` |
-| configs.credentialTemplates | object | `{}` | Repository credentials to be used as Templates for other repos # Creates a secret for each key/value specified below to create repository credentials |
-| configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
-| configs.repositories | object | `{}` | Repositories list to be used by applications # Creates a secret for each key/value specified below to create repositories # Note: the last example in the list would use a repository credential template, configured under "configs.repositoryCredentials". |
-| configs.repositoriesAnnotations | object | `{}` | Annotations to be added to `configs.repositories` Secret |
-| configs.secret.createSecret | bool | `true` | Create the argocd-secret |
-| configs.secret.annotations | object | `{}` | Annotations to be added to argocd-secret |
-| configs.secret.githubSecret | string | `""` | Shared secret for authenticating GitHub webhook events |
-| configs.secret.gitlabSecret | string | `""` | Shared secret for authenticating GitLab webhook events |
-| configs.secret.bitbucketServerSecret | string | `""` | Shared secret for authenticating BitbucketServer webhook events |
-| configs.secret.bitbucketUUID | string | `""` | UUID for authenticating Bitbucket webhook events |
-| configs.secret.gogsSecret | string | `""` | Shared secret for authenticating Gogs webhook events |
-| configs.secret.extra | object | `{}` | add additional secrets to be added to argocd-secret # Custom secrets. Useful for injecting SSO secrets into environment variables. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets # Note that all values must be non-empty. |
-| configs.secret.argocdServerTlsConfig | object | `{}` | Argo TLS Data |
-| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'` |
-| configs.secret.argocdServerAdminPasswordMtime | string | `""` (defaults to current time) | Admin password modification time. Eg. `"2006-01-02T15:04:05Z"` |
-| configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/ |
-| openshift.enabled | bool | `false` | enables using arbitrary uid for argo repo server |
 | sso.enabled | bool | `false` |  |
 | sso.rbac."policy.csv" | string | `"g, Impact Level 2 Authorized, role:admin\n"` |  |
 | sso.keycloakClientSecret | string | `"this-can-be-anything-for-dev"` |  |
@@ -525,6 +539,8 @@ helm install argo-cd chart/
 | applicationSet.args.policy | string | `"sync"` | How application is synced between the generator and the cluster |
 | applicationSet.args.debug | bool | `false` | Print debug logs |
 | applicationSet.args.dryRun | bool | `false` | Enable dry run mode |
+| applicationSet.logFormat | string | `""` (defaults to global.logging.format) | ApplicationSet controller log format. Either `text` or `json` |
+| applicationSet.logLevel | string | `""` (defaults to global.logging.level) | ApplicationSet controller log level. One of: `debug`, `info`, `warn`, `error` |
 | applicationSet.extraContainers | list | `[]` | Additional containers to be added to the applicationset controller pod |
 | applicationSet.metrics.enabled | bool | `false` | Deploy metrics service |
 | applicationSet.metrics.service.annotations | object | `{}` | Metrics service annotations |
@@ -584,10 +600,9 @@ helm install argo-cd chart/
 | notifications.context | object | `{}` | Define user-defined context # For more information: https://argocd-notifications.readthedocs.io/en/stable/templates/#defining-user-defined-context |
 | notifications.secret.create | bool | `true` | Whether helm chart creates controller secret |
 | notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
-| notifications.secret.name | string | `""` | The name of the secret to use. # If not set and create is true, the default name 'argocd-notifications-secret' is used |
 | notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret # Can be used for templates, notification services etc. Some examples given below. # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/ |
-| notifications.logLevel | string | `"info"` | Set the logging level. (One of: `debug`, `info`, `warn`, `error`) |
-| notifications.logFormat | string | `"text"` | Application controller log format. Either `text` or `json` |
+| notifications.logFormat | string | `""` (defaults to global.logging.format) | Application controller log format. Either `text` or `json` |
+| notifications.logLevel | string | `""` (defaults to global.logging.level) | Application controller log level. One of: `debug`, `info`, `warn`, `error` |
 | notifications.extraArgs | list | `[]` | Extra arguments to provide to the controller |
 | notifications.extraEnv | list | `[]` | Additional container environment variables |
 | notifications.extraVolumeMounts | list | `[]` | List of extra mounts to add (normally used with extraVolumes) |
@@ -607,12 +622,12 @@ helm install argo-cd chart/
 | notifications.podLabels | object | `{}` | Labels to be applied to the controller Pods |
 | notifications.securityContext | object | `{"runAsNonRoot":true}` | Pod Security Context |
 | notifications.containerSecurityContext | object | `{}` | Container Security Context |
+| notifications.priorityClassName | string | `""` | Priority class for the controller pods |
 | notifications.resources | object | `{}` | Resource limits and requests for the controller |
 | notifications.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | The name of the service account to use. # If not set and create is true, a name is generated using the fullname template |
 | notifications.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | notifications.cm.create | bool | `true` | Whether helm chart creates controller config map |
-| notifications.cm.name | string | `""` | The name of the config map to use. # If not set and create is true, the default name 'argocd-notifications-cm' is used |
 | notifications.subscriptions | object | `{}` | Contains centrally managed global application subscriptions # For more information: https://argocd-notifications.readthedocs.io/en/stable/subscriptions/ |
 | notifications.templates | object | `{}` | The notification template is used to generate the notification content # For more information: https://argocd-notifications.readthedocs.io/en/stable/templates/ |
 | notifications.tolerations | list | `[]` | [Tolerations] for use with node taints |

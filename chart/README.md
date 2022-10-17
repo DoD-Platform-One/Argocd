@@ -2,9 +2,10 @@
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
-Source code can be found [here](https://argo-cd.readthedocs.io/en/stable/)
+Source code can be found here:
 
-## Additional Information
+* <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
+* <https://github.com/argoproj/argo-cd>
 
 This is a **community maintained** chart. This chart installs [argo-cd](https://argo-cd.readthedocs.io/en/stable/), a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -81,15 +82,17 @@ cd argo-cd
 git diff v1.8.7 v2.0.0 -- manifests/install.yaml
 ```
 
-Changes in the `CustomResourceDefinition` resources shall be fixed easily by copying 1:1 from the [`manifests/crds` folder](https://github.com/argoproj/argo-cd/tree/master/manifests/crds) into this [`charts/argo-cd/crds` folder](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd/crds).
+Changes in the `CustomResourceDefinition` resources shall be fixed easily by copying 1:1 from the [`manifests/crds` folder](https://github.com/argoproj/argo-cd/tree/master/manifests/crds) into this [`charts/argo-cd/templates/crds` folder](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd/templates/crds).
 
 ## Upgrading
 
 ### Custom resource definitions
 
-Helm cannot upgrade custom resource definitions [by design](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations).
+Some users would prefer to install the CRDs _outside_ of the chart. You can disable the CRD installation of this chart by using `--set crds.install=false` when installing the chart.
 
-Please use `kubectl` to upgrade CRDs manually from [crds](crds/) folder or via the manifests from the upstream project repo:
+Helm cannot upgrade custom resource definitions in the `<chart>/crds` folder [by design](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#some-caveats-and-explanations). Starting with 5.2.0, the CRDs have been moved to `<chart>/templates` to address this design decision.
+
+If you are using Argo CD chart version prior to 5.2.0 or have elected to manage the Argo CD CRDs outside of the chart, please use `kubectl` to upgrade CRDs manually from [templates/crds](templates/crds/) folder or via the manifests from the upstream project repo:
 
 ```bash
 kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=<appVersion>"
@@ -97,6 +100,114 @@ kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=<appVer
 # Eg. version v2.4.9
 kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v2.4.9"
 ```
+
+### 5.5.0
+
+This version introduces new `configs.params` section that replaces command line arguments for containers.
+Please refer to documentation in values.yaml for migrating the configuration.
+
+### 5.2.0
+
+Custom resource definitions were moved to `templates` folder so they can be managed by Helm.
+
+To adopt already created CRDs, please use following command:
+
+```bash
+YOUR_ARGOCD_NAMESPACE="" # e.g. argo-cd
+YOUR_ARGOCD_RELEASENAME="" # e.g. argo-cd
+
+for crd in "applications.argoproj.io" "applicationsets.argoproj.io" "argocdextensions.argoproj.io" "appprojects.argoproj.io"; do
+  kubectl label --overwrite crd $crd app.kubernetes.io/managed-by=Helm
+  kubectl annotate --overwrite crd $crd meta.helm.sh/release-namespace="$YOUR_ARGOCD_NAMESPACE"
+  kubectl annotate --overwrite crd $crd meta.helm.sh/release-name="$YOUR_ARGOCD_RELEASENAME"
+done
+```
+
+### 5.0.0
+
+This version **removes support for**:
+
+- deprecated repository credentials (parameter `configs.repositoryCredentials`)
+- option to run application controller as a Deployment
+- the parameters `server.additionalApplications` and `server.additionalProjects`
+
+Please carefully read the following section if you are using these parameters!
+
+In order to upgrade Applications and Projects safely against CRDs' upgrade, `server.additionalApplications` and `server.additionalProjects` are moved to [argocd-apps](../argocd-apps).
+
+If you are using `server.additionalApplications` or `server.additionalProjects`, you can adopt to [argocd-apps](../argocd-apps) as below:
+
+1. Add [helm.sh/resource-policy annotation](https://helm.sh/docs/howto/charts_tips_and_tricks/#tell-helm-not-to-uninstall-a-resource) to avoid resources being removed by upgrading Helm chart
+
+You can keep your existing CRDs by adding `"helm.sh/resource-policy": keep` on `additionalAnnotations`, under `server.additionalApplications` and `server.additionalProjects` blocks, and running `helm upgrade`.
+
+e.g:
+
+```yaml
+server:
+  additionalApplications:
+    - name: guestbook
+      namespace: argocd
+      additionalLabels: {}
+      additionalAnnotations:
+        "helm.sh/resource-policy": keep # <-- add this
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      project: guestbook
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps.git
+        targetRevision: HEAD
+        path: guestbook
+        directory:
+          recurse: true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: guestbook
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: false
+      ignoreDifferences:
+      - group: apps
+        kind: Deployment
+        jsonPointers:
+        - /spec/replicas
+      info:
+      - name: url
+        value: https://argoproj.github.io/
+```
+
+You can also keep your existing CRDs by running the following scripts.
+
+```bash
+# keep Applications
+for app in "guestbook"; do
+  kubectl annotate --overwrite application $app helm.sh/resource-policy=keep
+done
+
+# keep Projects
+for project in "guestbook"; do
+  kubectl annotate --overwrite appproject $project helm.sh/resource-policy=keep
+done
+```
+
+2. Upgrade argo-cd Helm chart to v5.0.0
+
+3. Remove keep [helm.sh/resource-policy annotation](https://helm.sh/docs/howto/charts_tips_and_tricks/#tell-helm-not-to-uninstall-a-resource)
+
+```bash
+# delete annotations from Applications
+for app in "guestbook"; do
+  kubectl annotate --overwrite application $app helm.sh/resource-policy-
+done
+
+# delete annotations from Projects
+for project in "guestbook"; do
+  kubectl annotate --overwrite appproject $project helm.sh/resource-policy-
+done
+```
+
+4. Adopt existing resources to [argocd-apps](../argocd-apps)
 
 ### 4.9.0
 
@@ -219,6 +330,9 @@ NAME: my-release
 | apiVersionOverrides.autoscaling | string | `""` | String to override apiVersion of autoscaling rendered by this helm chart |
 | apiVersionOverrides.certmanager | string | `""` | String to override apiVersion of certmanager resources rendered by this helm chart |
 | apiVersionOverrides.ingress | string | `""` | String to override apiVersion of ingresses rendered by this helm chart |
+| crds.annotations | object | `{}` | Annotations to be added to all CRDs |
+| crds.install | bool | `true` | Install and upgrade CRDs |
+| crds.keep | bool | `true` | Keep CRDs on chart uninstall |
 | createAggregateRoles | bool | `false` | Create clusterroles that extend existing clusterroles to interact with argo-cd crds |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
@@ -228,6 +342,8 @@ NAME: my-release
 | global.image.repository | string | `"quay.io/argoproj/argocd"` | If defined, a repository applied to all Argo CD deployments |
 | global.image.tag | string | `""` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.imagePullSecrets | list | `[]` | If defined, uses a Secret to pull an image from a private Docker registry or repository |
+| global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
+| global.logging.level | string | `"info"` | Set the global logging level. One of: `debug`, `info`, `warn` or `error` |
 | global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
@@ -236,8 +352,6 @@ NAME: my-release
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | openshift.enabled | bool | `false` | enables using arbitrary uid for argo repo server |
-| server.additionalApplications | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications within this helm release |
-| server.additionalProjects | list | `[]` (See [values.yaml]) | Deploy Argo CD Projects within this helm release |
 
 ## Argo CD Configs
 
@@ -250,9 +364,24 @@ NAME: my-release
 | configs.gpgKeysAnnotations | object | `{}` | GnuPG key ring annotations |
 | configs.knownHosts.data.ssh_known_hosts | string | See [values.yaml] | Known Hosts |
 | configs.knownHostsAnnotations | object | `{}` | Known Hosts configmap annotations |
+| configs.params."controller.operation.processors" | int | `10` | Number of application operation processors |
+| configs.params."controller.repo.server.timeout.seconds" | int | `60` | Repo server RPC call timeout seconds. |
+| configs.params."controller.self.heal.timeout.seconds" | int | `5` | Specifies timeout between application self heal attempts |
+| configs.params."controller.status.processors" | int | `20` | Number of application status processors |
+| configs.params."otlp.address" | string | `""` | Open-Telemetry collector address: (e.g. "otel-collector:4317") |
+| configs.params."reposerver.parallelism.limit" | int | `0` | Limit on number of concurrent manifests generate requests. Any value less the 1 means no limit. |
+| configs.params."server.basehref" | string | `"/"` | Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from / |
+| configs.params."server.disable.auth" | bool | `false` | Disable Argo CD RBAC for user authentication |
+| configs.params."server.enable.gzip" | bool | `false` | Enable GZIP compression |
+| configs.params."server.insecure" | bool | `false` | Run server without TLS |
+| configs.params."server.rootpath" | string | `""` | Used if Argo CD is running behind reverse proxy under subpath different from / |
+| configs.params."server.staticassets" | string | `"/shared/app"` | Directory path that contains additional static assets |
+| configs.params."server.x.frame.options" | string | `"sameorigin"` | Set X-Frame-Options header in HTTP responses to value. To disable, set to "". |
+| configs.params."timeout.hard.reconciliation" | int | `0` | Time period in seconds for application hard resync |
+| configs.params."timeout.reconciliation" | int | `180` | Time period in seconds for application resync |
+| configs.params.annotations | object | `{}` | Annotations to be added to the argocd-cmd-params-cm ConfigMap |
 | configs.repositories | object | `{}` | Repositories list to be used by applications |
 | configs.repositoriesAnnotations | object | `{}` | Annotations to be added to `configs.repositories` Secret |
-| configs.repositoryCredentials | object | `{}` | *DEPRECATED:* Instead, use `configs.credentialTemplates` and/or `configs.repositories` |
 | configs.secret.annotations | object | `{}` | Annotations to be added to argocd-secret |
 | configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password |
 | configs.secret.argocdServerAdminPasswordMtime | string | `""` (defaults to current time) | Admin password modification time. Eg. `"2006-01-02T15:04:05Z"` |
@@ -273,17 +402,12 @@ NAME: my-release
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | controller.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
-| controller.args.appResyncPeriod | string | `"180"` | define the application controller `--app-resync` |
-| controller.args.operationProcessors | string | `"10"` | define the application controller `--operation-processors` |
-| controller.args.repoServerTimeoutSeconds | string | `"60"` | define the application controller `--repo-server-timeout-seconds` |
-| controller.args.selfHealTimeout | string | `"5"` | define the application controller `--self-heal-timeout-seconds` |
-| controller.args.statusProcessors | string | `"20"` | define the application controller `--status-processors` |
+| controller.args | object | `{}` | DEPRECATED - Application controller commandline flags |
 | controller.clusterAdminAccess.enabled | bool | `true` | Enable RBAC for local cluster deployments |
 | controller.clusterRoleRules.enabled | bool | `false` | Enable custom rules for the application controller's ClusterRole resource |
 | controller.clusterRoleRules.rules | list | `[]` | List of custom rules for the application controller's ClusterRole resource |
 | controller.containerPort | int | `8082` | Application controller listening port |
 | controller.containerSecurityContext | object | `{}` | Application controller container-level security context |
-| controller.enableStatefulSet | bool | `true` | Deploy the application controller as a StatefulSet instead of a Deployment, this is required for HA capability. |
 | controller.env | list | `[]` | Environment variables to pass to application controller |
 | controller.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to application controller |
 | controller.extraArgs | list | `[]` | Additional command line arguments to pass to application controller |
@@ -298,8 +422,6 @@ NAME: my-release
 | controller.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | controller.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | controller.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| controller.logFormat | string | `"text"` | Application controller log format. Either `text` or `json` |
-| controller.logLevel | string | `"info"` | Application controller log level |
 | controller.metrics.applicationLabels.enabled | bool | `false` | Enables additional labels in argocd_app_labels metric |
 | controller.metrics.applicationLabels.labels | list | `[]` | Additional labels |
 | controller.metrics.enabled | bool | `false` | Deploy metrics service |
@@ -331,7 +453,7 @@ NAME: my-release
 | controller.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | controller.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | controller.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| controller.replicas | int | `1` | The number of application controller pods to run. If changing the number of replicas you must pass the number as `ARGOCD_CONTROLLER_REPLICAS` as an environment variable |
+| controller.replicas | int | `1` | The number of application controller pods to run. Additional replicas will cause sharding of managed clusters across number of replicas. |
 | controller.resources | object | `{}` | Resource limits and requests for the application controller pods |
 | controller.service.annotations | object | `{}` | Application controller service annotations |
 | controller.service.labels | object | `{}` | Application controller service labels |
@@ -351,6 +473,7 @@ NAME: my-release
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | repoServer.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| repoServer.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
 | repoServer.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the repo server [HPA] |
 | repoServer.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the repo server [HPA] |
@@ -376,8 +499,6 @@ NAME: my-release
 | repoServer.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | repoServer.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | repoServer.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| repoServer.logFormat | string | `"text"` | Repo server log format: Either `text` or `json` |
-| repoServer.logLevel | string | `"info"` | Repo server log level |
 | repoServer.metrics.enabled | bool | `false` | Deploy metrics service |
 | repoServer.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | repoServer.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -432,6 +553,7 @@ NAME: my-release
 | server.GKEmanagedCertificate.domains | list | `["argocd.example.com"]` | Domains for the Google Managed Certificate |
 | server.GKEmanagedCertificate.enabled | bool | `false` | Enable ManagedCertificate custom resource for Google Kubernetes Engine. |
 | server.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
 | server.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the Argo CD server [HPA] |
 | server.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the Argo CD server [HPA] |
@@ -444,6 +566,10 @@ NAME: my-release
 | server.certificate.issuer.group | string | `""` | Certificate issuer group. Set if using an external issuer. Eg. `cert-manager.io` |
 | server.certificate.issuer.kind | string | `""` | Certificate issuer kind. Either `Issuer` or `ClusterIssuer` |
 | server.certificate.issuer.name | string | `""` | Certificate isser name. Eg. `letsencrypt` |
+| server.certificate.privateKey.algorithm | string | `"RSA"` | Algorithm used to generate certificate private key. One of: `RSA`, `Ed25519` or `ECDSA` |
+| server.certificate.privateKey.encoding | string | `"PKCS1"` | The private key cryptography standards (PKCS) encoding for private key. Either: `PCKS1` or `PKCS8` |
+| server.certificate.privateKey.rotationPolicy | string | `"Never"` | Rotation policy of private key when certificate is re-issued. Either: `Never` or `Always` |
+| server.certificate.privateKey.size | int | `2048` | Key bit size of the private key. If algorithm is set to `Ed25519`, size is ignored. |
 | server.certificate.renewBefore | string | `""` | How long before the currently issued certificate's expiry cert-manager should renew the certificate. Value must be in units accepted by Go time.ParseDuration |
 | server.certificate.secretName | string | `"argocd-server-tls"` | The name of the Secret that will be automatically created and managed by this Certificate resource |
 | server.clusterAdminAccess.enabled | bool | `true` | Enable RBAC for local cluster deployments |
@@ -496,8 +622,6 @@ NAME: my-release
 | server.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | server.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | server.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| server.logFormat | string | `"text"` | Argo CD server log format: Either `text` or `json` |
-| server.logLevel | string | `"info"` | Argo CD server log level |
 | server.metrics.enabled | bool | `false` | Deploy metrics service |
 | server.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | server.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -554,7 +678,6 @@ NAME: my-release
 | server.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | server.serviceAccount.create | bool | `true` | Create server service account |
 | server.serviceAccount.name | string | `"argocd-server"` | Server service account name |
-| server.staticAssets.enabled | bool | `true` | Disable deprecated flag `--staticassets` |
 | server.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | server.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the Argo CD server |
 | server.volumeMounts | list | `[]` | Additional volumeMounts to the server main container |
@@ -574,11 +697,9 @@ NAME: my-release
 | dex.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the Dex server |
 | dex.extraArgs | list | `[]` | Additional command line arguments to pass to the Dex server |
 | dex.extraContainers | list | `[]` | Additional containers to be added to the dex pod |
-| dex.extraVolumeMounts | list | `[]` | Extra volumeMounts to the dex pod |
-| dex.extraVolumes | list | `[]` | Extra volumes to the dex pod |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.image.repository | string | `"ghcr.io/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.30.2"` | Dex image tag |
+| dex.image.tag | string | `"v2.32.0"` | Dex image tag |
 | dex.imagePullSecrets | list | `[]` | Secrets with credentials to pull images from a private registry |
 | dex.initContainers | list | `[]` | Init containers to add to the dex pod |
 | dex.initImage.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Argo CD init image imagePullPolicy |
@@ -629,8 +750,8 @@ NAME: my-release
 | dex.servicePortMetrics | int | `5558` | Service port for metrics access |
 | dex.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | dex.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to dex |
-| dex.volumeMounts | list | `[{"mountPath":"/shared","name":"static-files"}]` | Additional volumeMounts to the dex main container |
-| dex.volumes | list | `[{"emptyDir":{},"name":"static-files"}]` | Additional volumes to the dex pod |
+| dex.volumeMounts | list | `[]` | Additional volumeMounts to the dex main container |
+| dex.volumes | list | `[]` | Additional volumes to the dex pod |
 
 ## Redis
 
@@ -732,6 +853,7 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | externalRedis.password | string | `""` | External Redis password |
 | externalRedis.port | int | `6379` | External Redis server port |
 | externalRedis.secretAnnotations | object | `{}` | External Redis Secret annotations |
+| externalRedis.username | string | `""` | External Redis username |
 
 ## ApplicationSet
 
@@ -755,6 +877,8 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | applicationSet.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the application set controller |
 | applicationSet.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the application set controller |
 | applicationSet.imagePullSecrets | list | `[]` | If defined, uses a Secret to pull an image from a private Docker registry or repository. |
+| applicationSet.logFormat | string | `""` (defaults to global.logging.format) | ApplicationSet controller log format. Either `text` or `json` |
+| applicationSet.logLevel | string | `""` (defaults to global.logging.level) | ApplicationSet controller log level. One of: `debug`, `info`, `warn`, `error` |
 | applicationSet.metrics.enabled | bool | `false` | Deploy metrics service |
 | applicationSet.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | applicationSet.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -821,7 +945,6 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | notifications.bots.slack.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | notifications.bots.slack.updateStrategy | object | `{"type":"Recreate"}` | The deployment strategy to use to replace existing pods with new ones |
 | notifications.cm.create | bool | `true` | Whether helm chart creates controller config map |
-| notifications.cm.name | string | `""` | The name of the config map to use. |
 | notifications.containerSecurityContext | object | `{}` | Container Security Context |
 | notifications.context | object | `{}` | Define user-defined context |
 | notifications.enabled | bool | `true` | Enable Notifications controller |
@@ -833,8 +956,8 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | notifications.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the notifications controller |
 | notifications.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the notifications controller |
 | notifications.imagePullSecrets | list | `[]` | Secrets with credentials to pull images from a private registry |
-| notifications.logFormat | string | `"text"` | Application controller log format. Either `text` or `json` |
-| notifications.logLevel | string | `"info"` | Set the logging level. (One of: `debug`, `info`, `warn`, `error`) |
+| notifications.logFormat | string | `""` (defaults to global.logging.format) | Application controller log format. Either `text` or `json` |
+| notifications.logLevel | string | `""` (defaults to global.logging.level) | Application controller log level. One of: `debug`, `info`, `warn`, `error` |
 | notifications.metrics.enabled | bool | `false` | Enables prometheus metrics server |
 | notifications.metrics.port | int | `9001` | Metrics port |
 | notifications.metrics.service.annotations | object | `{}` | Metrics service annotations |
@@ -850,11 +973,11 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | notifications.notifiers | object | See [values.yaml] | Configures notification services such as slack, email or custom webhook |
 | notifications.podAnnotations | object | `{}` | Annotations to be applied to the controller Pods |
 | notifications.podLabels | object | `{}` | Labels to be applied to the controller Pods |
+| notifications.priorityClassName | string | `""` | Priority class for the controller pods |
 | notifications.resources | object | `{}` | Resource limits and requests for the controller |
 | notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
 | notifications.secret.create | bool | `true` | Whether helm chart creates controller secret |
 | notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret |
-| notifications.secret.name | string | `""` | The name of the secret to use. |
 | notifications.securityContext | object | `{"runAsNonRoot":true}` | Pod Security Context |
 | notifications.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | notifications.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
