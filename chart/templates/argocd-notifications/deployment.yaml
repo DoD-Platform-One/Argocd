@@ -5,7 +5,6 @@ metadata:
   name: {{ template "argo-cd.notifications.fullname" . }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.notifications.name "name" .Values.notifications.name) | nindent 4 }}
-    app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.notifications.image.tag | trunc 63 | quote }}
 spec:
   strategy:
     {{- .Values.notifications.updateStrategy | toYaml | nindent 4 }}
@@ -22,7 +21,6 @@ spec:
       {{- end }}
       labels:
         {{- include "argo-cd.labels" (dict "context" . "component" .Values.notifications.name "name" .Values.notifications.name) | nindent 8 }}
-        app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.notifications.image.tag | trunc 63 | quote }}
         {{- with (mergeOverwrite (deepCopy .Values.global.podLabels) .Values.notifications.podLabels) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -41,15 +39,13 @@ spec:
             {{- toYaml .Values.notifications.resources | nindent 12 }}
           command:
             - argocd-notifications
-            - --loglevel={{ .Values.notifications.logLevel }}
-            - --logformat={{ .Values.notifications.logFormat }}
+            - --loglevel={{ default .Values.global.logging.level .Values.notifications.logLevel }}
+            - --logformat={{ default .Values.global.logging.format .Values.notifications.logFormat }}
             {{- if .Values.notifications.metrics.enabled }}
             - --metrics-port={{ .Values.notifications.metrics.port }}
             {{- end }}
             - --namespace={{ .Release.Namespace }}
             - --argocd-repo-server={{ template "argo-cd.repoServer.fullname" . }}:{{ .Values.repoServer.service.port }}
-            - --secret-name={{ include "argo-cd.notifications.secretName" . }}
-            - --config-map-name={{ include "argo-cd.notifications.configMapName" . }}
             {{- range .Values.notifications.extraArgs }}
             - {{ . | squote }}
             {{- end }}
@@ -103,5 +99,8 @@ spec:
     {{- with .Values.notifications.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.notifications.priorityClassName }}
+      priorityClassName: {{ . }}
     {{- end }}
 {{- end }}
