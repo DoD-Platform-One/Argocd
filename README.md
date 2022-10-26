@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 5.5.7-bb.0](https://img.shields.io/badge/Version-5.5.7--bb.0-informational?style=flat-square) ![AppVersion: v2.4.12](https://img.shields.io/badge/AppVersion-v2.4.12-informational?style=flat-square)
+![Version: 5.5.7-bb.1](https://img.shields.io/badge/Version-5.5.7--bb.1-informational?style=flat-square) ![AppVersion: v2.4.12](https://img.shields.io/badge/AppVersion-v2.4.12-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -44,7 +44,7 @@ helm install argo-cd chart/
 | apiVersionOverrides.autoscaling | string | `""` | String to override apiVersion of autoscaling rendered by this helm chart |
 | createAggregateRoles | bool | `false` | Create clusterroles that extend existing clusterroles to interact with argo-cd crds # Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles |
 | openshift.enabled | bool | `false` | enables using arbitrary uid for argo repo server |
-| crds.install | bool | `true` | Install and upgrade CRDs |
+| crds.install | bool | `false` | Install and upgrade CRDs |
 | crds.keep | bool | `true` | Keep CRDs on chart uninstall |
 | crds.annotations | object | `{}` | Annotations to be added to all CRDs |
 | awsCredentials.awsAccessKeyId | string | `""` |  |

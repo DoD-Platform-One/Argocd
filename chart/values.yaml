@@ -30,7 +30,9 @@ openshift:
 ## Custom resource configuration
 crds:
   # -- Install and upgrade CRDs
-  install: true
+  # -- This field is used for managing argocd customresourcedefinitions as helm resources
+  # -- This chart does not currently use this pattern, so it's set to false
+  install: false
   # -- Keep CRDs on chart uninstall
   keep: true
   # -- Annotations to be added to all CRDs
