@@ -30,9 +30,7 @@ openshift:
 ## Custom resource configuration
 crds:
   # -- Install and upgrade CRDs
-  # -- This field is used for managing argocd customresourcedefinitions as helm resources
-  # -- This chart does not currently use this pattern, so it's set to false
-  install: false
+  install: true
   # -- Keep CRDs on chart uninstall
   keep: true
   # -- Annotations to be added to all CRDs
@@ -2099,6 +2097,12 @@ networkPolicies:
   # Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints)
   # Used by package NetworkPolicies to allow Kube API access
   controlPlaneCidr: 0.0.0.0/0
+upgradeJob:
+  enabled: true
+  image:
+    repository: registry1.dso.mil/ironbank/big-bang/base
+    tag: 2.0.0
+    imagePullPolicy: IfNotPresent
 
 # Big Bang Continuous Integration Testing Only
 bbtests:

@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 5.5.7-bb.2](https://img.shields.io/badge/Version-5.5.7--bb.2-informational?style=flat-square) ![AppVersion: v2.4.12](https://img.shields.io/badge/AppVersion-v2.4.12-informational?style=flat-square)
+![Version: 5.5.7-bb.3](https://img.shields.io/badge/Version-5.5.7--bb.3-informational?style=flat-square) ![AppVersion: v2.4.12](https://img.shields.io/badge/AppVersion-v2.4.12-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -44,7 +44,7 @@ helm install argo-cd chart/
 | apiVersionOverrides.autoscaling | string | `""` | String to override apiVersion of autoscaling rendered by this helm chart |
 | createAggregateRoles | bool | `false` | Create clusterroles that extend existing clusterroles to interact with argo-cd crds # Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles |
 | openshift.enabled | bool | `false` | enables using arbitrary uid for argo repo server |
-| crds.install | bool | `false` | This chart does not currently use this pattern, so it's set to false |
+| crds.install | bool | `true` | Install and upgrade CRDs |
 | crds.keep | bool | `true` | Keep CRDs on chart uninstall |
 | crds.annotations | object | `{}` | Annotations to be added to all CRDs |
 | awsCredentials.awsAccessKeyId | string | `""` |  |
@@ -522,6 +522,10 @@ helm install argo-cd chart/
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` | Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints) Used by package NetworkPolicies to allow Kube API access |
+| upgradeJob.enabled | bool | `true` |  |
+| upgradeJob.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/base"` |  |
+| upgradeJob.image.tag | string | `"2.0.0"` |  |
+| upgradeJob.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | bbtests.enabled | bool | `false` |  |
 | bbtests.cypress.artifacts | bool | `true` |  |
 | bbtests.cypress.envs.cypress_url | string | `"http://argocd-server:80"` |  |
