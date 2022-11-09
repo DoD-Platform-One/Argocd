@@ -32,6 +32,15 @@ spec:
             kubectl annotate --overwrite crd $crd meta.helm.sh/release-namespace="$YOUR_ARGOCD_NAMESPACE"
             kubectl annotate --overwrite crd $crd meta.helm.sh/release-name="$YOUR_ARGOCD_RELEASENAME"
           done
+          {{- if and .Values.istio.enabled (eq .Values.istio.injection "enabled") }}
+          until curl -fsI http://localhost:15021/healthz/ready; do
+            echo "Waiting for Istio sidecar proxy..."
+            sleep 3
+          done
+          sleep 5
+          echo "Stopping the istio proxy..."
+          curl -X POST http://localhost:15020/quitquitquit
+          {{- end }}
         resources:
           limits:
             cpu: 0.5
