@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.5.7-bb.3] - 2022-11-7
+### Added
+- Job that adds annotations and labels to custom resource definitions so they can be managed by helm
+
 ## [5.5.7-bb.2] - 2022-10-31
 ### Updated
 - Upgraded Redis sub-chart to 16.12.3-bb.3

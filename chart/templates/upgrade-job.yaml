@@ -1,0 +1,96 @@
+{{- if .Values.upgradeJob.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: argocd-upgrade-job
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+    spec:
+      {{- with .Values.server.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: upgrade-job-svc-account
+      containers:
+      - name: argocd-upgrade-job
+        image: {{ .Values.upgradeJob.image.repository }}:{{ .Values.upgradeJob.image.tag }}
+        imagePullPolicy: {{ .Values.upgradeJob.image.imagePullPolicy }}
+        command:
+        - "/bin/bash"
+        - "-c"
+        - |
+          YOUR_ARGOCD_NAMESPACE="{{ .Release.Namespace }}"
+          YOUR_ARGOCD_RELEASENAME="{{ .Release.Name }}"
+
+          for crd in "applications.argoproj.io" "applicationsets.argoproj.io" "argocdextensions.argoproj.io" "appprojects.argoproj.io"; do
+            kubectl label --overwrite crd $crd app.kubernetes.io/managed-by=Helm
+            kubectl annotate --overwrite crd $crd meta.helm.sh/release-namespace="$YOUR_ARGOCD_NAMESPACE"
+            kubectl annotate --overwrite crd $crd meta.helm.sh/release-name="$YOUR_ARGOCD_RELEASENAME"
+          done
+        resources:
+          limits:
+            cpu: 0.5
+            memory: 128Mi
+          requests:
+            cpu: 0.5
+            memory: 128Mi
+        securityContext:
+          capabilities:
+            drop: ["ALL"]
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+      restartPolicy: Never
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: upgrade-job-svc-account
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: upgrade-clusterrole
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+rules:
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions.apiextensions.k8s.io
+  - customresourcedefinitions
+  verbs:
+  - get
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: upgrade-clusterrolebinding
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: upgrade-clusterrole
+subjects:
+  - kind: ServiceAccount
+    name: upgrade-job-svc-account
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+
