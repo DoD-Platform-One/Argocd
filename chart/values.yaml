@@ -2066,6 +2066,8 @@ domain: bigbang.dev
 istio:
   # -- Toggle BigBang istio integration
   enabled: false
+  # -- Toggle BigBang istio injection
+  injection: "disabled"
   # -- Default argocd peer authentication
   mtls:
     # -- STRICT = Allow only mutual TLS traffic,

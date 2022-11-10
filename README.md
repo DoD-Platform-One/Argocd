@@ -1,6 +1,6 @@
 # argo-cd
 
-![Version: 5.5.7-bb.4](https://img.shields.io/badge/Version-5.5.7--bb.4-informational?style=flat-square) ![AppVersion: v2.4.12](https://img.shields.io/badge/AppVersion-v2.4.12-informational?style=flat-square)
+![Version: 5.5.7-bb.5](https://img.shields.io/badge/Version-5.5.7--bb.5-informational?style=flat-square) ![AppVersion: v2.4.12](https://img.shields.io/badge/AppVersion-v2.4.12-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -510,6 +510,7 @@ helm install argo-cd chart/
 | sso.config."oidc.config" | string | `"name: Keycloak\nissuer: https://login.dso.mil/auth/realms/baby-yoda\nclientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd\nclientSecret: $oidc.keycloak.clientSecret\nrequestedScopes: [\"openid\",\"ArgoCD\"]\n"` |  |
 | domain | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` | Toggle BigBang istio integration |
+| istio.injection | string | `"disabled"` | Toggle BigBang istio injection |
 | istio.mtls | object | `{"mode":"STRICT"}` | Default argocd peer authentication |
 | istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
 | istio.argocd.enabled | bool | `true` | Toggle Istio VirtualService creation |
