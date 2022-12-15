@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.5.7-bb.6] - 2022-12-15
+### Changed
+- Change redis subchart to utilize oci
+
 ## [5.5.7-bb.5] - 2022-11-9
 ### Fixed
 - Removed helm template value in upgrade job that was preventing the job's sidecar from terminating
@@ -46,7 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [4.10.0-bb.0] - 2022-07-22
 ### Updated
 - argocd image upgrade `v2.4.4` --> `v2.4.7`
-- redis dependency chart upgrade `16.12.3-bb.1` --> `16.12.3-bb.2` 
+- redis dependency chart upgrade `16.12.3-bb.1` --> `16.12.3-bb.2`
 
 ## [4.9.13-bb.0] - 2022-07-13
 ### Added
@@ -79,7 +83,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [4.2.3-bb.1] - 2022-03-28
 ### Added
-- Added Tempo Zipkin Egress Policy 
+- Added Tempo Zipkin Egress Policy
 
 ## [4.2.3-bb.0] - 2022-03-28
 ### Updated
@@ -258,4 +262,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [0.2.5] - 2020-08-9
 ### Changed
 - Iron Bank ArgoCD - v1.6.1 with kustomize 3.8.0 plugins helmGenerator 0.2.0 SopGenerator 1.3.0
-
