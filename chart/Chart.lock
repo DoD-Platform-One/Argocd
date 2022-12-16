@@ -1,9 +1,9 @@
 dependencies:
 - name: redis
-  repository: file://external
+  repository: oci://registry1.dso.mil/bigbang
   version: 16.12.3-bb.3
 - name: gluon
   repository: oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon
   version: 0.2.8
-digest: sha256:59c6a1e2d45f554ce998e8f31f60893e0265d5eb577fb4b55de6d69e6a24c634
-generated: "2022-10-31T14:40:17.130433293-06:00"
+digest: sha256:a28bce345f6216cd823f9c112275908234dcddd5c76aa69743ab2e7526e6f7c1
+generated: "2022-12-15T08:51:58.040953-08:00"
