@@ -1,41 +1,80 @@
 # Troubleshooting Guide
 
-Argocd-tool binary command can be utilized to simplify settings and troubleshoot connectivity issues.
+The `argocd admin` command can be utilized to simplify settings and troubleshoot connectivity issues.
+
+See the [install docs](https://argo-cd.readthedocs.io/en/stable/cli_installation/) to see how to install it on your machine.
+
+If you have issues using the `argocd` cli to query your cluster, be sure your kubeconfig is configured to talk to your cluster. The default location for Kubernetes to store the kubeconfig file is at `$HOME/.kube/config`. You could do this by:
+
+```bash
+export KUBECONFIG="<path-to-kubeconfig-file>"
+```
 
 ### Settings
 
-The argocd-util binary can be used to ensure the validity of setting. The latest argocd-util binary can be downloaded from the  [repository](https://argoproj.github.io/argo-cd/operator-manual/troubleshooting/) along with examples. 
+Use the following command to validate settings configured in the `argocd-cm` configmap:
 
-    docker run --rm -it -w /src -v $(pwd):/src argoproj/argocd:<version> \
-    argocd-util settings validate --argocd-cm-path ./argocd-cm.yaml
+```bash
+argocd admin settings validate \
+    --load-cluster-settings=true \
+    --namespace argocd
+```
 
-If you are using Linux you can extract argocd-util binary from docker image:
+This should produce output similar to this:
+```bash
+INFO[0000] Starting configmap/secret informers          
+INFO[0000] Configmap/secret informer synced             
+✅ accounts
+1 accounts
 
+✅ general
+SSO is not configured
 
-    docker run --rm -it -w /src -v $(pwd):/src argocd cp /usr/local/bin/argocd-util ./argocd-util
-    The argocd-util settings validate command performs basic settings validation and print short summary of each settings group.
+✅ kustomize
+--enable-alpha-plugins
 
-### Connectivity Issues
+✅ plugins
+0 plugins
 
-To manually create Secret with cluster credentials argocd-util cluster kubeconfig can be utilized using the following.
+✅ repositories
+0 repositories
+0 repository credentials
 
-SSH into argocd-application-controller pod.
+✅ resource-overrides
+1 resource overrides
+```
 
+Another way you can check the configuration in the `argocd-cm` configmap is by using `kubectl`:
 
-    kubectl exec -n argocd -it \
-     $(kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-application-controller -o jsonpath='{.items[0].metadata.name}') bash
+```bash
+kubectl get configmap argocd-cm --namespace argocd -o yaml
+```
 
-Use argocd-util cluster kubeconfig command to export kubeconfig file from the configured Secret:
+The key-value pairs under the `.data` field stores some basic configuration data for the `argocd-server` service:
 
+```yaml
+apiVersion: v1
+data:
+  admin.enabled: "true"
+  application.instanceLabelKey: argocd.argoproj.io/instance
+  exec.enabled: "false"
+  kustomize.buildOptions: --enable-alpha-plugins
+  server.rbac.log.enforce.enable: "false"
+  url: https://argocd.bigbang.dev
+kind: ConfigMap
+```
 
-    argocd-util cluster kubeconfig https://<api-server-url> /tmp/kubeconfig --namespace argocd
+To learn more about where and how ArgoCD stores configuration data, see [this doc](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup).
 
-Use kubectl to get more details about connection issues, fix them and apply changes back to secret:
+### ArgoCD Server TLS
 
+The `argocd-server` service is deployed by this helm chart.
 
-    export KUBECONFIG=/tmp/kubeconfig
-    kubectl get pods -v 9
+This is the component that serves the API and UI of ArgoCD.
 
-Additional troubleshooting information can be found [here](https://argoproj.github.io/argo-cd/operator-manual/troubleshooting/).
+For this component to function properly in Big Bang, TLS must be disabled because TLS is terminated at the Istio ingress gateway before routing to the backend service. This results in a faulty redirect and the UI will be inaccessible.
 
+As of this release, the TLS configuration for `argocd-server` is stored in the `argocd-cmd-params-cm` configmap using the `server.insecure` key. This should be set to `server.insecure: "true"`.
+### More Troubleshooting
 
+See the [troubleshooting guide](https://argo-cd.readthedocs.io/en/stable/operator-manual/troubleshooting/)

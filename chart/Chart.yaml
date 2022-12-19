@@ -1,8 +1,9 @@
 apiVersion: v2
-appVersion: v2.4.12
+appVersion: v2.5.0
+kubeVersion: ">=1.22.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argo-cd
-version: 5.5.7-bb.6
+version: 5.13.0-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -26,7 +27,7 @@ dependencies:
   repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.4.12
+    - Argocd: v2.5.0
   helm.sh/images: |
     - name: argocd
       image: registry1.dso.mil/ironbank/big-bang/argocd:v2.4.12
@@ -40,4 +41,5 @@ annotations:
       condition: redis-bb.enabled
       image: registry1.dso.mil/ironbank/bitnami/redis:7.0.0-debian-10-r3
   artifacthub.io/changes: |
-    - "[Fixed]: v5.5.0 Upgrade guide heading in README"
+    - "[Added]: Option global.revisionHistoryLimit for deployments"
+    - "[Changed]: Forced Slack bot deployment strategy to Recreate"
