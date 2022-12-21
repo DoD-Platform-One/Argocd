@@ -11,7 +11,7 @@ This is a **community maintained** chart. This chart installs [argo-cd](https://
 
 The default installation is intended to be similar to the provided Argo CD [releases](https://github.com/argoproj/argo-cd/releases).
 
-If you want to avoid including sensitive information unencrypted (clear text) in your version control, make use of the [declarative set up](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/) of Argo CD.
+If you want to avoid including sensitive information unencrypted (clear text) in your version control, make use of the [declarative setup] of Argo CD.
 For instance, rather than adding repositories and their keys in your Helm values, you could deploy [SealedSecrets](https://github.com/bitnami-labs/sealed-secrets) with contents as seen in this [repositories section](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#repositories) or any other secrets manager service (i.e. HashiCorp Vault, AWS/GCP Secrets Manager, etc.).
 
 ## High Availability
@@ -84,8 +84,6 @@ git diff v1.8.7 v2.0.0 -- manifests/install.yaml
 
 Changes in the `CustomResourceDefinition` resources shall be fixed easily by copying 1:1 from the [`manifests/crds` folder](https://github.com/argoproj/argo-cd/tree/master/manifests/crds) into this [`charts/argo-cd/templates/crds` folder](https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd/templates/crds).
 
-## Upgrading
-
 ### Custom resource definitions
 
 Some users would prefer to install the CRDs _outside_ of the chart. You can disable the CRD installation of this chart by using `--set crds.install=false` when installing the chart.
@@ -101,10 +99,31 @@ kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=<appVer
 kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v2.4.9"
 ```
 
+## Changelog
+
+For full list of changes please check ArtifactHub [changelog].
+
+Highlighted versions provide information about additional steps that should be performed by user when upgrading to newer version.
+
+### 5.13.0
+
+This version reduces history limit for Argo CD deployment replicas to 3 to provide more visibility for Argo CD deployments that manage itself. If you need more deployment revisions for rollbacks set `global.revisionHistoryLimit` parameter.
+
+### 5.12.0
+
+This version deprecates the `configs.secret.argocdServerTlsConfig` option. Use `server.certificate` or `server.certificateSecret` to provide custom TLS configuration for Argo CD server.
+If you terminate TLS on ingress please use `argocd-server-tls` secret instead of `argocd-secret` secret.
+
 ### 5.10.0
 
-This version hardens security by configuring default container security contexts.
-The change aligns chart with [supported versions](https://argo-cd.readthedocs.io/en/stable/operator-manual/installation/#supported-versions) by upstream and adds requirement for minimum Kubernetes version >= 1.22.
+This version hardens security by configuring default container security contexts and adds hard requirement for Kubernetes 1.22+ to work properly.
+The change aligns chart with officially [supported versions](https://argo-cd.readthedocs.io/en/release-2.5/operator-manual/installation/#supported-versions) by upstream project.
+
+### 5.7.0
+
+This version introcudes new `configs.cm` and `configs.rbac` sections that replaces `server.config` and `server.rbacConfig` respectively.
+Please move your current configuration to the new place. The Argo CD RBAC config now also sets defaults in the `argocd-rbac-cm`.
+If you have manually created this ConfigMap please ensure templating is disabled so you will not lose your changes.
 
 ### 5.5.20
 
@@ -357,6 +376,7 @@ NAME: my-release
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
+| global.deploymentAnnotations | object | `{}` | Annotations for the all deployed Deployments |
 | global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.image.repository | string | `"quay.io/argoproj/argocd"` | If defined, a repository applied to all Argo CD deployments |
@@ -370,6 +390,7 @@ NAME: my-release
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.securityContext | object | `{}` (See [values.yaml]) | Toggle and define pod-level security context. |
+| global.statefulsetAnnotations | object | `{}` | Annotations for the all deployed Statefulsets |
 
 ## Argo CD Configs
 
@@ -383,12 +404,12 @@ NAME: my-release
 | configs.cm."timeout.hard.reconciliation" | int | `0` | Timeout to refresh application data as well as target manifests cache |
 | configs.cm."timeout.reconciliation" | string | `"180s"` | Timeout to discover if a new manifests version got published to the repository |
 | configs.cm.annotations | object | `{}` | Annotations to be added to argocd-cm configmap |
-| configs.cm.create | bool | `true` | Create the argocd-cm configmap for [Declarative setup] |
+| configs.cm.create | bool | `true` | Create the argocd-cm configmap for [declarative setup] |
 | configs.cm.url | string | `""` | Argo CD's externally facing base URL (optional). Required when configuring SSO |
 | configs.credentialTemplates | object | `{}` | Repository credentials to be used as Templates for other repos |
 | configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
-| configs.gpgKeys | object | `{}` (See [values.yaml]) | [GnuPG](https://argo-cd.readthedocs.io/en/stable/user-guide/gpg-verification/) keys to add to the key ring |
-| configs.gpgKeysAnnotations | object | `{}` | GnuPG key ring annotations |
+| configs.gpg.annotations | object | `{}` | Annotations to be added to argocd-gpg-keys-cm configmap |
+| configs.gpg.keys | object | `{}` (See [values.yaml]) | [GnuPG] public keys to add to the keyring |
 | configs.knownHosts.data.ssh_known_hosts | string | See [values.yaml] | Known Hosts |
 | configs.knownHostsAnnotations | object | `{}` | Known Hosts configmap annotations |
 | configs.params."controller.operation.processors" | int | `10` | Number of application operation processors |
@@ -487,6 +508,7 @@ NAME: my-release
 | controller.serviceAccount.create | bool | `true` | Create a service account for the application controller |
 | controller.serviceAccount.labels | object | `{}` | Labels applied to created service account |
 | controller.serviceAccount.name | string | `"argocd-application-controller"` | Service account name |
+| controller.statefulsetAnnotations | object | `{}` | Annotations for the application controller StatefulSet |
 | controller.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | controller.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the application controller |
 | controller.volumeMounts | list | `[]` | Additional volumeMounts to the application controller main container |
@@ -503,11 +525,18 @@ NAME: my-release
 | repoServer.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the repo server [HPA] |
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
+| repoServer.certificateSecret.annotations | object | `{}` | Annotations to be added to argocd-repo-server-tls secret |
+| repoServer.certificateSecret.ca | string | `""` | Certificate authority. Required for self-signed certificates. |
+| repoServer.certificateSecret.crt | string | `""` | Certificate data. Must contain SANs of Repo service (ie: argocd-repo-server, argocd-repo-server.argo-cd.svc) |
+| repoServer.certificateSecret.enabled | bool | `false` | Create argocd-repo-server-tls secret |
+| repoServer.certificateSecret.key | string | `""` | Certificate private key |
+| repoServer.certificateSecret.labels | object | `{}` | Labels to be added to argocd-repo-server-tls secret |
 | repoServer.clusterAdminAccess.enabled | bool | `false` | Enable RBAC for local cluster deployments |
 | repoServer.clusterRoleRules.enabled | bool | `false` | Enable custom rules for the Repo server's Cluster Role resource |
 | repoServer.clusterRoleRules.rules | list | `[]` | List of custom rules for the Repo server's Cluster Role resource |
 | repoServer.containerPort | int | `8081` | Configures the repo server port |
 | repoServer.containerSecurityContext | object | See [values.yaml] | Repo server container-level security context |
+| repoServer.deploymentAnnotations | object | `{}` | Annotations to be added to repo server Deployment |
 | repoServer.env | list | `[]` | Environment variables to pass to repo server |
 | repoServer.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to repo server |
 | repoServer.extraArgs | list | `[]` | Additional command line arguments to pass to repo server |
@@ -607,6 +636,7 @@ NAME: my-release
 | server.clusterAdminAccess.enabled | bool | `true` | Enable RBAC for local cluster deployments |
 | server.containerPort | int | `8080` | Configures the server port |
 | server.containerSecurityContext | object | See [values.yaml] | Server container-level security context |
+| server.deploymentAnnotations | object | `{}` | Annotations to be added to server Deployment |
 | server.env | list | `[]` | Environment variables to pass to Argo CD server |
 | server.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to Argo CD server |
 | server.extensions.containerSecurityContext | object | See [values.yaml] | Server UI extensions container-level security context |
@@ -750,6 +780,7 @@ server:
 | dex.containerPortHttp | int | `5556` | Container port for HTTP access |
 | dex.containerPortMetrics | int | `5558` | Container port for metrics access |
 | dex.containerSecurityContext | object | See [values.yaml] | Dex container-level security context |
+| dex.deploymentAnnotations | object | `{}` | Annotations to be added to the Dex server Deployment |
 | dex.enabled | bool | `true` | Enable dex |
 | dex.env | list | `[]` | Environment variables to pass to the Dex server |
 | dex.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the Dex server |
@@ -757,7 +788,7 @@ server:
 | dex.extraContainers | list | `[]` | Additional containers to be added to the dex pod |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.image.repository | string | `"ghcr.io/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.35.3-distroless"` | Dex image tag |
+| dex.image.tag | string | `"v2.35.3"` | Dex image tag |
 | dex.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | dex.initContainers | list | `[]` | Init containers to add to the dex pod |
 | dex.initImage.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Argo CD init image imagePullPolicy |
@@ -823,6 +854,7 @@ server:
 | redis.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | redis.containerPort | int | `6379` | Redis container port |
 | redis.containerSecurityContext | object | See [values.yaml] | Redis container-level security context |
+| redis.deploymentAnnotations | object | `{}` | Annotations to be added to the Redis server Deployment |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.env | list | `[]` | Environment variables to pass to the Redis server |
 | redis.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the Redis server |
@@ -925,13 +957,12 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | applicationSet.affinity | object | `{}` | Assign custom [affinity] rules |
-| applicationSet.args.debug | bool | `false` | Print debug logs |
 | applicationSet.args.dryRun | bool | `false` | Enable dry run mode |
-| applicationSet.args.enableLeaderElection | bool | `false` | The default leader election setting |
 | applicationSet.args.metricsAddr | string | `":8080"` | The default metric address |
 | applicationSet.args.policy | string | `"sync"` | How application is synced between the generator and the cluster |
 | applicationSet.args.probeBindAddr | string | `":8081"` | The default health check port |
 | applicationSet.containerSecurityContext | object | See [values.yaml] | ApplicationSet controller container-level security context |
+| applicationSet.deploymentAnnotations | object | `{}` | Annotations to be added to ApplicationSet controller Deployment |
 | applicationSet.enabled | bool | `true` | Enable ApplicationSet controller |
 | applicationSet.extraArgs | list | `[]` | List of extra cli args to add |
 | applicationSet.extraContainers | list | `[]` | Additional containers to be added to the applicationset controller pod |
@@ -1033,6 +1064,7 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | notifications.cm.create | bool | `true` | Whether helm chart creates controller config map |
 | notifications.containerSecurityContext | object | See [values.yaml] | Notification controller container-level security Context |
 | notifications.context | object | `{}` | Define user-defined context |
+| notifications.deploymentAnnotations | object | `{}` | Annotations to be applied to the notifications controller Deployment |
 | notifications.enabled | bool | `true` | Enable notifications controller |
 | notifications.extraArgs | list | `[]` | Extra arguments to provide to the controller |
 | notifications.extraEnv | list | `[]` | Additional container environment variables |
@@ -1087,10 +1119,12 @@ Autogenerated from chart metadata using [helm-docs](https://github.com/norwoodj/
 [affinity]: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 [BackendConfigSpec]: https://cloud.google.com/kubernetes-engine/docs/concepts/backendconfig#backendconfigspec_v1beta1_cloudgooglecom
 [CSS styles]: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/
+[changelog]: https://artifacthub.io/packages/helm/argo/argo-cd?modal=changelog
 [external cluster credentials]: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters
 [FrontendConfigSpec]: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
-[Declarative setup]: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup
+[declarative setup]: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup
 [gRPC-ingress]: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/
+[GnuPG]: https://argo-cd.readthedocs.io/en/stable/user-guide/gpg-verification/
 [HPA]: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 [MetricRelabelConfigs]: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs
 [Node selector]: https://kubernetes.io/docs/user-guide/node-selection/

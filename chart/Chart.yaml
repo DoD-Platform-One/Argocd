@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.5.0
+appVersion: v2.5.3
 kubeVersion: ">=1.22.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argo-cd
-version: 5.13.0-bb.0
+version: 5.16.1-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -27,19 +27,20 @@ dependencies:
   repository: "oci://registry.dso.mil/platform-one/big-bang/apps/library-charts/gluon"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.5.0
+    - Argocd: v2.5.3
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.4.12
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.5.3
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
     - name: dex
       condition: dex.enabled
-      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.30.3
+      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.35.3
     - name: redis
       condition: redis-bb.enabled
       image: registry1.dso.mil/ironbank/bitnami/redis:7.0.0-debian-10-r3
   artifacthub.io/changes: |
-    - "[Added]: Option global.revisionHistoryLimit for deployments"
-    - "[Changed]: Forced Slack bot deployment strategy to Recreate"
+    - "[Fixed]: Set aggregate roles only for using resources"
+    - "[Added]: Add argocdextensions to aggregate roles"
+    - "[Fixed]: Fix typo of notification.bots.slack.image in values"
