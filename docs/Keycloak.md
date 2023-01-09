@@ -108,28 +108,23 @@ helm upgrade -i -n argocd --create-namespace argocd chart/
 
 ## OIDC Custom CA
 
-ArgoCD does not support pointing to a kubernetes secret to trust SSO (OIDC) connections that are not trusted by the container already.
-To get around this limitation a kubernetes secret can be mounted to a file at `/etc/pki/tls/certs/` which is the current location of the system trust store for the argocd image from IronBank.
+ArgoCD does not seem to support pointing to a kubernetes secret to trust SSO (OIDC) connections that are not trusted by the container inherently.
+To get around this limitation, you can specify your "self-signed" Certificate Authority within BigBang's `sso.certificate_authority` value and it will be inserted into the sso configuration options starting with ArgoCD v2.5.X .
 
-Here is an example when using Big Bang to deploy argocd, assuming you are populating a secret named "ca-cert" in the same namespace, with a key of cert.pem and value of a single PEM encoded certificate (an easy way to make this secret is included below as well):
+Here is an example when using Big Bang to deploy argocd with SSO and feeding in a certificate authority PEM to trust for the OIDC connection:
 
 ```yaml
+sso:
+  certificate_authority: |
+    -----BEGIN CERTIFICATE-----
+    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    ...
+    -----END CERTIFICATE-----
 addons:
   argocd:
-    values:
-      server:
-        volumes:
-          - name: ca-cert
-            secret:
-              secretName: ca-secret
-              defaultMode: 0644
-        volumeMounts:
-          - name: ca-cert
-            mountPath: /etc/pki/tls/certs
-            readOnly: true
-```
-
-For secret creation with this example and a pem file at `/path/to/cert.pem`:
-```bash
-kubectl create secret generic ca-secret --from-file=cert.pem=/path/to/cert.pem -n argocd
+    sso:
+      enabled: true
+      client_id: "XXXX"
+      client_secret: "XXXX"
+      provider_name: "XXXXX"
 ```
