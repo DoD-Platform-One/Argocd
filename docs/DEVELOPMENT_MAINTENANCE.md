@@ -126,3 +126,11 @@ The secret located at `chart/templates/bigbang/argocd-iam-secret.yaml` is a Big 
 This secret stores AWS credentials for an IAM role when using SOPS encryption for your Big Bang values.
 
 Ensure this file does not get removed/deleted after performing an upgrade with `kpt`.
+
+## Chart.yaml
+
+The `Chart.yaml` file has a number of changes to support Big Bang needs:
+- `-bb.x` version appended
+- Chart renamed to `argocd` for consistency across BB
+- Annotations added for images and app versions
+- Dependencies added for Gluon and BB Redis
