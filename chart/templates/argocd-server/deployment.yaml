@@ -331,9 +331,6 @@ spec:
         lifecycle:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-      {{- with .Values.server.extraContainers }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
       {{- if .Values.server.extensions.enabled }}
       - name: argocd-extensions
         image: {{ .Values.server.extensions.image.repository }}:{{ .Values.server.extensions.image.tag }}
@@ -347,6 +344,13 @@ spec:
             mountPath: /tmp/extensions/
           - name: tmp
             mountPath: /tmp
+      {{- end }}
+      {{- with .Values.server.extraContainers }}
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with .Values.server.initContainers }}
+      initContainers:
+        {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
       {{- with .Values.server.nodeSelector }}
       nodeSelector:
@@ -418,10 +422,6 @@ spec:
             path: tls.crt
           - key: ca.crt
             path: ca.crt
-      {{- with .Values.server.initContainers }}
-      initContainers:
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
       {{- with .Values.server.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}

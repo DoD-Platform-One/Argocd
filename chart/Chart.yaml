@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.5.3
+appVersion: v2.5.5
 kubeVersion: ">=1.22.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
-name: argocd
-version: 5.16.1-bb.2
+name: argo-cd
+version: 5.17.0-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -27,10 +27,10 @@ dependencies:
   repository: "oci://registry1.dso.mil/bigbang"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.5.3
+    - Argocd: v2.5.5
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.5.3
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.5.5
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
@@ -41,6 +41,6 @@ annotations:
       condition: redis-bb.enabled
       image: registry1.dso.mil/ironbank/bitnami/redis:7.0.0-debian-10-r3
   artifacthub.io/changes: |
-    - "[Fixed]: Set aggregate roles only for using resources"
-    - "[Added]: Add argocdextensions to aggregate roles"
-    - "[Fixed]: Fix typo of notification.bots.slack.image in values"
+    - "[Added]: Support for extraContainers and initContainers for applicationSet and notifications"
+    - "[Added]: Support for use of Helm templates for extraContainers and initContainers"
+    - "[Docs]: Added notes about custom Helm template support"

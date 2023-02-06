@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.16.1-bb.2](https://img.shields.io/badge/Version-5.16.1--bb.2-informational?style=flat-square) ![AppVersion: v2.5.3](https://img.shields.io/badge/AppVersion-v2.5.3-informational?style=flat-square)
+![Version: 5.17.0-bb.0](https://img.shields.io/badge/Version-5.17.0--bb.0-informational?style=flat-square) ![AppVersion: v2.5.5](https://img.shields.io/badge/AppVersion-v2.5.5-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -54,7 +54,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.5.3"` |  |
+| global.image.tag | string | `"v2.5.5"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | global.imagePullSecrets | list | `[]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
