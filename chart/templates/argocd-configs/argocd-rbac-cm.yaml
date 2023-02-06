@@ -11,8 +11,14 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
   {{- end }}
-{{- with (mergeOverwrite (deepCopy (omit .Values.configs.rbac "create" "annotations")) (.Values.server.rbacConfig | default dict)) }}
 data:
+{{- if .Values.sso.enabled }}
+{{- with (mergeOverwrite (deepCopy (omit .Values.configs.rbac "create" "annotations")) (.Values.server.rbacConfig | default dict) .Values.sso.rbac) }}
   {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- else }}
+{{- with (mergeOverwrite (deepCopy (omit .Values.configs.rbac "create" "annotations")) (.Values.server.rbacConfig | default dict)) }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
 {{- end }}
 {{- end }}
