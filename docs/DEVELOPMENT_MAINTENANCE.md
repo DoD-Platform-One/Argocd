@@ -127,6 +127,26 @@ This secret stores AWS credentials for an IAM role when using SOPS encryption fo
 
 Ensure this file does not get removed/deleted after performing an upgrade with `kpt`.
 
+## RBAC SSO ConfigMap
+
+The configmap at `chart/templates/argocd-configs/argocd-rbac-cm.yaml` needs to be edited to include the BB SSO values.
+
+Currently this is done by modifying the configmap data to the following to effectively merge our SSO configs into the defaults:
+
+```yaml
+data:
+{{- if .Values.sso.enabled }}
+{{- with (mergeOverwrite (deepCopy (omit .Values.configs.rbac "create" "annotations")) (.Values.server.rbacConfig | default dict) .Values.sso.rbac) }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- else }}
+{{- with (mergeOverwrite (deepCopy (omit .Values.configs.rbac "create" "annotations")) (.Values.server.rbacConfig | default dict)) }}
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}
+```
+
 ## Chart.yaml
 
 The `Chart.yaml` file has a number of changes to support Big Bang needs:
