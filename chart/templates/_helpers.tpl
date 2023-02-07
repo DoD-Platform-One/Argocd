@@ -30,7 +30,7 @@ Create Dex server endpoint
 Create redis name and version as used by the chart label.
 */}}
 {{- define "argo-cd.redis.fullname" -}}
-{{ $redisHa := (index .Values "redis-bb") }}
+{{- $redisHa := (index .Values "redis-bb") -}}
 {{- if $redisHa.enabled -}}
     {{ .Release.Name }}-redis-bb-headless
 {{- else -}}

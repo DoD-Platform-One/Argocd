@@ -65,6 +65,8 @@ spec:
         - --redis
         - {{ .Values.redis.externalEndpoint }}
         {{- end }}
+        - --port={{ .Values.repoServer.containerPorts.server }}
+        - --metrics-port={{ .Values.repoServer.containerPorts.metrics }}
         {{- with .Values.repoServer.logFormat }}
         - --logformat
         - {{ . | quote }}
@@ -224,7 +226,6 @@ spec:
             value: /helm-working-dir
         {{- if or (and (.Values.awsCredentials.awsAccessKeyId) (.Values.awsCredentials.awsSecretAccessKey) (.Values.awsCredentials.awsDefaultRegion)) .Values.repoServer.envFrom }}
         envFrom:
-         
         {{- if and (.Values.awsCredentials.awsAccessKeyId) (.Values.awsCredentials.awsSecretAccessKey) (.Values.awsCredentials.awsDefaultRegion) }}
         - secretRef:
             name: argocd-iam-secret
@@ -255,10 +256,10 @@ spec:
           name: tmp
         ports:
         - name: repo-server
-          containerPort: {{ .Values.repoServer.containerPort }}
+          containerPort: {{ .Values.repoServer.containerPorts.server }}
           protocol: TCP
         - name: metrics
-          containerPort: 8084
+          containerPort: {{ .Values.repoServer.containerPorts.metrics }}
           protocol: TCP
         livenessProbe:
           httpGet:
@@ -373,3 +374,5 @@ spec:
       {{- with .Values.repoServer.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}
+      hostNetwork: {{ .Values.repoServer.hostNetwork }}
+      dnsPolicy: {{ .Values.repoServer.dnsPolicy }}

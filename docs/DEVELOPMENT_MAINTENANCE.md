@@ -52,6 +52,20 @@ Here's the section of the `chart/values.yaml` file where these additions are con
 
 ```yaml
 # Big Bang Additions
+# SSO Additions
+sso:
+  enabled: false
+  rbac:
+    policy.csv: |
+      g, Impact Level 2 Authorized, role:admin
+  keycloakClientSecret: this-can-be-anything-for-dev
+  config:
+    oidc.config: |
+      name: Keycloak
+      issuer: https://login.dso.mil/auth/realms/baby-yoda
+      clientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd
+      clientSecret: $oidc.keycloak.clientSecret
+      requestedScopes: ["openid","ArgoCD"]
 # Optional key/secret for IAM role when using SOPS encryption in AWS.
 awsCredentials:
   awsAccessKeyId: ""
@@ -107,7 +121,7 @@ There are instances where the helm chart templates for Kubernetes resources in t
 
 ## Monitoring
 
-The Kubernetes `Service` templates used for metrics collection in this package, currently named `metrics.yaml`, have a notable addition of a values key to the conditional statements to the templates:
+The Kubernetes `Service` and `ServiceMonitor` templates used for metrics collection in this package, currently named `metrics.yaml` and `servicemonitor.yaml`, have a notable addition of a values key to the conditional statements to the templates:
 
 `.Values.monitoring.enabled`
 
@@ -147,6 +161,22 @@ data:
 {{- end }}
 ```
 
+`argocd-cm.yaml` is also modified to include the SSO config:
+
+```yaml
+{{- if .Values.sso.enabled }}
+  {{- toYaml .Values.sso.config | nindent 2 }}
+{{- end }}
+```
+
+`argocd-secret.yaml` is also modified to add an SSO conditional + the client secret:
+
+```yaml
+  {{- if .Values.sso.enabled }}
+  oidc.keycloak.clientSecret: {{.Values.sso.keycloakClientSecret | b64enc }}
+  {{- end }}
+```
+
 ## Chart.yaml
 
 The `Chart.yaml` file has a number of changes to support Big Bang needs:
@@ -154,3 +184,20 @@ The `Chart.yaml` file has a number of changes to support Big Bang needs:
 - Chart renamed to `argocd` for consistency across BB
 - Annotations added for images and app versions
 - Dependencies added for Gluon and BB Redis
+
+## helpers.tpl
+
+- Modified `argo-cd.redis.fullname` to point to BB redis
+
+## chart/templates/argocd-repo-server/deployment.yaml
+
+- Modified to support BB redis via arg changes to the repo server container.
+- Modified `envFrom` section to support mounting AWS credentials
+
+## chart/templates/argocd-server/deployment.yaml
+
+- Modified to support BB redis via arg changes to the server container.
+
+## chart/templates/redis/deployment.yaml
+
+- Modified `$redisHa` to reference BB redis
