@@ -168,9 +168,9 @@ This version **removes support for**:
 
 Please carefully read the following section if you are using these parameters!
 
-In order to upgrade Applications and Projects safely against CRDs' upgrade, `server.additionalApplications` and `server.additionalProjects` are moved to [argocd-apps](../argocd-apps).
+In order to upgrade Applications and Projects safely against CRDs' upgrade, `server.additionalApplications` and `server.additionalProjects` are moved to [argocd-apps](https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps).
 
-If you are using `server.additionalApplications` or `server.additionalProjects`, you can adopt to [argocd-apps](../argocd-apps) as below:
+If you are using `server.additionalApplications` or `server.additionalProjects`, you can adopt to [argocd-apps](https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps) as below:
 
 1. Add [helm.sh/resource-policy annotation](https://helm.sh/docs/howto/charts_tips_and_tricks/#tell-helm-not-to-uninstall-a-resource) to avoid resources being removed by upgrading Helm chart
 
@@ -242,7 +242,7 @@ for project in "guestbook"; do
 done
 ```
 
-4. Adopt existing resources to [argocd-apps](../argocd-apps)
+4. Adopt existing resources to [argocd-apps](https://github.com/argoproj/argo-helm/tree/main/charts/argocd-apps)
 
 ### 4.9.0
 
