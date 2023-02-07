@@ -1,5 +1,4 @@
-{{- if and .Values.applicationSet.enabled (or .Values.applicationSet.metrics.enabled
- .Values.monitoring.enabled) }}
+{{- if and .Values.applicationSet.enabled (or .Values.applicationSet.metrics.enabled .Values.monitoring.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:

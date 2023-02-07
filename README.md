@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.17.0-bb.1](https://img.shields.io/badge/Version-5.17.0--bb.1-informational?style=flat-square) ![AppVersion: v2.5.5](https://img.shields.io/badge/AppVersion-v2.5.5-informational?style=flat-square)
+![Version: 5.19.15-bb.0](https://img.shields.io/badge/Version-5.19.15--bb.0-informational?style=flat-square) ![AppVersion: v2.5.10](https://img.shields.io/badge/AppVersion-v2.5.10-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -38,6 +38,37 @@ helm install argocd chart/
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| sso.enabled | bool | `false` |  |
+| sso.rbac."policy.csv" | string | `"g, Impact Level 2 Authorized, role:admin\n"` |  |
+| sso.keycloakClientSecret | string | `"this-can-be-anything-for-dev"` |  |
+| sso.config."oidc.config" | string | `"name: Keycloak\nissuer: https://login.dso.mil/auth/realms/baby-yoda\nclientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd\nclientSecret: $oidc.keycloak.clientSecret\nrequestedScopes: [\"openid\",\"ArgoCD\"]\n"` |  |
+| awsCredentials.awsAccessKeyId | string | `""` |  |
+| awsCredentials.awsSecretAccessKey | string | `""` |  |
+| awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
+| domain | string | `"bigbang.dev"` |  |
+| istio.enabled | bool | `false` | Toggle BigBang istio integration |
+| istio.injection | string | `"disabled"` | Toggle BigBang istio injection |
+| istio.mtls | object | `{"mode":"STRICT"}` | Default argocd peer authentication |
+| istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
+| istio.argocd.enabled | bool | `true` | Toggle Istio VirtualService creation |
+| istio.argocd.annotations | object | `{}` | Set Annotations for VirtualService |
+| istio.argocd.labels | object | `{}` | Set Labels for VirtualService |
+| istio.argocd.gateways | list | `["istio-system/main"]` | Set Gateway for VirtualService |
+| istio.argocd.hosts | list | `["argocd.{{ .Values.domain }}"]` | Set Hosts for VirtualService |
+| monitoring.enabled | bool | `false` | Toggle BigBang monitoring integration |
+| networkPolicies.enabled | bool | `false` | Toggle BigBang networkPolicies integration |
+| networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
+| networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
+| networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` | Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints) Used by package NetworkPolicies to allow Kube API access |
+| upgradeJob.enabled | bool | `true` |  |
+| upgradeJob.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/base"` |  |
+| upgradeJob.image.tag | string | `"2.0.0"` |  |
+| upgradeJob.image.imagePullPolicy | string | `"IfNotPresent"` |  |
+| bbtests.enabled | bool | `false` |  |
+| bbtests.cypress.artifacts | bool | `true` |  |
+| bbtests.cypress.envs.cypress_url | string | `"http://argocd-server:80"` |  |
+| bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
+| bbtests.cypress.envs.cypress_password | string | `"Password123"` |  |
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
@@ -52,10 +83,10 @@ helm install argocd chart/
 | crds.annotations | object | `{}` | Annotations to be added to all CRDs |
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
-| global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v2.5.5"` |  |
-| global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| global.imagePullSecrets | list | `[]` | Secrets with credentials to pull images from a private registry |
+| global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
+| global.image.tag | string | `"v2.5.10"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
+| global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
 | global.logging.level | string | `"info"` | Set the global logging level. One of: `debug`, `info`, `warn` or `error` |
 | global.statefulsetAnnotations | object | `{}` | Annotations for the all deployed Statefulsets |
@@ -63,7 +94,6 @@ helm install argocd chart/
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
 | global.securityContext | object | `{}` (See [values.yaml]) | Toggle and define pod-level security context. |
-| global.imagePullSecrets[0].name | string | `"private-registry"` |  |
 | global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
 | global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
@@ -97,16 +127,18 @@ helm install argocd chart/
 | configs.rbac.scopes | string | `"[groups]"` | OIDC scopes to examine during rbac enforcement (in addition to `sub` scope). The scope value can be a string, or a list of strings. |
 | configs.gpg.annotations | object | `{}` | Annotations to be added to argocd-gpg-keys-cm configmap |
 | configs.gpg.keys | object | `{}` (See [values.yaml]) | [GnuPG] public keys to add to the keyring # Note: Public keys should be exported with `gpg --export --armor <KEY>` |
+| configs.ssh.annotations | object | `{}` | Annotations to be added to argocd-ssh-known-hosts-cm configmap |
+| configs.ssh.knownHosts | string | See [values.yaml] | Known hosts to be added to the known host list by default. |
+| configs.ssh.extraHosts | string | `""` | Additional known hosts for private repositories |
+| configs.tls.annotations | object | `{}` | Annotations to be added to argocd-tls-certs-cm configmap |
+| configs.tls.certificates | object | `{}` (See [values.yaml]) | TLS certificates for Git repositories |
 | configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] # Ref: # - https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters # - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials |
-| configs.knownHostsAnnotations | object | `{}` | Known Hosts configmap annotations |
-| configs.knownHosts.data.ssh_known_hosts | string | See [values.yaml] | Known Hosts |
-| configs.tlsCertsAnnotations | object | `{}` | TLS certificate configmap annotations |
-| configs.tlsCerts | object | See [values.yaml] | TLS certificate |
 | configs.credentialTemplates | object | `{}` | Repository credentials to be used as Templates for other repos # Creates a secret for each key/value specified below to create repository credentials |
 | configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
 | configs.repositories | object | `{}` | Repositories list to be used by applications # Creates a secret for each key/value specified below to create repositories # Note: the last example in the list would use a repository credential template, configured under "configs.repositoryCredentials". |
 | configs.repositoriesAnnotations | object | `{}` | Annotations to be added to `configs.repositories` Secret |
 | configs.secret.createSecret | bool | `true` | Create the argocd-secret |
+| configs.secret.labels | object | `{}` | Labels to be added to argocd-secret |
 | configs.secret.annotations | object | `{}` | Annotations to be added to argocd-secret |
 | configs.secret.githubSecret | string | `""` | Shared secret for authenticating GitHub webhook events |
 | configs.secret.gitlabSecret | string | `""` | Shared secret for authenticating GitLab webhook events |
@@ -128,7 +160,6 @@ helm install argocd chart/
 | controller.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the application controller |
 | controller.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the application controller |
 | controller.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the application controller |
-| controller.imagePullSecrets[0].name | string | `"private-registry"` |  |
 | controller.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | controller.args | object | `{}` | DEPRECATED - Application controller commandline flags |
 | controller.extraArgs | list | `[]` | Additional command line arguments to pass to application controller |
@@ -141,8 +172,11 @@ helm install argocd chart/
 | controller.statefulsetAnnotations | object | `{}` | Annotations for the application controller StatefulSet |
 | controller.podAnnotations | object | `{}` | Annotations to be added to application controller pods |
 | controller.podLabels | object | `{}` | Labels to be added to application controller pods |
+| controller.resources | object | `{"limits":{"cpu":"500m","memory":"3Gi"},"requests":{"cpu":"500m","memory":"3Gi"}}` | Resource limits and requests for the application controller pods |
+| controller.containerPorts.metrics | int | `8082` | Metrics container port |
+| controller.hostNetwork | bool | `false` | Host Network for application controller pods |
+| controller.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for application controller pods |
 | controller.containerSecurityContext | object | See [values.yaml] | Application controller container-level security context |
-| controller.containerPort | int | `8082` | Application controller listening port |
 | controller.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | controller.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | controller.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
@@ -153,7 +187,6 @@ helm install argocd chart/
 | controller.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | controller.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | controller.priorityClassName | string | `""` | Priority class for the application controller pods |
-| controller.resources | object | `{"limits":{"cpu":"500m","memory":"3Gi"},"requests":{"cpu":"500m","memory":"3Gi"}}` | Resource limits and requests for the application controller pods |
 | controller.serviceAccount.create | bool | `true` | Create a service account for the application controller |
 | controller.serviceAccount.name | string | `"argocd-application-controller"` | Service account name |
 | controller.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -182,7 +215,6 @@ helm install argocd chart/
 | controller.clusterRoleRules.rules | list | `[]` | List of custom rules for the application controller's ClusterRole resource |
 | dex.enabled | bool | `true` | Enable dex |
 | dex.name | string | `"dex-server"` | Dex name |
-| dex.imagePullSecrets[0].name | string | `"private-registry"` |  |
 | dex.extraArgs | list | `[]` | Additional command line arguments to pass to the Dex server |
 | dex.metrics.enabled | bool | `false` | Deploy metrics service |
 | dex.metrics.service.annotations | object | `{}` | Metrics service annotations |
@@ -212,6 +244,8 @@ helm install argocd chart/
 | dex.initImage.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Argo CD init image imagePullPolicy |
 | dex.env | list | `[]` | Environment variables to pass to the Dex server |
 | dex.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the Dex server |
+| dex.extraContainers | list | `[]` | Additional containers to be added to the dex pod # Note: Supports use of custom Helm templates |
+| dex.initContainers | list | `[]` | Init containers to add to the dex pod # Note: Supports use of custom Helm templates |
 | dex.volumeMounts | list | `[]` | Additional volumeMounts to the dex main container |
 | dex.volumes | list | `[]` | Additional volumes to the dex pod |
 | dex.certificateSecret.enabled | bool | `false` | Create argocd-dex-server-tls secret |
@@ -223,6 +257,10 @@ helm install argocd chart/
 | dex.deploymentAnnotations | object | `{}` | Annotations to be added to the Dex server Deployment |
 | dex.podAnnotations | object | `{}` | Annotations to be added to the Dex server pods |
 | dex.podLabels | object | `{}` | Labels to be added to the Dex server pods |
+| dex.resources | object | `{"limits":{"cpu":"10m","memory":"128Mi"},"requests":{"cpu":"10m","memory":"128Mi"}}` | Resource limits and requests for dex |
+| dex.containerPorts.http | int | `5556` | HTTP container port |
+| dex.containerPorts.grpc | int | `5557` | gRPC container port |
+| dex.containerPorts.metrics | int | `5558` | Metrics container port |
 | dex.containerSecurityContext | object | See [values.yaml] | Dex container-level security context |
 | dex.livenessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Dex >= 2.28.0 |
 | dex.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
@@ -240,22 +278,16 @@ helm install argocd chart/
 | dex.serviceAccount.name | string | `"argocd-dex-server"` | Dex service account name |
 | dex.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | dex.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
-| dex.containerPortHttp | int | `5556` | Container port for HTTP access |
 | dex.servicePortHttp | int | `5556` | Service port for HTTP access |
 | dex.servicePortHttpName | string | `"http"` | Service port name for HTTP access |
-| dex.containerPortGrpc | int | `5557` | Container port for gRPC access |
 | dex.servicePortGrpc | int | `5557` | Service port for gRPC access |
 | dex.servicePortGrpcName | string | `"grpc"` | Service port name for gRPC access |
-| dex.containerPortMetrics | int | `5558` | Container port for metrics access |
 | dex.servicePortMetrics | int | `5558` | Service port for metrics access |
 | dex.nodeSelector | object | `{}` | [Node selector] |
 | dex.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | dex.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | dex.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | dex.priorityClassName | string | `""` | Priority class for dex |
-| dex.resources | object | `{"limits":{"cpu":"10m","memory":"128Mi"},"requests":{"cpu":"10m","memory":"128Mi"}}` | Resource limits and requests for dex |
-| dex.extraContainers | list | `[]` | Additional containers to be added to the dex pod |
-| dex.initContainers | list | `[]` | Init containers to add to the dex pod |
 | redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.name | string | `"redis"` | Redis name |
@@ -266,17 +298,29 @@ helm install argocd chart/
 | redis.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `redis.pdb.minAvailable` |
 | redis.image.repository | string | `"registry1.dso.mil/ironbank/opensource/redis/redis7"` | Redis repository |
 | redis.image.tag | string | `"7.0.5"` | Redis tag |
-| redis.image.imagePullPolicy | string | `"IfNotPresent"` | Redis imagePullPolicy |
-| redis.imagePullSecrets[0] | string | `"private-registry"` |  |
+| redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
+| redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
+| redis.exporter.image.repository | string | `"public.ecr.aws/bitnami/redis-exporter"` | Repository to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"1.45.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
+| redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
+| redis.exporter.resources | object | `{}` | Resource limits and requests for redis-exporter sidecar |
+| redis.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | redis.extraArgs | list | `[]` | Additional command line arguments to pass to redis-server |
 | redis.env | list | `[]` | Environment variables to pass to the Redis server |
 | redis.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the Redis server |
+| redis.extraContainers | list | `[]` | Additional containers to be added to the redis pod # Note: Supports use of custom Helm templates |
+| redis.initContainers | list | `[]` | Init containers to add to the redis pod # Note: Supports use of custom Helm templates |
+| redis.volumeMounts | list | `[]` | Additional volumeMounts to the redis container |
+| redis.volumes | list | `[]` | Additional volumes to the redis pod |
 | redis.deploymentAnnotations | object | `{}` | Annotations to be added to the Redis server Deployment |
 | redis.podAnnotations | object | `{}` | Annotations to be added to the Redis server pods |
 | redis.podLabels | object | `{}` | Labels to be added to the Redis server pods |
+| redis.resources | object | `{"limits":{"cpu":"50m","memory":"64Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}` | Resource limits and requests for redis |
 | redis.securityContext | object | See [values.yaml] | Redis pod-level security context |
+| redis.containerPorts.redis | int | `6379` | Redis container port |
+| redis.containerPorts.metrics | int | `9121` | Metrics container port |
 | redis.containerSecurityContext | object | See [values.yaml] | Redis container-level security context |
-| redis.containerPort | int | `6379` | Redis container port |
 | redis.servicePort | int | `6379` | Redis service port |
 | redis.nodeSelector | object | `{}` | [Node selector] |
 | redis.tolerations | list | `[]` | [Tolerations] for use with node taints |
@@ -287,20 +331,9 @@ helm install argocd chart/
 | redis.serviceAccount.name | string | `""` | Service account name for redis pod |
 | redis.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | redis.serviceAccount.automountServiceAccountToken | bool | `false` | Automount API credentials for the Service Account |
-| redis.resources | object | `{"limits":{"cpu":"50m","memory":"64Mi"},"requests":{"cpu":"50m","memory":"64Mi"}}` | Resource limits and requests for redis |
-| redis.volumeMounts | list | `[]` | Additional volumeMounts to the redis container |
-| redis.volumes | list | `[]` | Additional volumes to the redis pod |
-| redis.extraContainers | list | `[]` | Additional containers to be added to the redis pod |
-| redis.initContainers | list | `[]` | Init containers to add to the redis pod |
 | redis.service.annotations | object | `{}` | Redis service annotations |
 | redis.service.labels | object | `{}` | Additional redis service labels |
-| redis.metrics.enabled | bool | `false` | Deploy metrics service and redis-exporter sidecar |
-| redis.metrics.image.repository | string | `"public.ecr.aws/bitnami/redis-exporter"` | redis-exporter image repository |
-| redis.metrics.image.tag | string | `"1.26.0-debian-10-r2"` | redis-exporter image tag |
-| redis.metrics.image.imagePullPolicy | string | `"IfNotPresent"` | redis-exporter image PullPolicy |
-| redis.metrics.containerPort | int | `9121` | Port to use for redis-exporter sidecar |
-| redis.metrics.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
-| redis.metrics.resources | object | `{}` | Resource limits and requests for redis-exporter sidecar |
+| redis.metrics.enabled | bool | `false` | Deploy metrics service |
 | redis.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
 | redis.metrics.service.clusterIP | string | `"None"` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
 | redis.metrics.service.annotations | object | `{}` | Metrics service annotations |
@@ -347,7 +380,7 @@ helm install argocd chart/
 | server.lifecycle | object | `{}` | Specify postStart and preStop lifecycle hooks for your argo-cd-server container |
 | server.extensions.enabled | bool | `false` | Enable support for Argo UI extensions |
 | server.extensions.image.repository | string | `"ghcr.io/argoproj-labs/argocd-extensions"` | Repository to use for extensions image |
-| server.extensions.image.tag | string | `"v0.1.0"` | Tag to use for extensions image |
+| server.extensions.image.tag | string | `"v0.2.1"` | Tag to use for extensions image |
 | server.extensions.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for extensions |
 | server.extensions.containerSecurityContext | object | See [values.yaml] | Server UI extensions container-level security context |
 | server.extensions.resources | object | `{}` | Resource limits and requests for the argocd-extensions container |
@@ -358,7 +391,12 @@ helm install argocd chart/
 | server.deploymentAnnotations | object | `{}` | Annotations to be added to server Deployment |
 | server.podAnnotations | object | `{}` | Annotations to be added to server pods |
 | server.podLabels | object | `{}` | Labels to be added to server pods |
-| server.containerPort | int | `8080` | Configures the server port |
+| server.resources | object | `{"limits":{"cpu":"20m","memory":"128Mi"},"requests":{"cpu":"20m","memory":"128Mi"}}` | Resource limits and requests for the Argo CD server |
+| server.containerPorts.server | int | `8080` | Server container port |
+| server.containerPorts.metrics | int | `8082` | Metrics container port |
+| server.hostNetwork | bool | `false` | Host Network for Server pods |
+| server.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Server pods |
+| server.containerSecurityContext | object | See [values.yaml] | Server container-level security context |
 | server.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | server.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | server.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
@@ -374,8 +412,6 @@ helm install argocd chart/
 | server.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | server.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the Argo CD server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | server.priorityClassName | string | `""` | Priority class for the Argo CD server |
-| server.containerSecurityContext | object | See [values.yaml] | Server container-level security context |
-| server.resources | object | `{"limits":{"cpu":"20m","memory":"128Mi"},"requests":{"cpu":"20m","memory":"128Mi"}}` | Resource limits and requests for the Argo CD server |
 | server.certificate.enabled | bool | `false` | Deploy a Certificate resource (requires cert-manager) |
 | server.certificate.secretName | string | `"argocd-server-tls"` | The name of the Secret that will be automatically created and managed by this Certificate resource |
 | server.certificate.domain | string | `"argocd.example.com"` | Certificate primary domain (commonName) |
@@ -403,7 +439,6 @@ helm install argocd chart/
 | server.service.servicePortHttps | int | `443` | Server service https port |
 | server.service.servicePortHttpName | string | `"http"` | Server service http port name, can be used to route traffic via istio |
 | server.service.servicePortHttpsName | string | `"https"` | Server service https port name, can be used to route traffic via istio |
-| server.service.namedTargetPort | bool | `true` | Use named target port for argocd # Named target ports are not supported by GCE health checks, so when deploying argocd on GKE # and exposing it via GCE ingress, the health checks fail and the load balancer returns a 502. |
 | server.service.loadBalancerIP | string | `""` | LoadBalancer will get created with the IP specified in this field |
 | server.service.loadBalancerSourceRanges | list | `[]` | Source IP ranges to allow access to service from |
 | server.service.externalIPs | list | `[]` | Server service external IPs |
@@ -484,12 +519,18 @@ helm install argocd chart/
 | repoServer.env | list | `[]` | Environment variables to pass to repo server |
 | repoServer.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to repo server |
 | repoServer.extraContainers | list | `[]` | Additional containers to be added to the repo server pod # Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/config-management-plugins/ # Note: Supports use of custom Helm templates |
+| repoServer.initContainers | list | `[]` | Init containers to add to the repo server pods |
 | repoServer.volumeMounts | list | `[]` | Additional volumeMounts to the repo server main container |
 | repoServer.volumes | list | `[]` | Additional volumes to the repo server pod |
 | repoServer.deploymentAnnotations | object | `{}` | Annotations to be added to repo server Deployment |
 | repoServer.podAnnotations | object | `{}` | Annotations to be added to repo server pods |
 | repoServer.podLabels | object | `{}` | Labels to be added to repo server pods |
-| repoServer.containerPort | int | `8081` | Configures the repo server port |
+| repoServer.resources | object | `{"limits":{"cpu":"100m","memory":"1Gi"},"requests":{"cpu":"100m","memory":"1Gi"}}` | Resource limits and requests for the repo server pods |
+| repoServer.containerPorts.server | int | `8081` | Repo server container port |
+| repoServer.containerPorts.metrics | int | `8084` | Metrics container port |
+| repoServer.hostNetwork | bool | `false` | Host Network for Repo server pods |
+| repoServer.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Repo server pods |
+| repoServer.containerSecurityContext | object | See [values.yaml] | Repo server container-level security context |
 | repoServer.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | repoServer.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | repoServer.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
@@ -505,8 +546,6 @@ helm install argocd chart/
 | repoServer.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
 | repoServer.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the repo server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | repoServer.priorityClassName | string | `""` | Priority class for the repo server |
-| repoServer.containerSecurityContext | object | See [values.yaml] | Repo server container-level security context |
-| repoServer.resources | object | `{"limits":{"cpu":"100m","memory":"1Gi"},"requests":{"cpu":"100m","memory":"1Gi"}}` | Resource limits and requests for the repo server pods |
 | repoServer.certificateSecret.enabled | bool | `false` | Create argocd-repo-server-tls secret |
 | repoServer.certificateSecret.annotations | object | `{}` | Annotations to be added to argocd-repo-server-tls secret |
 | repoServer.certificateSecret.labels | object | `{}` | Labels to be added to argocd-repo-server-tls secret |
@@ -540,38 +579,6 @@ helm install argocd chart/
 | repoServer.serviceAccount.labels | object | `{}` | Labels applied to created service account |
 | repoServer.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | repoServer.rbac | list | `[]` | Repo server rbac rules |
-| repoServer.initContainers | list | `[]` | Init containers to add to the repo server pods |
-| sso.enabled | bool | `false` |  |
-| sso.rbac."policy.csv" | string | `"g, Impact Level 2 Authorized, role:admin\n"` |  |
-| sso.keycloakClientSecret | string | `"this-can-be-anything-for-dev"` |  |
-| sso.config."oidc.config" | string | `"name: Keycloak\nissuer: https://login.dso.mil/auth/realms/baby-yoda\nclientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd\nclientSecret: $oidc.keycloak.clientSecret\nrequestedScopes: [\"openid\",\"ArgoCD\"]\n"` |  |
-| awsCredentials.awsAccessKeyId | string | `""` |  |
-| awsCredentials.awsSecretAccessKey | string | `""` |  |
-| awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
-| domain | string | `"bigbang.dev"` |  |
-| istio.enabled | bool | `false` | Toggle BigBang istio integration |
-| istio.injection | string | `"disabled"` | Toggle BigBang istio injection |
-| istio.mtls | object | `{"mode":"STRICT"}` | Default argocd peer authentication |
-| istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
-| istio.argocd.enabled | bool | `true` | Toggle Istio VirtualService creation |
-| istio.argocd.annotations | object | `{}` | Set Annotations for VirtualService |
-| istio.argocd.labels | object | `{}` | Set Labels for VirtualService |
-| istio.argocd.gateways | list | `["istio-system/main"]` | Set Gateway for VirtualService |
-| istio.argocd.hosts | list | `["argocd.{{ .Values.domain }}"]` | Set Hosts for VirtualService |
-| monitoring.enabled | bool | `false` | Toggle BigBang monitoring integration |
-| networkPolicies.enabled | bool | `false` | Toggle BigBang networkPolicies integration |
-| networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
-| networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
-| networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` | Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints) Used by package NetworkPolicies to allow Kube API access |
-| upgradeJob.enabled | bool | `true` |  |
-| upgradeJob.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/base"` |  |
-| upgradeJob.image.tag | string | `"2.0.0"` |  |
-| upgradeJob.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| bbtests.enabled | bool | `false` |  |
-| bbtests.cypress.artifacts | bool | `true` |  |
-| bbtests.cypress.envs.cypress_url | string | `"http://argocd-server:80"` |  |
-| bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
-| bbtests.cypress.envs.cypress_password | string | `"Password123"` |  |
 | applicationSet.enabled | bool | `true` | Enable ApplicationSet controller |
 | applicationSet.name | string | `"applicationset-controller"` | ApplicationSet controller name string |
 | applicationSet.replicaCount | int | `1` | The number of ApplicationSet controller pods to run |
@@ -586,8 +593,6 @@ helm install argocd chart/
 | applicationSet.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | If defined, uses a Secret to pull an image from a private Docker registry or repository. |
 | applicationSet.logFormat | string | `""` (defaults to global.logging.format) | ApplicationSet controller log format. Either `text` or `json` |
 | applicationSet.logLevel | string | `""` (defaults to global.logging.level) | ApplicationSet controller log level. One of: `debug`, `info`, `warn`, `error` |
-| applicationSet.args.metricsAddr | string | `":8080"` | The default metric address |
-| applicationSet.args.probeBindAddr | string | `":8081"` | The default health check port |
 | applicationSet.args.policy | string | `"sync"` | How application is synced between the generator and the cluster |
 | applicationSet.args.dryRun | bool | `false` | Enable dry run mode |
 | applicationSet.extraArgs | list | `[]` | List of extra cli args to add |
@@ -616,14 +621,18 @@ helm install argocd chart/
 | applicationSet.service.labels | object | `{}` | ApplicationSet service labels |
 | applicationSet.service.port | int | `7000` | ApplicationSet service port |
 | applicationSet.service.portName | string | `"webhook"` | ApplicationSet service port name |
-| applicationSet.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| applicationSet.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
+| applicationSet.serviceAccount.create | bool | `true` | Create ApplicationSet controller service account |
+| applicationSet.serviceAccount.name | string | `"argocd-applicationset-controller"` | ApplicationSet controller service account name |
+| applicationSet.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | applicationSet.serviceAccount.labels | object | `{}` | Labels applied to created service account |
-| applicationSet.serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| applicationSet.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | applicationSet.deploymentAnnotations | object | `{}` | Annotations to be added to ApplicationSet controller Deployment |
 | applicationSet.podAnnotations | object | `{}` | Annotations for the ApplicationSet controller pods |
 | applicationSet.podLabels | object | `{}` | Labels for the ApplicationSet controller pods |
 | applicationSet.resources | object | `{}` | Resource limits and requests for the ApplicationSet controller pods. |
+| applicationSet.containerPorts.metrics | int | `8080` | Metrics container port |
+| applicationSet.containerPorts.probe | int | `8081` | Probe container port |
+| applicationSet.containerPorts.webhook | int | `7000` | Webhook container port |
 | applicationSet.containerSecurityContext | object | See [values.yaml] | ApplicationSet controller container-level security context |
 | applicationSet.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for ApplicationSet controller |
 | applicationSet.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
@@ -693,17 +702,19 @@ helm install argocd chart/
 | notifications.podAnnotations | object | `{}` | Annotations to be applied to the notifications controller Pods |
 | notifications.podLabels | object | `{}` | Labels to be applied to the notifications controller Pods |
 | notifications.resources | object | `{}` | Resource limits and requests for the notifications controller |
+| notifications.containerPorts.metrics | int | `9001` | Metrics container port |
 | notifications.containerSecurityContext | object | See [values.yaml] | Notification controller container-level security Context |
 | notifications.nodeSelector | object | `{}` | [Node selector] |
 | notifications.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | notifications.affinity | object | `{}` | Assign custom [affinity] rules |
 | notifications.priorityClassName | string | `""` | Priority class for the notifications controller pods |
-| notifications.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | The name of the service account to use. # If not set and create is true, a name is generated using the fullname template |
+| notifications.serviceAccount.create | bool | `true` | Create notifications controller service account |
+| notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | Notification controller service account name |
 | notifications.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | notifications.serviceAccount.labels | object | `{}` | Labels applied to created service account |
+| notifications.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | notifications.cm.create | bool | `true` | Whether helm chart creates notifications controller config map |
-| notifications.subscriptions | object | `{}` | Contains centrally managed global application subscriptions # For more information: https://argocd-notifications.readthedocs.io/en/stable/subscriptions/ |
+| notifications.subscriptions | list | `[]` | Contains centrally managed global application subscriptions # For more information: https://argocd-notifications.readthedocs.io/en/stable/subscriptions/ |
 | notifications.templates | object | `{}` | The notification template is used to generate the notification content # For more information: https://argocd-notifications.readthedocs.io/en/stable/templates/ |
 | notifications.triggers | object | `{}` | The trigger defines the condition when the notification should be sent # For more information: https://argocd-notifications.readthedocs.io/en/stable/triggers/ |
 | notifications.bots.slack.enabled | bool | `false` | Enable slack bot # You have to set secret.notifiers.slack.signingSecret |
@@ -716,6 +727,9 @@ helm install argocd chart/
 | notifications.bots.slack.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the Slack bot |
 | notifications.bots.slack.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the Slack bot |
 | notifications.bots.slack.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
+| notifications.bots.slack.logFormat | string | `""` (defaults to global.logging.format) | Slack bot log format. Either `text` or `json` |
+| notifications.bots.slack.logLevel | string | `""` (defaults to global.logging.level) | Slack bot log level. One of: `debug`, `info`, `warn`, `error` |
+| notifications.bots.slack.extraArgs | list | `[]` | List of extra cli args to add for Slack bot |
 | notifications.bots.slack.service.annotations | object | `{}` | Service annotations for Slack bot |
 | notifications.bots.slack.service.port | int | `80` | Service port for Slack bot |
 | notifications.bots.slack.service.type | string | `"LoadBalancer"` | Service type for Slack bot |
