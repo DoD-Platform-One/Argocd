@@ -105,6 +105,10 @@ For full list of changes please check ArtifactHub [changelog].
 
 Highlighted versions provide information about additional steps that should be performed by user when upgrading to newer version.
 
+### 5.21.0
+
+This versions adds `global.affinity` options that are used as a presets. Override on component level works as before and replaces the default preset completely.
+
 ### 5.19.0
 
 This version consolidates config for custom repository TLS certificates and SSH known hosts. If you provide this values please move them into new `configs.ssh` and `configs.tls` sections.
@@ -381,6 +385,9 @@ NAME: my-release
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
+| global.affinity.nodeAffinity.matchExpressions | list | `[]` | Default match expressions for node affinity |
+| global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `soft` or `hard` |
+| global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `soft` or `hard` |
 | global.deploymentAnnotations | object | `{}` | Annotations for the all deployed Deployments |
 | global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
@@ -415,6 +422,8 @@ NAME: my-release
 | configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
 | configs.gpg.annotations | object | `{}` | Annotations to be added to argocd-gpg-keys-cm configmap |
 | configs.gpg.keys | object | `{}` (See [values.yaml]) | [GnuPG] public keys to add to the keyring |
+| configs.params."applicationsetcontroller.enable.progressive.syncs" | bool | `false` | Enables use of the Progressive Syncs capability |
+| configs.params."applicationsetcontroller.policy" | string | `"sync"` | Modify how application is synced between the generator and the cluster. One of: `sync`, `create-only`, `create-update`, `create-delete` |
 | configs.params."controller.operation.processors" | int | `10` | Number of application operation processors |
 | configs.params."controller.repo.server.timeout.seconds" | int | `60` | Repo server RPC call timeout seconds. |
 | configs.params."controller.self.heal.timeout.seconds" | int | `5` | Specifies timeout between application self heal attempts |
@@ -458,12 +467,13 @@ NAME: my-release
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| controller.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| controller.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | controller.args | object | `{}` | DEPRECATED - Application controller commandline flags |
 | controller.clusterRoleRules.enabled | bool | `false` | Enable custom rules for the application controller's ClusterRole resource |
 | controller.clusterRoleRules.rules | list | `[]` | List of custom rules for the application controller's ClusterRole resource |
 | controller.containerPorts.metrics | int | `8082` | Metrics container port |
 | controller.containerSecurityContext | object | See [values.yaml] | Application controller container-level security context |
+| controller.dnsConfig | object | `{}` | [DNS configuration] |
 | controller.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for application controller pods |
 | controller.env | list | `[]` | Environment variables to pass to application controller |
 | controller.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to application controller |
@@ -526,7 +536,7 @@ NAME: my-release
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| repoServer.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| repoServer.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | repoServer.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
 | repoServer.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the repo server [HPA] |
@@ -545,6 +555,7 @@ NAME: my-release
 | repoServer.containerPorts.server | int | `8081` | Repo server container port |
 | repoServer.containerSecurityContext | object | See [values.yaml] | Repo server container-level security context |
 | repoServer.deploymentAnnotations | object | `{}` | Annotations to be added to repo server Deployment |
+| repoServer.dnsConfig | object | `{}` | [DNS configuration] |
 | repoServer.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Repo server pods |
 | repoServer.env | list | `[]` | Environment variables to pass to repo server |
 | repoServer.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to repo server |
@@ -618,7 +629,7 @@ NAME: my-release
 | server.GKEfrontendConfig.spec | object | `{}` | [FrontendConfigSpec] |
 | server.GKEmanagedCertificate.domains | list | `["argocd.example.com"]` | Domains for the Google Managed Certificate |
 | server.GKEmanagedCertificate.enabled | bool | `false` | Enable ManagedCertificate custom resource for Google Kubernetes Engine. |
-| server.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| server.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
 | server.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the Argo CD server [HPA] |
@@ -647,6 +658,7 @@ NAME: my-release
 | server.containerPorts.server | int | `8080` | Server container port |
 | server.containerSecurityContext | object | See [values.yaml] | Server container-level security context |
 | server.deploymentAnnotations | object | `{}` | Annotations to be added to server Deployment |
+| server.dnsConfig | object | `{}` | [DNS configuration] |
 | server.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Server pods |
 | server.env | list | `[]` | Environment variables to pass to Argo CD server |
 | server.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to Argo CD server |
@@ -780,7 +792,7 @@ server:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| dex.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| dex.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | dex.certificateSecret.annotations | object | `{}` | Annotations to be added to argocd-dex-server-tls secret |
 | dex.certificateSecret.ca | string | `""` | Certificate authority. Required for self-signed certificates. |
 | dex.certificateSecret.crt | string | `""` | Certificate data. Must contain SANs of Dex service (ie: argocd-dex-server, argocd-dex-server.argo-cd.svc) |
@@ -792,6 +804,8 @@ server:
 | dex.containerPorts.metrics | int | `5558` | Metrics container port |
 | dex.containerSecurityContext | object | See [values.yaml] | Dex container-level security context |
 | dex.deploymentAnnotations | object | `{}` | Annotations to be added to the Dex server Deployment |
+| dex.dnsConfig | object | `{}` | [DNS configuration] |
+| dex.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Dex server pods |
 | dex.enabled | bool | `true` | Enable dex |
 | dex.env | list | `[]` | Environment variables to pass to the Dex server |
 | dex.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the Dex server |
@@ -862,11 +876,13 @@ server:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| redis.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| redis.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | redis.containerPorts.metrics | int | `9121` | Metrics container port |
 | redis.containerPorts.redis | int | `6379` | Redis container port |
 | redis.containerSecurityContext | object | See [values.yaml] | Redis container-level security context |
 | redis.deploymentAnnotations | object | `{}` | Annotations to be added to the Redis server Deployment |
+| redis.dnsConfig | object | `{}` | [DNS configuration] |
+| redis.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Redis server pods |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.env | list | `[]` | Environment variables to pass to the Redis server |
 | redis.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the Redis server |
@@ -970,14 +986,15 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| applicationSet.affinity | object | `{}` | Assign custom [affinity] rules |
-| applicationSet.args.dryRun | bool | `false` | Enable dry run mode |
-| applicationSet.args.policy | string | `"sync"` | How application is synced between the generator and the cluster |
+| applicationSet.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
+| applicationSet.args | object | `{}` | DEPRECATED - ApplicationSet controller command line flags |
 | applicationSet.containerPorts.metrics | int | `8080` | Metrics container port |
 | applicationSet.containerPorts.probe | int | `8081` | Probe container port |
 | applicationSet.containerPorts.webhook | int | `7000` | Webhook container port |
 | applicationSet.containerSecurityContext | object | See [values.yaml] | ApplicationSet controller container-level security context |
 | applicationSet.deploymentAnnotations | object | `{}` | Annotations to be added to ApplicationSet controller Deployment |
+| applicationSet.dnsConfig | object | `{}` | [DNS configuration] |
+| applicationSet.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for ApplicationSet controller pods |
 | applicationSet.enabled | bool | `true` | Enable ApplicationSet controller |
 | applicationSet.extraArgs | list | `[]` | List of extra cli args to add |
 | applicationSet.extraContainers | list | `[]` | Additional containers to be added to the ApplicationSet controller pod |
@@ -996,8 +1013,6 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | applicationSet.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | applicationSet.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | applicationSet.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| applicationSet.logFormat | string | `""` (defaults to global.logging.format) | ApplicationSet controller log format. Either `text` or `json` |
-| applicationSet.logLevel | string | `""` (defaults to global.logging.level) | ApplicationSet controller log level. One of: `debug`, `info`, `warn`, `error` |
 | applicationSet.metrics.enabled | bool | `false` | Deploy metrics service |
 | applicationSet.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | applicationSet.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -1055,10 +1070,12 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| notifications.affinity | object | `{}` | Assign custom [affinity] rules |
+| notifications.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | notifications.argocdUrl | string | `nil` | Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates |
-| notifications.bots.slack.affinity | object | `{}` | Assign custom [affinity] rules |
+| notifications.bots.slack.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | notifications.bots.slack.containerSecurityContext | object | See [values.yaml] | Slack bot container-level security Context |
+| notifications.bots.slack.dnsConfig | object | `{}` | [DNS configuration] |
+| notifications.bots.slack.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Slack bot pods |
 | notifications.bots.slack.enabled | bool | `false` | Enable slack bot |
 | notifications.bots.slack.extraArgs | list | `[]` | List of extra cli args to add for Slack bot |
 | notifications.bots.slack.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the Slack bot |
@@ -1086,6 +1103,8 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | notifications.containerSecurityContext | object | See [values.yaml] | Notification controller container-level security Context |
 | notifications.context | object | `{}` | Define user-defined context |
 | notifications.deploymentAnnotations | object | `{}` | Annotations to be applied to the notifications controller Deployment |
+| notifications.dnsConfig | object | `{}` | [DNS configuration] |
+| notifications.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for notifications controller Pods |
 | notifications.enabled | bool | `true` | Enable notifications controller |
 | notifications.extraArgs | list | `[]` | Extra arguments to provide to the notifications controller |
 | notifications.extraContainers | list | `[]` | Additional containers to be added to the notifications controller pod |
@@ -1146,6 +1165,7 @@ Autogenerated from chart metadata using [helm-docs](https://github.com/norwoodj/
 [BackendConfigSpec]: https://cloud.google.com/kubernetes-engine/docs/concepts/backendconfig#backendconfigspec_v1beta1_cloudgooglecom
 [CSS styles]: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/
 [changelog]: https://artifacthub.io/packages/helm/argo/argo-cd?modal=changelog
+[DNS configuration]: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
 [external cluster credentials]: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters
 [FrontendConfigSpec]: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters
 [declarative setup]: https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup

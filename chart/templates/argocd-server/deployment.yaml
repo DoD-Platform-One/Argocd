@@ -274,6 +274,12 @@ spec:
                 name: argocd-cmd-params-cm
                 key: application.namespaces
                 optional: true
+          - name: ARGOCD_SERVER_ENABLE_PROXY_EXTENSION
+            valueFrom:
+              configMapKeyRef:
+                name: argocd-cmd-params-cm
+                key: server.enable.proxy.extension
+                optional: true
         {{- with .Values.server.envFrom }}
         envFrom:
           {{- toYaml . | nindent 10 }}
@@ -354,16 +360,14 @@ spec:
       initContainers:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
+      affinity:
+        {{- include "argo-cd.affinity" (dict "context" . "component" .Values.server) | nindent 8 }}
       {{- with .Values.server.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.server.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.server.affinity }}
-      affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.server.topologySpreadConstraints }}
@@ -428,4 +432,8 @@ spec:
       priorityClassName: {{ . }}
       {{- end }}
       hostNetwork: {{ .Values.server.hostNetwork }}
+      {{- with .Values.server.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       dnsPolicy: {{ .Values.server.dnsPolicy }}

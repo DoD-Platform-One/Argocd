@@ -5,7 +5,7 @@ metadata:
 upstream:
   type: git
   git:
-    commit: 05c79e322a6d1f54a70840dd9649d9b9cb5ef8a2
+    commit: 63b741ed580be65282a957855787f94ffc00b3b1
     repo: https://github.com/argoproj/argo-helm
     directory: /charts/argo-cd
-    ref: argo-cd-5.19.15
+    ref: argo-cd-5.22.1

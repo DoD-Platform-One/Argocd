@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.19.15-bb.0](https://img.shields.io/badge/Version-5.19.15--bb.0-informational?style=flat-square) ![AppVersion: v2.5.10](https://img.shields.io/badge/AppVersion-v2.5.10-informational?style=flat-square)
+![Version: 5.22.1-bb.0](https://img.shields.io/badge/Version-5.22.1--bb.0-informational?style=flat-square) ![AppVersion: v2.6.1](https://img.shields.io/badge/AppVersion-v2.6.1-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -97,6 +97,9 @@ helm install argocd chart/
 | global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
 | global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
+| global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `soft` or `hard` |
+| global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `soft` or `hard` |
+| global.affinity.nodeAffinity.matchExpressions | list | `[]` | Default match expressions for node affinity |
 | configs.cm.create | bool | `true` | Create the argocd-cm configmap for [declarative setup] |
 | configs.cm.annotations | object | `{}` | Annotations to be added to argocd-cm configmap |
 | configs.cm.url | string | `""` | Argo CD's externally facing base URL (optional). Required when configuring SSO |
@@ -120,6 +123,8 @@ helm install argocd chart/
 | configs.params."server.enable.gzip" | bool | `false` | Enable GZIP compression |
 | configs.params."server.x.frame.options" | string | `"sameorigin"` | Set X-Frame-Options header in HTTP responses to value. To disable, set to "". |
 | configs.params."reposerver.parallelism.limit" | int | `0` | Limit on number of concurrent manifests generate requests. Any value less the 1 means no limit. |
+| configs.params."applicationsetcontroller.policy" | string | `"sync"` | Modify how application is synced between the generator and the cluster. One of: `sync`, `create-only`, `create-update`, `create-delete` |
+| configs.params."applicationsetcontroller.enable.progressive.syncs" | bool | `false` | Enables use of the Progressive Syncs capability |
 | configs.rbac.create | bool | `true` | Create the argocd-rbac-cm configmap with ([Argo CD RBAC policy]) definitions. If false, it is expected the configmap will be created by something else. Argo CD will not work if there is no configmap created with the name above. |
 | configs.rbac.annotations | object | `{}` | Annotations to be added to argocd-rbac-cm configmap |
 | configs.rbac."policy.default" | string | `""` | The name of the default role which Argo CD will falls back to, when authorizing API requests (optional). If omitted or empty, users may be still be able to login, but will see no apps, projects, etc... |
@@ -175,6 +180,7 @@ helm install argocd chart/
 | controller.resources | object | `{"limits":{"cpu":"500m","memory":"3Gi"},"requests":{"cpu":"500m","memory":"3Gi"}}` | Resource limits and requests for the application controller pods |
 | controller.containerPorts.metrics | int | `8082` | Metrics container port |
 | controller.hostNetwork | bool | `false` | Host Network for application controller pods |
+| controller.dnsConfig | object | `{}` | [DNS configuration] |
 | controller.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for application controller pods |
 | controller.containerSecurityContext | object | See [values.yaml] | Application controller container-level security context |
 | controller.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
@@ -184,7 +190,7 @@ helm install argocd chart/
 | controller.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | controller.nodeSelector | object | `{}` | [Node selector] |
 | controller.tolerations | list | `[]` | [Tolerations] for use with node taints |
-| controller.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| controller.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | controller.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | controller.priorityClassName | string | `""` | Priority class for the application controller pods |
 | controller.serviceAccount.create | bool | `true` | Create a service account for the application controller |
@@ -261,6 +267,8 @@ helm install argocd chart/
 | dex.containerPorts.http | int | `5556` | HTTP container port |
 | dex.containerPorts.grpc | int | `5557` | gRPC container port |
 | dex.containerPorts.metrics | int | `5558` | Metrics container port |
+| dex.dnsConfig | object | `{}` | [DNS configuration] |
+| dex.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Dex server pods |
 | dex.containerSecurityContext | object | See [values.yaml] | Dex container-level security context |
 | dex.livenessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Dex >= 2.28.0 |
 | dex.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
@@ -285,7 +293,7 @@ helm install argocd chart/
 | dex.servicePortMetrics | int | `5558` | Service port for metrics access |
 | dex.nodeSelector | object | `{}` | [Node selector] |
 | dex.tolerations | list | `[]` | [Tolerations] for use with node taints |
-| dex.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| dex.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | dex.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | dex.priorityClassName | string | `""` | Priority class for dex |
 | redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
@@ -320,11 +328,13 @@ helm install argocd chart/
 | redis.securityContext | object | See [values.yaml] | Redis pod-level security context |
 | redis.containerPorts.redis | int | `6379` | Redis container port |
 | redis.containerPorts.metrics | int | `9121` | Metrics container port |
+| redis.dnsConfig | object | `{}` | [DNS configuration] |
+| redis.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Redis server pods |
 | redis.containerSecurityContext | object | See [values.yaml] | Redis container-level security context |
 | redis.servicePort | int | `6379` | Redis service port |
 | redis.nodeSelector | object | `{}` | [Node selector] |
 | redis.tolerations | list | `[]` | [Tolerations] for use with node taints |
-| redis.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| redis.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | redis.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to redis # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | redis.priorityClassName | string | `""` | Priority class for redis |
 | redis.serviceAccount.create | bool | `false` | Create a service account for the redis pod |
@@ -395,6 +405,7 @@ helm install argocd chart/
 | server.containerPorts.server | int | `8080` | Server container port |
 | server.containerPorts.metrics | int | `8082` | Metrics container port |
 | server.hostNetwork | bool | `false` | Host Network for Server pods |
+| server.dnsConfig | object | `{}` | [DNS configuration] |
 | server.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Server pods |
 | server.containerSecurityContext | object | See [values.yaml] | Server container-level security context |
 | server.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
@@ -409,7 +420,7 @@ helm install argocd chart/
 | server.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | server.nodeSelector | object | `{}` | [Node selector] |
 | server.tolerations | list | `[]` | [Tolerations] for use with node taints |
-| server.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| server.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | server.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the Argo CD server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | server.priorityClassName | string | `""` | Priority class for the Argo CD server |
 | server.certificate.enabled | bool | `false` | Deploy a Certificate resource (requires cert-manager) |
@@ -529,6 +540,7 @@ helm install argocd chart/
 | repoServer.containerPorts.server | int | `8081` | Repo server container port |
 | repoServer.containerPorts.metrics | int | `8084` | Metrics container port |
 | repoServer.hostNetwork | bool | `false` | Host Network for Repo server pods |
+| repoServer.dnsConfig | object | `{}` | [DNS configuration] |
 | repoServer.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Repo server pods |
 | repoServer.containerSecurityContext | object | See [values.yaml] | Repo server container-level security context |
 | repoServer.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
@@ -543,7 +555,7 @@ helm install argocd chart/
 | repoServer.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | repoServer.nodeSelector | object | `{}` | [Node selector] |
 | repoServer.tolerations | list | `[]` | [Tolerations] for use with node taints |
-| repoServer.affinity | object | `{}` | Assign custom [affinity] rules to the deployment |
+| repoServer.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | repoServer.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the repo server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | repoServer.priorityClassName | string | `""` | Priority class for the repo server |
 | repoServer.certificateSecret.enabled | bool | `false` | Create argocd-repo-server-tls secret |
@@ -591,10 +603,7 @@ helm install argocd chart/
 | applicationSet.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the ApplicationSet controller |
 | applicationSet.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the ApplicationSet controller |
 | applicationSet.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | If defined, uses a Secret to pull an image from a private Docker registry or repository. |
-| applicationSet.logFormat | string | `""` (defaults to global.logging.format) | ApplicationSet controller log format. Either `text` or `json` |
-| applicationSet.logLevel | string | `""` (defaults to global.logging.level) | ApplicationSet controller log level. One of: `debug`, `info`, `warn`, `error` |
-| applicationSet.args.policy | string | `"sync"` | How application is synced between the generator and the cluster |
-| applicationSet.args.dryRun | bool | `false` | Enable dry run mode |
+| applicationSet.args | object | `{}` | DEPRECATED - ApplicationSet controller command line flags |
 | applicationSet.extraArgs | list | `[]` | List of extra cli args to add |
 | applicationSet.extraEnv | list | `[]` | Environment variables to pass to the ApplicationSet controller |
 | applicationSet.extraEnvFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the ApplicationSet controller |
@@ -633,6 +642,8 @@ helm install argocd chart/
 | applicationSet.containerPorts.metrics | int | `8080` | Metrics container port |
 | applicationSet.containerPorts.probe | int | `8081` | Probe container port |
 | applicationSet.containerPorts.webhook | int | `7000` | Webhook container port |
+| applicationSet.dnsConfig | object | `{}` | [DNS configuration] |
+| applicationSet.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for ApplicationSet controller pods |
 | applicationSet.containerSecurityContext | object | See [values.yaml] | ApplicationSet controller container-level security context |
 | applicationSet.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for ApplicationSet controller |
 | applicationSet.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
@@ -648,7 +659,7 @@ helm install argocd chart/
 | applicationSet.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | applicationSet.nodeSelector | object | `{}` | [Node selector] |
 | applicationSet.tolerations | list | `[]` | [Tolerations] for use with node taints |
-| applicationSet.affinity | object | `{}` | Assign custom [affinity] rules |
+| applicationSet.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | applicationSet.priorityClassName | string | `""` | If specified, indicates the pod's priority. If not specified, the pod priority will be default or zero if there is no default. |
 | applicationSet.webhook.ingress.enabled | bool | `false` | Enable an ingress resource for Webhooks |
 | applicationSet.webhook.ingress.annotations | object | `{}` | Additional ingress annotations |
@@ -703,10 +714,12 @@ helm install argocd chart/
 | notifications.podLabels | object | `{}` | Labels to be applied to the notifications controller Pods |
 | notifications.resources | object | `{}` | Resource limits and requests for the notifications controller |
 | notifications.containerPorts.metrics | int | `9001` | Metrics container port |
+| notifications.dnsConfig | object | `{}` | [DNS configuration] |
+| notifications.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for notifications controller Pods |
 | notifications.containerSecurityContext | object | See [values.yaml] | Notification controller container-level security Context |
 | notifications.nodeSelector | object | `{}` | [Node selector] |
 | notifications.tolerations | list | `[]` | [Tolerations] for use with node taints |
-| notifications.affinity | object | `{}` | Assign custom [affinity] rules |
+| notifications.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | notifications.priorityClassName | string | `""` | Priority class for the notifications controller pods |
 | notifications.serviceAccount.create | bool | `true` | Create notifications controller service account |
 | notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | Notification controller service account name |
@@ -736,9 +749,11 @@ helm install argocd chart/
 | notifications.bots.slack.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | notifications.bots.slack.serviceAccount.name | string | `"argocd-notifications-bot"` | The name of the service account to use. # If not set and create is true, a name is generated using the fullname template |
 | notifications.bots.slack.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
+| notifications.bots.slack.dnsConfig | object | `{}` | [DNS configuration] |
+| notifications.bots.slack.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Slack bot pods |
 | notifications.bots.slack.containerSecurityContext | object | See [values.yaml] | Slack bot container-level security Context |
 | notifications.bots.slack.resources | object | `{}` | Resource limits and requests for the Slack bot |
-| notifications.bots.slack.affinity | object | `{}` | Assign custom [affinity] rules |
+| notifications.bots.slack.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | notifications.bots.slack.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | notifications.bots.slack.nodeSelector | object | `{}` | [Node selector] |
 
