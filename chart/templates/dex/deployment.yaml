@@ -146,10 +146,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.dex.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- include "argo-cd.affinity" (dict "context" . "component" .Values.dex) | nindent 8 }}
       {{- with .Values.dex.topologySpreadConstraints }}
       topologySpreadConstraints:
         {{- range $constraint := . }}
@@ -188,4 +186,9 @@ spec:
       {{- with .Values.dex.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}
+      {{- with .Values.dex.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      dnsPolicy: {{ .Values.dex.dnsPolicy }}
 {{- end }}

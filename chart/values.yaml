@@ -168,11 +168,28 @@ global:
   #   hostnames:
   #   - git.myhostname
 
+  # Default network policy rules used by all components
   networkPolicy:
     # -- Create NetworkPolicy objects for all components
     create: false
     # -- Default deny all ingress traffic
     defaultDenyIngress: false
+
+  # Default affinity preset for all components
+  affinity:
+    # -- Default pod anti-affinity rules. Either: `soft` or `hard`
+    podAntiAffinity: soft
+    # Node affinity rules
+    nodeAffinity:
+      # -- Default node affinity rules. Either: `soft` or `hard`
+      type: hard
+      # -- Default match expressions for node affinity
+      matchExpressions: []
+        # - key: topology.kubernetes.io/zone
+        #   operator: In
+        #   values:
+        #    - antarctica-east1
+        #    - antarctica-west1
 
 ## Argo Configs
 configs:
@@ -280,6 +297,12 @@ configs:
     ## Repo-server properties
     # -- Limit on number of concurrent manifests generate requests. Any value less the 1 means no limit.
     reposerver.parallelism.limit: 0
+
+    ## ApplicationSet Properties
+    # -- Modify how application is synced between the generator and the cluster. One of: `sync`, `create-only`, `create-update`, `create-delete`
+    applicationsetcontroller.policy: sync
+    # -- Enables use of the Progressive Syncs capability
+    applicationsetcontroller.enable.progressive.syncs: false
 
   # Argo CD RBAC policy configuration
   ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/rbac.md
@@ -659,6 +682,8 @@ controller:
   # -- Host Network for application controller pods
   hostNetwork: false
 
+  # -- [DNS configuration]
+  dnsConfig: {}
   # -- Alternative DNS policy for application controller pods
   dnsPolicy: "ClusterFirst"
 
@@ -697,6 +722,7 @@ controller:
   tolerations: []
 
   # -- Assign custom [affinity] rules to the deployment
+  # @default -- `{}` (defaults to global.affinity preset)
   affinity: {}
 
   # -- Assign custom [TopologySpreadConstraints] rules to the application controller
@@ -962,6 +988,11 @@ dex:
     # -- Metrics container port
     metrics: 5558
 
+  # -- [DNS configuration]
+  dnsConfig: {}
+  # -- Alternative DNS policy for Dex server pods
+  dnsPolicy: "ClusterFirst"
+
   # -- Dex container-level security context
   # @default -- See [values.yaml]
   containerSecurityContext:
@@ -1032,6 +1063,7 @@ dex:
   # -- [Tolerations] for use with node taints
   tolerations: []
   # -- Assign custom [affinity] rules to the deployment
+  # @default -- `{}` (defaults to global.affinity preset)
   affinity: {}
 
   # -- Assign custom [TopologySpreadConstraints] rules to dex
@@ -1184,6 +1216,11 @@ redis:
     # -- Metrics container port
     metrics: 9121
 
+  # -- [DNS configuration]
+  dnsConfig: {}
+  # -- Alternative DNS policy for Redis server pods
+  dnsPolicy: "ClusterFirst"
+
   # -- Redis container-level security context
   # @default -- See [values.yaml]
   containerSecurityContext:
@@ -1202,6 +1239,7 @@ redis:
   tolerations: []
 
   # -- Assign custom [affinity] rules to the deployment
+  # @default -- `{}` (defaults to global.affinity preset)
   affinity: {}
 
   # -- Assign custom [TopologySpreadConstraints] rules to redis
@@ -1589,6 +1627,8 @@ server:
   # -- Host Network for Server pods
   hostNetwork: false
 
+  # -- [DNS configuration]
+  dnsConfig: {}
   # -- Alternative DNS policy for Server pods
   dnsPolicy: "ClusterFirst"
 
@@ -1637,6 +1677,7 @@ server:
   # -- [Tolerations] for use with node taints
   tolerations: []
   # -- Assign custom [affinity] rules to the deployment
+  # @default -- `{}` (defaults to global.affinity preset)
   affinity: {}
 
   # -- Assign custom [TopologySpreadConstraints] rules to the Argo CD server
@@ -2080,6 +2121,8 @@ repoServer:
   # -- Host Network for Repo server pods
   hostNetwork: false
 
+    # -- [DNS configuration]
+  dnsConfig: {}
   # -- Alternative DNS policy for Repo server pods
   dnsPolicy: "ClusterFirst"
 
@@ -2128,6 +2171,7 @@ repoServer:
   # -- [Tolerations] for use with node taints
   tolerations: []
   # -- Assign custom [affinity] rules to the deployment
+  # @default -- `{}` (defaults to global.affinity preset)
   affinity: {}
 
   # -- Assign custom [TopologySpreadConstraints] rules to the repo server
@@ -2283,18 +2327,14 @@ applicationSet:
   # @default -- `[]` (defaults to global.imagePullSecrets)
   imagePullSecrets: []
 
-  # -- ApplicationSet controller log format. Either `text` or `json`
-  # @default -- `""` (defaults to global.logging.format)
-  logFormat: ""
-  # -- ApplicationSet controller log level. One of: `debug`, `info`, `warn`, `error`
-  # @default -- `""` (defaults to global.logging.level)
-  logLevel: ""
-
-  args:
+  # -- DEPRECATED - ApplicationSet controller command line flags
+  args: {}
+    # DEPRECATED - Use configs.params.applicationsetcontroller.policy to override
     # -- How application is synced between the generator and the cluster
-    policy: sync
+    # policy: sync
+    # DEPRECATED - Use configs.params.applicationsetcontroller.dryrun to override
     # -- Enable dry run mode
-    dryRun: false
+    # dryRun: false
 
   # -- List of extra cli args to add
   extraArgs: []
@@ -2413,6 +2453,11 @@ applicationSet:
     # -- Webhook container port
     webhook: 7000
 
+  # -- [DNS configuration]
+  dnsConfig: {}
+  # -- Alternative DNS policy for ApplicationSet controller pods
+  dnsPolicy: "ClusterFirst"
+
   # -- ApplicationSet controller container-level security context
   # @default -- See [values.yaml]
   containerSecurityContext:
@@ -2464,6 +2509,7 @@ applicationSet:
   tolerations: []
 
   # -- Assign custom [affinity] rules
+  # @default -- `{}` (defaults to global.affinity preset)
   affinity: {}
 
   # -- If specified, indicates the pod's priority. If not specified, the pod priority will be default or zero if there is no default.
@@ -2685,6 +2731,11 @@ notifications:
     # -- Metrics container port
     metrics: 9001
 
+  # -- [DNS configuration]
+  dnsConfig: {}
+  # -- Alternative DNS policy for notifications controller Pods
+  dnsPolicy: "ClusterFirst"
+
   # -- Notification controller container-level security Context
   # @default -- See [values.yaml]
   containerSecurityContext:
@@ -2704,6 +2755,7 @@ notifications:
   tolerations: []
 
   # -- Assign custom [affinity] rules
+  # @default -- `{}` (defaults to global.affinity preset)
   affinity: {}
 
   # -- Priority class for the notifications controller pods
@@ -3066,6 +3118,11 @@ notifications:
         # -- Annotations applied to created service account
         annotations: {}
 
+      # -- [DNS configuration]
+      dnsConfig: {}
+      # -- Alternative DNS policy for Slack bot pods
+      dnsPolicy: "ClusterFirst"
+
       # -- Slack bot container-level security Context
       # @default -- See [values.yaml]
       containerSecurityContext:
@@ -3088,6 +3145,7 @@ notifications:
       #   memory: 128Mi
 
       # -- Assign custom [affinity] rules
+      # @default -- `{}` (defaults to global.affinity preset)
       affinity: {}
 
       # -- [Tolerations] for use with node taints

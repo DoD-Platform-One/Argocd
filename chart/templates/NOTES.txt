@@ -52,9 +52,6 @@ DEPRECATED option configs.gpgKeys - Use config.gpg.keys
 {{- if .Values.configs.gpgKeysAnnotations }}
 DEPRECATED option configs.gpgKeysAnnotations - Use config.gpg.annotations
 {{- end }}
-{{- if hasKey .Values "createAggregateRoles" }}
-DEPRECATED option createAggregateRoles - Use global.rbac.aggregatedRoles
-{{- end }}
 {{- if hasKey (.Values.controller.clusterAdminAccess | default dict) "enabled" }}
 DEPRECATED option .controller.clusterAdminAccess.enabled - Use createClusterRoles
 {{- end }}
@@ -75,6 +72,18 @@ DEPRECATED option configs.tlsCertsAnnotations - Use configs.tls.annotations
 {{- end }}
 {{- if hasKey .Values.configs "tlsCerts" }}
 DEPRECATED option configs.tlsCerts.data - Use configs.tls.certificates
+{{- end }}
+{{- if .Values.applicationSet.logFormat }}
+DEPRECATED option applicationSet.logFormat - Use configs.params.applicationsetcontroller.log.format
+{{- end }}
+{{- if .Values.applicationSet.logLevel }}
+DEPRECATED option applicationSet.logLevel - Use configs.params.applicationsetcontroller.log.level
+{{- end }}
+{{- if .Values.applicationSet.args.policy }}
+DEPRECATED option applicationSet.args.policy - Use configs.params.applicationsetcontroller.policy
+{{- end }}
+{{- if .Values.applicationSet.args.dryRun }}
+DEPRECATED option applicationSet.args.dryRun - Use configs.params.applicationsetcontroller.dryRun
 {{- end }}
 {{- if .Values.controller.service }}
 REMOVED option controller.service - Use controller.metrics
