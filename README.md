@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.22.1-bb.0](https://img.shields.io/badge/Version-5.22.1--bb.0-informational?style=flat-square) ![AppVersion: v2.6.1](https://img.shields.io/badge/AppVersion-v2.6.1-informational?style=flat-square)
+![Version: 5.22.1-bb.1](https://img.shields.io/badge/Version-5.22.1--bb.1-informational?style=flat-square) ![AppVersion: v2.6.1](https://img.shields.io/badge/AppVersion-v2.6.1-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -756,6 +756,10 @@ helm install argocd chart/
 | notifications.bots.slack.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | notifications.bots.slack.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | notifications.bots.slack.nodeSelector | object | `{}` | [Node selector] |
+| argocd-apps.applications | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
+| argocd-apps.projects | list | `[]` (See [values.yaml]) | Deploy Argo CD Projects within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
+| argocd-apps.applicationsets | list | `[]` (See [values.yaml]) | Deploy Argo CD ApplicationSets within this helm release # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/ |
+| argocd-apps.extensions | list | `[]` (See [values.yaml]) | Deploy Argo UI Extensions within this helm release # This function in tech preview stage, do expect unstability or breaking changes in newer versions. Bump image.tag if necessary. # Ref: https://github.com/argoproj-labs/argocd-extensions |
 
 ## Contributing
 
