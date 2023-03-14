@@ -1,0 +1,12 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: argocd-apps
+upstream:
+  type: git
+  git:
+    repo: https://github.com/argoproj/argo-helm
+    directory: /charts/argocd-apps
+    ref: argo-cd-5.26.0
+info:
+  description: Applies changes to argocd-apps to make it compatible as a subchart to argocd

@@ -183,7 +183,7 @@ The `Chart.yaml` file has a number of changes to support Big Bang needs:
 - `-bb.x` version appended
 - Chart renamed to `argocd` for consistency across BB
 - Annotations added for images and app versions
-- Dependencies added for Gluon and BB Redis
+- Dependencies added for Gluon, argocd-apps, and BB Redis
 
 ## helpers.tpl
 
@@ -201,3 +201,8 @@ The `Chart.yaml` file has a number of changes to support Big Bang needs:
 ## chart/templates/redis/deployment.yaml
 
 - Modified `$redisHa` to reference BB redis
+
+## argocd-apps templates
+
+- In ```deps/argocd-apps/templates/*```  all of the templates have been given `post-install` ad `post-upgrade`
+hooks so that they wait for the argocd crds to be installed before continuing.
