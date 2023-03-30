@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.22.1-bb.2](https://img.shields.io/badge/Version-5.22.1--bb.2-informational?style=flat-square) ![AppVersion: v2.6.1](https://img.shields.io/badge/AppVersion-v2.6.1-informational?style=flat-square)
+![Version: 5.27.1-bb.0](https://img.shields.io/badge/Version-5.27.1--bb.0-informational?style=flat-square) ![AppVersion: v2.6.6](https://img.shields.io/badge/AppVersion-v2.6.6-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -97,9 +97,13 @@ helm install argocd chart/
 | global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
 | global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
-| global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `soft` or `hard` |
-| global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `soft` or `hard` |
+| global.priorityClassName | string | `""` | Default priority class for all components |
+| global.nodeSelector | object | `{}` | Default node selector for all components |
+| global.tolerations | object | `{}` | Default tolerations for all components |
+| global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `none`, `soft` or `hard` |
+| global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `none`, `soft` or `hard` |
 | global.affinity.nodeAffinity.matchExpressions | list | `[]` | Default match expressions for node affinity |
+| global.topologySpreadConstraints | list | `[]` | Default [TopologySpreadConstraints] rules for all components # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector of the component |
 | configs.cm.create | bool | `true` | Create the argocd-cm configmap for [declarative setup] |
 | configs.cm.annotations | object | `{}` | Annotations to be added to argocd-cm configmap |
 | configs.cm.url | string | `""` | Argo CD's externally facing base URL (optional). Required when configuring SSO |
@@ -137,7 +141,10 @@ helm install argocd chart/
 | configs.ssh.extraHosts | string | `""` | Additional known hosts for private repositories |
 | configs.tls.annotations | object | `{}` | Annotations to be added to argocd-tls-certs-cm configmap |
 | configs.tls.certificates | object | `{}` (See [values.yaml]) | TLS certificates for Git repositories |
-| configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] # Ref: # - https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters # - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials |
+| configs.cmp.create | bool | `false` | Create the argocd-cmp-cm configmap |
+| configs.cmp.annotations | object | `{}` | Annotations to be added to argocd-cmp-cm configmap |
+| configs.cmp.plugins | object | `{}` | Plugin yaml files to be added to argocd-cmp-cm |
+| configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] # Ref: # - https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters # - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials # - https://argo-cd.readthedocs.io/en/stable/user-guide/projects/#project-scoped-repositories-and-clusters |
 | configs.credentialTemplates | object | `{}` | Repository credentials to be used as Templates for other repos # Creates a secret for each key/value specified below to create repository credentials |
 | configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
 | configs.repositories | object | `{}` | Repositories list to be used by applications # Creates a secret for each key/value specified below to create repositories # Note: the last example in the list would use a repository credential template, configured under "configs.repositoryCredentials". |
@@ -161,7 +168,7 @@ helm install argocd chart/
 | controller.pdb.labels | object | `{}` | Labels to be added to application controller pdb |
 | controller.pdb.annotations | object | `{}` | Annotations to be added to application controller pdb |
 | controller.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
-| controller.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `controller.pdb.minAvailable` |
+| controller.pdb.maxUnavailable | string | `""` | Number of pods that are unavailable after eviction as number or percentage (eg.: 50%). # Has higher precedence over `controller.pdb.minAvailable` |
 | controller.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the application controller |
 | controller.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the application controller |
 | controller.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the application controller |
@@ -188,11 +195,11 @@ helm install argocd chart/
 | controller.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | controller.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | controller.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| controller.nodeSelector | object | `{}` | [Node selector] |
-| controller.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| controller.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the application controller pods |
+| controller.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
+| controller.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | controller.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| controller.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
-| controller.priorityClassName | string | `""` | Priority class for the application controller pods |
+| controller.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | controller.serviceAccount.create | bool | `true` | Create a service account for the application controller |
 | controller.serviceAccount.name | string | `"argocd-application-controller"` | Service account name |
 | controller.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -216,6 +223,10 @@ helm install argocd chart/
 | controller.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
 | controller.metrics.serviceMonitor.annotations | object | `{}` | Prometheus ServiceMonitor annotations |
 | controller.metrics.rules.enabled | bool | `false` | Deploy a PrometheusRule for the application controller |
+| controller.metrics.rules.namespace | string | `""` | PrometheusRule namespace |
+| controller.metrics.rules.selector | object | `{}` | PrometheusRule selector |
+| controller.metrics.rules.additionalLabels | object | `{}` | PrometheusRule labels |
+| controller.metrics.rules.annotations | object | `{}` | PrometheusRule annotations |
 | controller.metrics.rules.spec | list | `[]` | PrometheusRule.Spec for the application controller |
 | controller.clusterRoleRules.enabled | bool | `false` | Enable custom rules for the application controller's ClusterRole resource |
 | controller.clusterRoleRules.rules | list | `[]` | List of custom rules for the application controller's ClusterRole resource |
@@ -242,7 +253,7 @@ helm install argocd chart/
 | dex.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | dex.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `dex.pdb.minAvailable` |
 | dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.35.3"` | Dex image tag |
+| dex.image.tag | string | `"v2.36.0"` | Dex image tag |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | dex.initImage.repository | string | `""` (defaults to global.image.repository) | Argo CD init image repository |
@@ -291,11 +302,11 @@ helm install argocd chart/
 | dex.servicePortGrpc | int | `5557` | Service port for gRPC access |
 | dex.servicePortGrpcName | string | `"grpc"` | Service port name for gRPC access |
 | dex.servicePortMetrics | int | `5558` | Service port for metrics access |
-| dex.nodeSelector | object | `{}` | [Node selector] |
-| dex.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| dex.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the dex pods |
+| dex.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
+| dex.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | dex.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| dex.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
-| dex.priorityClassName | string | `""` | Priority class for dex |
+| dex.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.name | string | `"redis"` | Redis name |
@@ -308,6 +319,7 @@ helm install argocd chart/
 | redis.image.tag | string | `"7.0.5"` | Redis tag |
 | redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
+| redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | redis.exporter.image.repository | string | `"public.ecr.aws/bitnami/redis-exporter"` | Repository to use for the redis-exporter |
 | redis.exporter.image.tag | string | `"1.45.0"` | Tag to use for the redis-exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
@@ -332,11 +344,11 @@ helm install argocd chart/
 | redis.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Redis server pods |
 | redis.containerSecurityContext | object | See [values.yaml] | Redis container-level security context |
 | redis.servicePort | int | `6379` | Redis service port |
-| redis.nodeSelector | object | `{}` | [Node selector] |
-| redis.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| redis.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for redis pods |
+| redis.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
+| redis.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | redis.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| redis.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to redis # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
-| redis.priorityClassName | string | `""` | Priority class for redis |
+| redis.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to redis # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | redis.serviceAccount.create | bool | `false` | Create a service account for the redis pod |
 | redis.serviceAccount.name | string | `""` | Service account name for redis pod |
 | redis.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -379,7 +391,7 @@ helm install argocd chart/
 | server.pdb.labels | object | `{}` | Labels to be added to Argo CD server pdb |
 | server.pdb.annotations | object | `{}` | Annotations to be added to Argo CD server pdb |
 | server.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
-| server.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `server.pdb.minAvailable` |
+| server.pdb.maxUnavailable | string | `""` | Number of pods that are unavailable after eviction as number or percentage (eg.: 50%). # Has higher precedence over `server.pdb.minAvailable` |
 | server.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the Argo CD server |
 | server.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the Argo CD server |
 | server.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the Argo CD server |
@@ -403,7 +415,7 @@ helm install argocd chart/
 | server.podLabels | object | `{}` | Labels to be added to server pods |
 | server.resources | object | `{"limits":{"cpu":"20m","memory":"128Mi"},"requests":{"cpu":"20m","memory":"128Mi"}}` | Resource limits and requests for the Argo CD server |
 | server.containerPorts.server | int | `8080` | Server container port |
-| server.containerPorts.metrics | int | `8082` | Metrics container port |
+| server.containerPorts.metrics | int | `8083` | Metrics container port |
 | server.hostNetwork | bool | `false` | Host Network for Server pods |
 | server.dnsConfig | object | `{}` | [DNS configuration] |
 | server.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Server pods |
@@ -418,11 +430,11 @@ helm install argocd chart/
 | server.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | server.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | server.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| server.nodeSelector | object | `{}` | [Node selector] |
-| server.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| server.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the Argo CD server pods |
+| server.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
+| server.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | server.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| server.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the Argo CD server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
-| server.priorityClassName | string | `""` | Priority class for the Argo CD server |
+| server.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the Argo CD server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | server.certificate.enabled | bool | `false` | Deploy a Certificate resource (requires cert-manager) |
 | server.certificate.secretName | string | `"argocd-server-tls"` | The name of the Secret that will be automatically created and managed by this Certificate resource |
 | server.certificate.domain | string | `"argocd.example.com"` | Certificate primary domain (commonName) |
@@ -431,7 +443,7 @@ helm install argocd chart/
 | server.certificate.renewBefore | string | `""` (defaults to 360h = 15d if not specified) | How long before the expiry a certificate should be renewed. # Ref: https://cert-manager.io/docs/usage/certificate/#renewal |
 | server.certificate.issuer.group | string | `""` | Certificate issuer group. Set if using an external issuer. Eg. `cert-manager.io` |
 | server.certificate.issuer.kind | string | `""` | Certificate issuer kind. Either `Issuer` or `ClusterIssuer` |
-| server.certificate.issuer.name | string | `""` | Certificate isser name. Eg. `letsencrypt` |
+| server.certificate.issuer.name | string | `""` | Certificate issuer name. Eg. `letsencrypt` |
 | server.certificate.privateKey.rotationPolicy | string | `"Never"` | Rotation policy of private key when certificate is re-issued. Either: `Never` or `Always` |
 | server.certificate.privateKey.encoding | string | `"PKCS1"` | The private key cryptography standards (PKCS) encoding for private key. Either: `PCKS1` or `PKCS8` |
 | server.certificate.privateKey.algorithm | string | `"RSA"` | Algorithm used to generate certificate private key. One of: `RSA`, `Ed25519` or `ECDSA` |
@@ -521,7 +533,7 @@ helm install argocd chart/
 | repoServer.pdb.labels | object | `{}` | Labels to be added to repo server pdb |
 | repoServer.pdb.annotations | object | `{}` | Annotations to be added to repo server pdb |
 | repoServer.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
-| repoServer.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `repoServer.pdb.minAvailable` |
+| repoServer.pdb.maxUnavailable | string | `""` | Number of pods that are unavailable after eviction as number or percentage (eg.: 50%). # Has higher precedence over `repoServer.pdb.minAvailable` |
 | repoServer.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the repo server |
 | repoServer.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the repo server |
 | repoServer.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the repo server |
@@ -553,11 +565,11 @@ helm install argocd chart/
 | repoServer.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | repoServer.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | repoServer.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| repoServer.nodeSelector | object | `{}` | [Node selector] |
-| repoServer.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| repoServer.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
+| repoServer.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | repoServer.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| repoServer.topologySpreadConstraints | list | `[]` | Assign custom [TopologySpreadConstraints] rules to the repo server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
-| repoServer.priorityClassName | string | `""` | Priority class for the repo server |
+| repoServer.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the repo server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| repoServer.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the repo server pods |
 | repoServer.certificateSecret.enabled | bool | `false` | Create argocd-repo-server-tls secret |
 | repoServer.certificateSecret.annotations | object | `{}` | Annotations to be added to argocd-repo-server-tls secret |
 | repoServer.certificateSecret.labels | object | `{}` | Labels to be added to argocd-repo-server-tls secret |
@@ -598,7 +610,7 @@ helm install argocd chart/
 | applicationSet.pdb.labels | object | `{}` | Labels to be added to ApplicationSet controller pdb |
 | applicationSet.pdb.annotations | object | `{}` | Annotations to be added to ApplicationSet controller pdb |
 | applicationSet.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
-| applicationSet.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `applicationSet.pdb.minAvailable` |
+| applicationSet.pdb.maxUnavailable | string | `""` | Number of pods that are unavailable after eviction as number or percentage (eg.: 50%). # Has higher precedence over `applicationSet.pdb.minAvailable` |
 | applicationSet.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the ApplicationSet controller |
 | applicationSet.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the ApplicationSet controller |
 | applicationSet.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the ApplicationSet controller |
@@ -657,10 +669,11 @@ helm install argocd chart/
 | applicationSet.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | applicationSet.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | applicationSet.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
-| applicationSet.nodeSelector | object | `{}` | [Node selector] |
-| applicationSet.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| applicationSet.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
+| applicationSet.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | applicationSet.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
-| applicationSet.priorityClassName | string | `""` | If specified, indicates the pod's priority. If not specified, the pod priority will be default or zero if there is no default. |
+| applicationSet.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the ApplicationSet controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| applicationSet.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the ApplicationSet controller pods |
 | applicationSet.webhook.ingress.enabled | bool | `false` | Enable an ingress resource for Webhooks |
 | applicationSet.webhook.ingress.annotations | object | `{}` | Additional ingress annotations |
 | applicationSet.webhook.ingress.labels | object | `{}` | Additional ingress labels |
@@ -677,7 +690,7 @@ helm install argocd chart/
 | notifications.pdb.labels | object | `{}` | Labels to be added to notifications controller pdb |
 | notifications.pdb.annotations | object | `{}` | Annotations to be added to notifications controller pdb |
 | notifications.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
-| notifications.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `notifications.pdb.minAvailable` |
+| notifications.pdb.maxUnavailable | string | `""` | Number of pods that are unavailable after eviction as number or percentage (eg.: 50%). # Has higher precedence over `notifications.pdb.minAvailable` |
 | notifications.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the notifications controller |
 | notifications.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the notifications controller |
 | notifications.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the notifications controller |
@@ -717,10 +730,11 @@ helm install argocd chart/
 | notifications.dnsConfig | object | `{}` | [DNS configuration] |
 | notifications.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for notifications controller Pods |
 | notifications.containerSecurityContext | object | See [values.yaml] | Notification controller container-level security Context |
-| notifications.nodeSelector | object | `{}` | [Node selector] |
-| notifications.tolerations | list | `[]` | [Tolerations] for use with node taints |
+| notifications.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
+| notifications.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | notifications.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
-| notifications.priorityClassName | string | `""` | Priority class for the notifications controller pods |
+| notifications.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| notifications.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the notifications controller pods |
 | notifications.serviceAccount.create | bool | `true` | Create notifications controller service account |
 | notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | Notification controller service account name |
 | notifications.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |

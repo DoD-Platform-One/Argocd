@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.6.1
+appVersion: v2.6.6
 kubeVersion: ">=1.22.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 5.22.1-bb.2
+version: 5.27.1-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -30,19 +30,19 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.6.1
+    - Argocd: v2.6.6
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.6.1
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.6.6
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
     - name: dex
       condition: dex.enabled
-      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.35.3
+      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.36.0
     - name: redis
       condition: redis-bb.enabled
       image: registry1.dso.mil/ironbank/bitnami/redis:7.0.0-debian-10-r3
   artifacthub.io/changes: |
     - kind: changed
-      description: Grouped component templates together
+      description: Upgrade Argo CD to v2.6.6
