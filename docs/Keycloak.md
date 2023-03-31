@@ -23,20 +23,20 @@ These are the items you need to do after keycloak and argocd are working on your
 Keycloak client configuration should look like the following:
 ```json
 {
-  "id": "a752f27c-dc07-46c9-832a-11759b722ab3",
   "clientId": "il2_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_argocd",
   "name": "IL2 ArgoCD",
+  "rootUrl": "",
+  "adminUrl": "",
   "baseUrl": "/applications",
   "surrogateAuthRequired": false,
   "enabled": true,
   "alwaysDisplayInConsole": false,
   "clientAuthenticatorType": "client-secret",
-  "secret": "**********",
   "redirectUris": [
-    "https://argocd.fences.dso.mil/auth/callback"
+    "https://argocd.example.mil/auth/callback"
   ],
   "webOrigins": [
-    "https://argocd.fences.dso.mil"
+    "https://argocd.example.mil"
   ],
   "notBefore": 0,
   "bearerOnly": false,
@@ -50,15 +50,24 @@ Keycloak client configuration should look like the following:
   "protocol": "openid-connect",
   "attributes": {
     "saml.assertion.signature": "false",
+    "id.token.as.detached.signature": "false",
     "saml.multivalued.roles": "false",
     "saml.force.post.binding": "false",
     "saml.encrypt": "false",
+    "oauth2.device.authorization.grant.enabled": "false",
     "saml.server.signature": "false",
+    "backchannel.logout.revoke.offline.tokens": "false",
     "saml.server.signature.keyinfo.ext": "false",
+    "use.refresh.tokens": "true",
     "exclude.session.state.from.auth.response": "false",
+    "oidc.ciba.grant.enabled": "false",
+    "saml.artifact.binding": "false",
+    "backchannel.logout.session.required": "true",
+    "client_credentials.use_refresh_token": "false",
     "saml_force_name_id_format": "false",
     "saml.client.signature": "false",
     "tls.client.certificate.bound.access.tokens": "false",
+    "require.pushed.authorization.requests": "false",
     "saml.authnstatement": "false",
     "display.on.consent.screen": "false",
     "saml.onetimeuse.condition": "false"
@@ -70,7 +79,12 @@ Keycloak client configuration should look like the following:
     "role_list",
     "ArgoCD"
   ],
-  "optionalClientScopes": []
+  "optionalClientScopes": [],
+  "access": {
+    "view": true,
+    "configure": true,
+    "manage": true
+  }
 }
 ```
 
