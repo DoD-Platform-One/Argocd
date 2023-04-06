@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [5.27.1-bb.2] - 2023-04-06
+### Updated
+- Fixing issue where Argo image wasn't correctly updated to 2.6.6
+
 ## [5.27.1-bb.1] - 2023-03-30
 ### Updated
 - Updates KeyCloak file for `argocd-apps` to match correct format
