@@ -24,7 +24,7 @@ NOTE: For these testing steps it is good to do them on both a clean install and 
 
 You will want to install with:
 - Argocd enabled
-    - Set admin password for testing determinism
+    - Set `admin` password for testing determinism (this sets password to `Password123`)
     - ``` 
         configs:
             secret:
