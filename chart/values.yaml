@@ -1440,6 +1440,8 @@ redis-bb:
   image:
     pullSecrets:
       - private-registry
+  metrics:
+    enabled: true
 
   master:
     resources:
