@@ -1218,7 +1218,7 @@ redis:
     # -- Redis repository
     repository: registry1.dso.mil/ironbank/opensource/redis/redis7
     # -- Redis tag
-    tag: 7.0.5
+    tag: 7.0.11
     # -- Redis image pull policy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: IfNotPresent
