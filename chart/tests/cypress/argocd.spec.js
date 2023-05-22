@@ -157,7 +157,7 @@ function app_page() {
   if (!Cypress.env('keycloak_test_enable')) {
     it('Having logged in with a local account, deploy and delete app in the ArgoCD UI', function() {
         cy.task('log', 'entering the app deployment test...')
-        cy.contains('No applications available to you just yet', {timeout: 15000} )
+        cy.contains('No applications', {timeout: 15000} )
         cy.get('button[qe-id="applications-list-button-new-app"]').click()
         cy.contains('Application Name').type('guestbook',{delay: 0})
         cy.get('input[qe-id="application-create-field-project"]').type('default',{delay: 0})
@@ -186,7 +186,7 @@ function app_page() {
         cy.contains('Please type').click()
         cy.get('input[qeid="name-field-delete-confirmation"]').type('guestbook')
         cy.get('button[qe-id="prompt-popup-ok-button"]').click()
-        cy.contains('No applications available to you just yet', { timeout: 60000 })
+        cy.contains('No applications', { timeout: 60000 })
         cy.task('log', 'app is deleted...')
         cy.task('log', 'test has completed successfully')
     })
@@ -201,7 +201,7 @@ function app_page() {
   if (Cypress.env('keycloak_test_enable')) {
     it('Having logged in with a keycloak SSO account, deploy and delete app in the ArgoCD UI', function() {
         cy.task('log', 'entering the keycloak SSO version of the app deployment test...')
-        cy.contains('No applications available to you just yet', {timeout: 15000} )
+        cy.contains('No applications', {timeout: 15000} )
         cy.get('button[qe-id="applications-list-button-new-app"]').click()
         cy.contains('Application Name').type('guestbook',{delay: 0})
         cy.get('input[qe-id="application-create-field-project"]').type('default',{delay: 0})

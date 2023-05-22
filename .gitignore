@@ -1,1 +1,7 @@
 .idea
+chart/tests/.env
+chart/tests/cypress.config.js
+chart/tests/cypress/e2e
+chart/tests/cypress/fixtures
+chart/tests/cypress/integration
+chart/tests/cypress/support
