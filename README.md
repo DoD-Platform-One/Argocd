@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.33.1-bb.1](https://img.shields.io/badge/Version-5.33.1--bb.1-informational?style=flat-square) ![AppVersion: v2.7.1](https://img.shields.io/badge/AppVersion-v2.7.1-informational?style=flat-square)
+![Version: 5.33.1-bb.2](https://img.shields.io/badge/Version-5.33.1--bb.2-informational?style=flat-square) ![AppVersion: v2.7.1](https://img.shields.io/badge/AppVersion-v2.7.1-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -81,6 +81,7 @@ helm install argocd chart/
 | crds.install | bool | `true` | Install and upgrade CRDs |
 | crds.keep | bool | `true` | Keep CRDs on chart uninstall |
 | crds.annotations | object | `{}` | Annotations to be added to all CRDs |
+| crds.additionalLabels | object | `{}` | Addtional labels to be added to all CRDs |
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
@@ -93,19 +94,18 @@ helm install argocd chart/
 | global.deploymentAnnotations | object | `{}` | Annotations for the all deployed Deployments |
 | global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
 | global.podLabels | object | `{}` | Labels for the all deployed pods |
+| global.addPrometheusAnnotations | bool | `false` | Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors. |
 | global.securityContext | object | `{}` (See [values.yaml]) | Toggle and define pod-level security context. |
 | global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
 | global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
 | global.priorityClassName | string | `""` | Default priority class for all components |
 | global.nodeSelector | object | `{}` | Default node selector for all components |
-| global.tolerations | object | `{}` | Default tolerations for all components |
+| global.tolerations | list | `[]` | Default tolerations for all components |
 | global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `none`, `soft` or `hard` |
 | global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `none`, `soft` or `hard` |
 | global.affinity.nodeAffinity.matchExpressions | list | `[]` | Default match expressions for node affinity |
 | global.topologySpreadConstraints | list | `[]` | Default [TopologySpreadConstraints] rules for all components # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector of the component |
-| global.entrypoint.useImplicit | bool | `false` | Implicitly use the docker image's entrypoint. This requires the image to have ENTRYPOINT set properly |
-| global.entrypoint.entrypoint | string | `"entrypoint.sh"` | The entrypoint to use for the containers. |
 | global.deploymentStrategy | object | `{}` | Deployment strategy for the all deployed Deployments |
 | configs.cm.create | bool | `true` | Create the argocd-cm configmap for [declarative setup] |
 | configs.cm.annotations | object | `{}` | Annotations to be added to argocd-cm configmap |
@@ -211,6 +211,8 @@ helm install argocd chart/
 | controller.metrics.enabled | bool | `false` | Deploy metrics service |
 | controller.metrics.applicationLabels.enabled | bool | `false` | Enables additional labels in argocd_app_labels metric |
 | controller.metrics.applicationLabels.labels | list | `[]` | Additional labels |
+| controller.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
+| controller.metrics.service.clusterIP | string | `""` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
 | controller.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | controller.metrics.service.labels | object | `{}` | Metrics service labels |
 | controller.metrics.service.servicePort | int | `8082` | Metrics service port |
@@ -311,6 +313,8 @@ helm install argocd chart/
 | dex.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | dex.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | dex.deploymentStrategy | object | `{}` | Deployment strategy to be added to the Dex server Deployment |
+| dex.logFormat | string | `""` (defaults to global.logging.format) | Dex log format. Either `text` or `json` |
+| dex.logLevel | string | `""` (defaults to global.logging.level) | Dex log level. One of: `debug`, `info`, `warn`, `error` |
 | redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.name | string | `"redis"` | Redis name |
@@ -473,6 +477,8 @@ helm install argocd chart/
 | server.service.externalTrafficPolicy | string | `""` | Denotes if this Service desires to route external traffic to node-local or cluster-wide endpoints |
 | server.service.sessionAffinity | string | `""` | Used to maintain session affinity. Supports `ClientIP` and `None` |
 | server.metrics.enabled | bool | `false` | Deploy metrics service |
+| server.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
+| server.metrics.service.clusterIP | string | `""` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
 | server.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | server.metrics.service.labels | object | `{}` | Metrics service labels |
 | server.metrics.service.servicePort | int | `8083` | Metrics service port |
@@ -587,6 +593,8 @@ helm install argocd chart/
 | repoServer.service.port | int | `8081` | Repo server service port |
 | repoServer.service.portName | string | `"tcp-repo-server"` | Repo server service port name |
 | repoServer.metrics.enabled | bool | `false` | Deploy metrics service |
+| repoServer.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
+| repoServer.metrics.service.clusterIP | string | `""` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
 | repoServer.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | repoServer.metrics.service.labels | object | `{}` | Metrics service labels |
 | repoServer.metrics.service.servicePort | int | `8084` | Metrics service port |
@@ -630,6 +638,8 @@ helm install argocd chart/
 | applicationSet.extraVolumeMounts | list | `[]` | List of extra mounts to add (normally used with extraVolumes) |
 | applicationSet.extraVolumes | list | `[]` | List of extra volumes to add |
 | applicationSet.metrics.enabled | bool | `false` | Deploy metrics service |
+| applicationSet.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
+| applicationSet.metrics.service.clusterIP | string | `""` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
 | applicationSet.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | applicationSet.metrics.service.labels | object | `{}` | Metrics service labels |
 | applicationSet.metrics.service.servicePort | int | `8085` | Metrics service port |
@@ -646,6 +656,7 @@ helm install argocd chart/
 | applicationSet.metrics.serviceMonitor.annotations | object | `{}` | Prometheus ServiceMonitor annotations |
 | applicationSet.service.annotations | object | `{}` | ApplicationSet service annotations |
 | applicationSet.service.labels | object | `{}` | ApplicationSet service labels |
+| applicationSet.service.type | string | `"ClusterIP"` | ApplicationSet service type |
 | applicationSet.service.port | int | `7000` | ApplicationSet service port |
 | applicationSet.service.portName | string | `"webhook"` | ApplicationSet service port name |
 | applicationSet.serviceAccount.create | bool | `true` | Create ApplicationSet controller service account |
@@ -717,6 +728,8 @@ helm install argocd chart/
 | notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret # Can be used for templates, notification services etc. Some examples given below. # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/ |
 | notifications.metrics.enabled | bool | `false` | Enables prometheus metrics server |
 | notifications.metrics.port | int | `9001` | Metrics port |
+| notifications.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
+| notifications.metrics.service.clusterIP | string | `""` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
 | notifications.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | notifications.metrics.service.labels | object | `{}` | Metrics service labels |
 | notifications.metrics.service.portName | string | `"http-metrics"` | Metrics service port name |
