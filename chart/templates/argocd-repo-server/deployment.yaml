@@ -9,6 +9,7 @@ metadata:
     {{- end }}
   {{- end }}
   name: {{ template "argo-cd.repoServer.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.repoServer.name "name" .Values.repoServer.name) | nindent 4 }}
 spec:
@@ -61,10 +62,6 @@ spec:
       - name: {{ .Values.repoServer.name }}
         image: {{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}
         imagePullPolicy: {{ default .Values.global.image.imagePullPolicy .Values.repoServer.image.imagePullPolicy }}
-        {{- if not .Values.global.entrypoint.useImplicit }}
-        command:
-          - {{ .Values.global.entrypoint.entrypoint | quote }}
-        {{- end }}
         args:
         - argocd-repo-server
         {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) $redisHa.enabled }}
@@ -78,6 +75,7 @@ spec:
         - --redis
         - {{ .Values.redis.externalEndpoint }}
         {{- end }}
+        - /usr/local/bin/argocd-repo-server
         - --port={{ .Values.repoServer.containerPorts.server }}
         - --metrics-port={{ .Values.repoServer.containerPorts.metrics }}
         {{- with .Values.repoServer.logFormat }}
@@ -301,7 +299,7 @@ spec:
       {{- end }}
       initContainers:
       - command:
-        - cp
+        - /bin/cp
         - -n
         - /usr/local/bin/argocd
         - /var/run/argocd/argocd-cmp-server

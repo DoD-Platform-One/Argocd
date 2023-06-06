@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.6.7
+appVersion: v2.7.1
 kubeVersion: ">=1.22.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 5.28.0-bb.5
+version: 5.33.1-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -30,10 +30,10 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.6.7
+    - Argocd: v2.7.1
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.6.7
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.7.1
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
@@ -48,4 +48,4 @@ annotations:
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.50.0
   artifacthub.io/changes: |
     - kind: added
-      description: Add support for custom Deployment strategy
+      description: Ability to add additional labels to all CRDs via .Values.crds.additionalLabels
