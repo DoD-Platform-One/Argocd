@@ -113,6 +113,8 @@ crds:
   keep: true
   # -- Annotations to be added to all CRDs
   annotations: {}
+  # -- Addtional labels to be added to all CRDs
+  additionalLabels: {}
 
 ## Globally shared configuration
 global:
@@ -128,7 +130,7 @@ global:
     # -- If defined, a repository applied to all Argo CD deployments
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-    tag: v2.6.7
+    tag: v2.7.1
     # -- If defined, a imagePullPolicy applied to all Argo CD deployments
     imagePullPolicy: IfNotPresent
 
@@ -154,6 +156,9 @@ global:
 
   # -- Labels for the all deployed pods
   podLabels: {}
+
+  # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
+  addPrometheusAnnotations: false
 
   # -- Toggle and define pod-level security context.
   # @default -- `{}` (See [values.yaml])
@@ -182,7 +187,7 @@ global:
   nodeSelector: {}
 
   # -- Default tolerations for all components
-  tolerations: {}
+  tolerations: []
 
   # Default affinity preset for all components
   affinity:
@@ -207,14 +212,6 @@ global:
     # - maxSkew: 1
     #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
-
-  # POD entrypoint configuration
-  entrypoint:
-    # -- Implicitly use the docker image's entrypoint. This requires the image to have
-    # ENTRYPOINT set properly
-    useImplicit: false
-    # -- The entrypoint to use for the containers.
-    entrypoint: "entrypoint.sh"
 
   # -- Deployment strategy for the all deployed Deployments
   deploymentStrategy: {}
@@ -848,6 +845,10 @@ controller:
       # -- Additional labels
       labels: []
     service:
+      # -- Metrics service type
+      type: ClusterIP
+      # -- Metrics service clusterIP. `None` makes a "headless service" (no virtual IP)
+      clusterIP: ""
       # -- Metrics service annotations
       annotations: {}
       # -- Metrics service labels
@@ -1185,6 +1186,13 @@ dex:
     # rollingUpdate:
     #   maxSurge: 25%
     #   maxUnavailable: 25%
+
+  # -- Dex log format. Either `text` or `json`
+  # @default -- `""` (defaults to global.logging.format)
+  logFormat: ""
+  # -- Dex log level. One of: `debug`, `info`, `warn`, `error`
+  # @default -- `""` (defaults to global.logging.level)
+  logLevel: ""
 
 ## Redis
 redis:
@@ -1910,6 +1918,10 @@ server:
     # -- Deploy metrics service
     enabled: false
     service:
+      # -- Metrics service type
+      type: ClusterIP
+      # -- Metrics service clusterIP. `None` makes a "headless service" (no virtual IP)
+      clusterIP: ""
       # -- Metrics service annotations
       annotations: {}
       # -- Metrics service labels
@@ -2380,6 +2392,10 @@ repoServer:
     # -- Deploy metrics service
     enabled: false
     service:
+      # -- Metrics service type
+      type: ClusterIP
+      # -- Metrics service clusterIP. `None` makes a "headless service" (no virtual IP)
+      clusterIP: ""
       # -- Metrics service annotations
       annotations: {}
       # -- Metrics service labels
@@ -2533,6 +2549,10 @@ applicationSet:
     # -- Deploy metrics service
     enabled: false
     service:
+      # -- Metrics service type
+      type: ClusterIP
+      # -- Metrics service clusterIP. `None` makes a "headless service" (no virtual IP)
+      clusterIP: ""
       # -- Metrics service annotations
       annotations: {}
       # -- Metrics service labels
@@ -2571,6 +2591,8 @@ applicationSet:
     annotations: {}
     # -- ApplicationSet service labels
     labels: {}
+    # -- ApplicationSet service type
+    type: ClusterIP
     # -- ApplicationSet service port
     port: 7000
     # -- ApplicationSet service port name
@@ -2854,6 +2876,10 @@ notifications:
     # -- Metrics port
     port: 9001
     service:
+      # -- Metrics service type
+      type: ClusterIP
+      # -- Metrics service clusterIP. `None` makes a "headless service" (no virtual IP)
+      clusterIP: ""
       # -- Metrics service annotations
       annotations: {}
       # -- Metrics service labels
