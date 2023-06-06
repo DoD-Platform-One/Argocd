@@ -2920,6 +2920,8 @@ notifications:
   # -- Notification controller container-level security Context
   # @default -- See [values.yaml]
   containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
     runAsNonRoot: true
     readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
