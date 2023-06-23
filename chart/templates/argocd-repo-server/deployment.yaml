@@ -90,7 +90,7 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
         env:
-          {{- with .Values.repoServer.env }}
+          {{- with (concat .Values.global.env .Values.repoServer.env) }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
           {{- if .Values.openshift.enabled }}
@@ -292,8 +292,14 @@ spec:
           failureThreshold: {{ .Values.repoServer.readinessProbe.failureThreshold }}
         resources:
           {{- toYaml .Values.repoServer.resources | nindent 10 }}
+        {{- with .Values.repoServer.containerSecurityContext }}
         securityContext:
-          {{- toYaml .Values.repoServer.containerSecurityContext | nindent 10 }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.repoServer.lifecycle }}
+        lifecycle:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- with .Values.repoServer.extraContainers }}
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
