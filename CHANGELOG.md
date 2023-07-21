@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.39.0] - 2023-07-14
+### Updated
+- Updated to Argo 2.7.7
+- Updated to dex 2.37.0 
+- Updated to redis 7.0.12
+
 ## [5.36.1-bb.0] - 2023-06-21
 ### Updated
 - updated argocd appversion 
