@@ -71,6 +71,8 @@ bbtests:
       cypress_url: "http://argocd-server:80"
       cypress_user: "admin"
       cypress_password: "Password123"
+      cypress_waittime: "20000"
+      cypress_timeout: "18000"
 
 
 ## Argo CD configuration

@@ -1,3 +1,22 @@
+let customWaitTime;
+let customTimeOut;
+before(() => {
+  customWaitTime = Cypress.env('waittime');
+  if (customWaitTime === '') {
+      customWaitTime = 10000;
+  }else{
+    customWaitTime = parseInt(customWaitTime);
+  }
+  
+  customTimeOut = Cypress.env('timeout');
+  if (customTimeOut === '') {
+    customTimeOut = 20000;
+  }else{
+    customTimeOut = parseInt(customTimeOut);
+  }
+});
+
+
 // the app throws an "Unauthorized" exception when you first visit without a token that will stop the test without this
 Cypress.on('uncaught:exception', (err, runnable) => {
   return false
@@ -76,10 +95,10 @@ describe('ArgoCD test', function() {
   function appsyncpane () { 
     h++
     cy.task('log', 'appsyncpane() called...')
-    cy.get('a[qe-id="applications-tiles-button-sync"]', {timeout: 60000})
+    cy.get('a[qe-id="applications-tiles-button-sync"]', {timeout: customTimeOut})
     .should('be.visible')
     .click({force: true})
-    cy.wait(1000)
+    cy.wait(customWaitTime)
     // this is just to wait for the panel to slide out
     cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__close').should('be.visible')
     cy.get('body').then($body => {
@@ -90,7 +109,7 @@ describe('ArgoCD test', function() {
         cy.task('log', 'resources are not showing up in the sync pane, closing and recursing...')
         cy.get('.sliding-panel--is-middle > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base-o').last().click()
         if (h < appsyncpaneretries) {
-          cy.wait(1000)
+          cy.wait(customWaitTime)
           appsyncpane()
         } else {
           cy.task('log', 'fatal error: hit max retries for appsyncpane()')
@@ -106,19 +125,19 @@ describe('ArgoCD test', function() {
     i++
     cy.task('log', 'appsyncbutton() called...')
     cy.get('body').then($body => {
-      cy.get('.sliding-panel--opened > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).then($synchronize => {
+      cy.get('.sliding-panel--opened > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: customTimeOut}).then($synchronize => {
       if ($synchronize.is(':visible')){
         cy.task('log', 'clicking \"out of sync\" to include all resources in the sync...')
         cy.get('[style="float: right;"] > :nth-child(2)').click()
         cy.task('log', 'clicking the synchronize button...')
-        cy.get('.sliding-panel--opened > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: 1000}).last().click()
+        cy.get('.sliding-panel--opened > .sliding-panel__wrapper > .sliding-panel__header > div > .argo-button--base', {timeout: customTimeOut}).last().click()
         return
       } else {
         cy.task('log', 'sync button not visible...')
         if (i < appsyncbuttonretries) {
-          cy.wait(1000)
+          cy.wait(customWaitTime)
           cy.task('log', 'appsyncpane() called...')
-          cy.get('a[qe-id="application-sync-panel-button-synchronize"]', {timeout: 30000})
+          cy.get('a[qe-id="application-sync-panel-button-synchronize"]', {timeout: customTimeOut})
           .should('be.visible')
           .click()
           appsyncbutton()
@@ -144,7 +163,7 @@ function app_page() {
       return
     } else {
     if (k < app_pageloops) {
-      cy.wait(1000)
+      cy.wait(customWaitTime)
       cy.reload()
       app_page()
     } else {
@@ -157,9 +176,9 @@ function app_page() {
   if (!Cypress.env('keycloak_test_enable')) {
     it('Having logged in with a local account, deploy and delete app in the ArgoCD UI', function() {
         cy.task('log', 'entering the app deployment test...')
-        cy.contains('No applications', {timeout: 15000} )
+        cy.contains('No applications', {timeout: customTimeOut} )
         cy.get('button[qe-id="applications-list-button-new-app"]').click()
-        cy.contains('Application Name').type('guestbook',{delay: 0})
+        cy.contains('Application Name').type('guestbook',{delay: 0, timeout:customTimeOut})
         cy.get('input[qe-id="application-create-field-project"]').type('default',{delay: 0})
         cy.get('input[id="sync-option-CreateNamespace-undefined"]').last().click()
         cy.get('input[qe-id="application-create-field-path"]').type('guestbook',{delay: 0})
@@ -170,23 +189,23 @@ function app_page() {
         cy.task('log', 'pressed create on the test app...')
         appsyncpane ()
         appsyncbutton()
-        cy.wait(2000)
-        cy.get('.applications-list__title', {timeout: 15000})
+        cy.wait(customWaitTime)
+        cy.get('.applications-list__title', {timeout: customTimeOut})
           .should('be.visible')
           .contains('guestbook')
           .click()
         cy.task('log', 'entering test app stats page...')
         cy.get(':nth-child(2) > .application-status-panel__item-value > :nth-child(1)')
-          .contains('Synced', { timeout: 180000 })
+          .contains('Synced', { timeout: customTimeOut })
         cy.task('log', 'app is synced...')
         cy.get(':nth-child(1) > .application-status-panel__item-value')
-          .contains('Healthy', { timeout: 180000 })
+          .contains('Healthy', { timeout: customTimeOut })
         cy.task('log', 'app is healthy...')
         cy.get(':nth-child(6) > .fa').click()
         cy.contains('Please type').click()
         cy.get('input[qeid="name-field-delete-confirmation"]').type('guestbook')
         cy.get('button[qe-id="prompt-popup-ok-button"]').click()
-        cy.contains('No applications', { timeout: 60000 })
+        cy.contains('No applications', { timeout: customTimeOut })
         cy.task('log', 'app is deleted...')
         cy.task('log', 'test has completed successfully')
     })
@@ -201,9 +220,9 @@ function app_page() {
   if (Cypress.env('keycloak_test_enable')) {
     it('Having logged in with a keycloak SSO account, deploy and delete app in the ArgoCD UI', function() {
         cy.task('log', 'entering the keycloak SSO version of the app deployment test...')
-        cy.contains('No applications', {timeout: 15000} )
+        cy.contains('No applications', {timeout: customTimeOut} )
         cy.get('button[qe-id="applications-list-button-new-app"]').click()
-        cy.contains('Application Name').type('guestbook',{delay: 0})
+        cy.contains('Application Name').type('guestbook',{delay: 0, timeout: customTimeOut})
         cy.get('input[qe-id="application-create-field-project"]').type('default',{delay: 0})
         cy.get(':nth-child(5) > :nth-child(1) > .select > .select__value').click()
         cy.contains('Automatic').click()
@@ -213,14 +232,14 @@ function app_page() {
         cy.get('input[qe-id="application-create-field-cluster-url"]').type('https://kubernetes.default.svc',{delay: 0})
         cy.get('input[qeid="application-create-field-namespace"]').type('argocd',{delay: 0})
         cy.get('button[qe-id="applications-list-button-create"]').click()
-        cy.wait(2000)
+        cy.wait(customWaitTime)
         app_page()
-        cy.wait(10000)
+        cy.wait(customWaitTime)
         cy.reload()
         cy.get(':nth-child(2) > .application-status-panel__item-value > :nth-child(1)')
           .contains('Synced')
         cy.task('log', 'app is synced...')
-        cy.wait(10000)
+        cy.wait(customWaitTime)
         cy.reload()
         cy.get(':nth-child(1) > .application-status-panel__item-value')
           .contains('Healthy')
@@ -229,7 +248,7 @@ function app_page() {
         cy.contains('Please type').click()
         cy.get('input[qeid="name-field-delete-confirmation"]').type('guestbook')
         cy.get('button[qe-id="prompt-popup-ok-button"]').click()
-        cy.wait(15000)
+        cy.wait(customWaitTime)
         cy.reload()
         cy.contains('guestbook').should('not.exist')
         cy.task('log', 'app is deleted...')
