@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.7.7
+appVersion: v2.7.10
 kubeVersion: ">=1.23.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 5.39.0-bb.1
+version: 5.42.2-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -18,7 +18,7 @@ maintainers:
     url: https://argoproj.github.io/
 dependencies:
 - name: redis
-  version: 17.13.2-bb.0
+  version: 17.15.4-bb.0
   repository: "oci://registry1.dso.mil/bigbang"
   condition: redis-bb.enabled
   alias: redis-bb
@@ -30,10 +30,10 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.7.7
+    - Argocd: v2.7.10
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.7.7
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.7.10
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
@@ -42,10 +42,10 @@ annotations:
       image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.37.0
     - name: redis
       condition: redis-bb.enabled
-      image: registry1.dso.mil/ironbank/bitnami/redis:7.0.12
+      image: registry1.dso.mil/ironbank/bitnami/redis:7.2.0
     - name: redis-exporter
       condition: redis-bb.metrics.enabled
-      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.51.0
+      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.52.0
   artifacthub.io/changes: |
-    - kind: added
-      description: Allow configuring Dex's init image resources separately
+    - kind: fixed
+      description: Templates for global presets properly renders keys as a string instead of map
