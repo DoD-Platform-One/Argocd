@@ -576,6 +576,7 @@ NAME: my-release
 | repoServer.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
 | repoServer.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the repo server [HPA] |
+| repoServer.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD repo server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
 | repoServer.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the repo server [HPA] |
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
@@ -673,6 +674,7 @@ NAME: my-release
 | server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
 | server.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the Argo CD server [HPA] |
+| server.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
 | server.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the Argo CD server [HPA] |
 | server.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the Argo CD server [HPA] |
@@ -1193,6 +1195,7 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
 | notifications.secret.create | bool | `true` | Whether helm chart creates notifications controller secret |
 | notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret |
+| notifications.secret.labels | object | `{}` | key:value pairs of labels to be added to the secret |
 | notifications.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
 | notifications.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | notifications.serviceAccount.create | bool | `true` | Create notifications controller service account |

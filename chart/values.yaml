@@ -132,7 +132,7 @@ global:
     # -- If defined, a repository applied to all Argo CD deployments
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-    tag: v2.7.7
+    tag: v2.7.10
     # -- If defined, a imagePullPolicy applied to all Argo CD deployments
     imagePullPolicy: IfNotPresent
 
@@ -1252,7 +1252,7 @@ redis:
     # -- Redis repository
     repository: registry1.dso.mil/ironbank/opensource/redis/redis7
     # -- Redis tag
-    tag: 7.0.12
+    tag: 7.2.0
     # -- Redis image pull policy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: IfNotPresent
@@ -1612,6 +1612,9 @@ server:
       #   - type: Pods
       #     value: 2
       #     periodSeconds: 60
+    # -- Configures custom HPA metrics for the Argo CD server
+    # Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    metrics: []
 
   ## Argo CD server Pod Disruption Budget
   ## Ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
@@ -2181,6 +2184,9 @@ repoServer:
       #   - type: Pods
       #     value: 2
       #     periodSeconds: 60
+    # -- Configures custom HPA metrics for the Argo CD repo server
+    # Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    metrics: []
 
   ## Repo server Pod Disruption Budget
   ## Ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
@@ -2930,6 +2936,9 @@ notifications:
 
     # -- key:value pairs of annotations to be added to the secret
     annotations: {}
+
+    # -- key:value pairs of labels to be added to the secret
+    labels: {}
 
     # -- Generic key:value pairs to be inserted into the secret
     ## Can be used for templates, notification services etc. Some examples given below.

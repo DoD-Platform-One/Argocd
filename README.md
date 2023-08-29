@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.39.0-bb.1](https://img.shields.io/badge/Version-5.39.0--bb.1-informational?style=flat-square) ![AppVersion: v2.7.7](https://img.shields.io/badge/AppVersion-v2.7.7-informational?style=flat-square)
+![Version: 5.42.2-bb.0](https://img.shields.io/badge/Version-5.42.2--bb.0-informational?style=flat-square) ![AppVersion: v2.7.10](https://img.shields.io/badge/AppVersion-v2.7.10-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -87,7 +87,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.7.7"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.7.10"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -330,7 +330,7 @@ helm install argocd chart/
 | redis.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | redis.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `redis.pdb.minAvailable` |
 | redis.image.repository | string | `"registry1.dso.mil/ironbank/opensource/redis/redis7"` | Redis repository |
-| redis.image.tag | string | `"7.0.12"` | Redis tag |
+| redis.image.tag | string | `"7.2.0"` | Redis tag |
 | redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
@@ -401,6 +401,7 @@ helm install argocd chart/
 | server.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
+| server.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
 | server.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the Argo CD server |
 | server.pdb.labels | object | `{}` | Labels to be added to Argo CD server pdb |
 | server.pdb.annotations | object | `{}` | Annotations to be added to Argo CD server pdb |
@@ -548,6 +549,7 @@ helm install argocd chart/
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. This is only available on HPA apiVersion `autoscaling/v2beta2` and newer |
+| repoServer.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD repo server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
 | repoServer.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the repo server |
 | repoServer.pdb.labels | object | `{}` | Labels to be added to repo server pdb |
 | repoServer.pdb.annotations | object | `{}` | Annotations to be added to repo server pdb |
@@ -748,6 +750,7 @@ helm install argocd chart/
 | notifications.context | object | `{}` | Define user-defined context # For more information: https://argocd-notifications.readthedocs.io/en/stable/templates/#defining-user-defined-context |
 | notifications.secret.create | bool | `true` | Whether helm chart creates notifications controller secret |
 | notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
+| notifications.secret.labels | object | `{}` | key:value pairs of labels to be added to the secret |
 | notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret # Can be used for templates, notification services etc. Some examples given below. # For more information: https://argocd-notifications.readthedocs.io/en/stable/services/overview/ |
 | notifications.metrics.enabled | bool | `false` | Enables prometheus metrics server |
 | notifications.metrics.port | int | `9001` | Metrics port |
