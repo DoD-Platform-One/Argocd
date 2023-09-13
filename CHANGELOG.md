@@ -3,11 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.42.2-bb.1] - 2023-08-30
+### Updated
+- Refactored Cypress test to improve readability and maintainability
+- Removed frequent use of waits and reloads
+- Updated to work properly with KeyCloak enabled
+
 ## [5.42.2-bb.0] - 2023-08-15
 ### Updated
 - Updated to Argo 2.7.10
 - Updated to redis-exporter 1.52.0
 - Updated to redis 7.2.0
+
 ## [5.39.0-bb.1] - 2023-08-18
 ### Updated
 - Setting new variable for cypress test timeout
