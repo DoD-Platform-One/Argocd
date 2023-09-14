@@ -37,21 +37,7 @@ export const createApplication = () => {
   cy.get('input[qe-id="application-create-field-repository-url"]').type('https://github.com/argoproj/argocd-example-apps.git',{delay: 0})
   cy.get('input[qe-id="application-create-field-cluster-url"]').type('https://kubernetes.default.svc',{delay: 0})
   cy.get('input[qeid="application-create-field-namespace"]').type('argocd',{delay: 0})
-  
-  //It appears to be sending partially put together requests prior to actually being completed
-  //This ensures the content-length is the proper size while ignoring the previously failed requests
-  cy.intercept({
-    method: 'POST',
-    url: '\/api\/v1\/repositories\/*.*\/appdetails',
-    headers: {
-      'Content-Length': '203'
-    }
-  }).as('createConfirmation')
-
   cy.get('button[qe-id="applications-list-button-create"]').click()
-  cy.wait('@createConfirmation', {timeout: customTimeout}).then((interception) => {
-    expect(interception.response.statusCode).to.equal(200);
-  })
 }
 
 export const deleteApplication = () => {

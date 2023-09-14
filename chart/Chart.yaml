@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.7.10
+appVersion: v2.8.2
 kubeVersion: ">=1.23.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 5.42.2-bb.1
+version: 5.45.2-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -30,10 +30,10 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.7.10
+    - Argocd: v2.8.2
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.7.10
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.8.2
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.0.0
@@ -48,4 +48,4 @@ annotations:
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.52.0
   artifacthub.io/changes: |
     - kind: fixed
-      description: Templates for global presets properly renders keys as a string instead of map
+      description: do not hardcode the pathtype of the grpc ingress rule when using a single ingress resource in aws alb
