@@ -55,16 +55,6 @@ export const deleteApplication = () => {
   cy.get('.applications-list__search-wrapper').should('not.contain', applicationName)
 }
 
-// Save cookies so we don't have to log in again
-beforeEach(function () {
-  cy.getCookies().then(cookies => {
-    const namesOfCookies = cookies.map(cm => cm.name)
-    Cypress.Cookies.preserveOnce(...namesOfCookies)
-  })
-  //Requires the below to ensure you don't have to constantly reload the page
-  Cypress.Cookies.preserveOnce('session_id', 'argocd.token')
-})
-
 describe('ArgoCD Test', () => {
   it('Should log into the system', () => {
     cy.visit(`${Cypress.env('url')}/login`)
@@ -86,4 +76,8 @@ describe('ArgoCD Test', () => {
     cy.visit(`${Cypress.env('url')}/${applicationName}`)
     deleteApplication();
   })
+})
+
+after(() => {
+  Cypress.session.clearCurrentSessionData
 })
