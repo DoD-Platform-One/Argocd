@@ -1,7 +1,0 @@
-{
-  "pluginsFile": "cypress/integration/plugins.js",
-  "supportFile": false,
-  "fixturesFolder": false,
-  "defaultCommandTimeout": 20000,
-  "requestTimeout": 18000
-}

@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.45.2-bb.0](https://img.shields.io/badge/Version-5.45.2--bb.0-informational?style=flat-square) ![AppVersion: v2.8.2](https://img.shields.io/badge/AppVersion-v2.8.2-informational?style=flat-square)
+![Version: 5.45.2-bb.1](https://img.shields.io/badge/Version-5.45.2--bb.1-informational?style=flat-square) ![AppVersion: v2.8.2](https://img.shields.io/badge/AppVersion-v2.8.2-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -66,11 +66,10 @@ helm install argocd chart/
 | upgradeJob.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | bbtests.enabled | bool | `false` |  |
 | bbtests.cypress.artifacts | bool | `true` |  |
-| bbtests.cypress.envs.cypress_url | string | `"http://argocd-server:80"` |  |
+| bbtests.cypress.envs.cypress_url | string | `"http://argocd-server"` |  |
 | bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
 | bbtests.cypress.envs.cypress_password | string | `"Password123"` |  |
-| bbtests.cypress.envs.cypress_waittime | string | `"20000"` |  |
-| bbtests.cypress.envs.cypress_timeout | string | `"18000"` |  |
+| bbtests.cypress.envs.cypress_timeout | string | `"120000"` |  |
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
