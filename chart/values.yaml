@@ -1246,7 +1246,7 @@ redis:
     # -- Redis repository
     repository: registry1.dso.mil/ironbank/opensource/redis/redis7
     # -- Redis tag
-    tag: 7.2.0
+    tag: 7.2.1
     # -- Redis image pull policy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: IfNotPresent
@@ -1260,9 +1260,9 @@ redis:
     ## Prometheus redis-exporter image
     image:
       # -- Repository to use for the redis-exporter
-      repository: public.ecr.aws/bitnami/redis-exporter
+      repository: ironbank/bitnami/analytics/redis-exporter
       # -- Tag to use for the redis-exporter
-      tag: 1.52.0
+      tag: v1.54.0
       # -- Image pull policy for the redis-exporter
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""
@@ -2287,6 +2287,9 @@ repoServer:
   #      name: argocd-cmp-cm
   #  - name: cmp-tmp
   #    emptyDir: {}
+
+  # -- Toggle the usage of a ephemeral Helm working directory
+  useEphemeralHelmWorkingDir: true
 
   # -- Annotations to be added to repo server Deployment
   deploymentAnnotations: {}
