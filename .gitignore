@@ -1,6 +1,3 @@
 .idea
 chart/tests/.env
-chart/tests/cypress/fixtures
-chart/tests/cypress/integration
-chart/tests/cypress/support
 node_modules
