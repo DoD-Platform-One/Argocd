@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.46.7-bb.0]
+### Updated
+- Updated chart to 5.46.7
+- Bumped Redis chart dependency to `18.0.4-bb.0`
+- Updated to redis 7.2.1
+- Updated to redis-exporter 1.54.0
+
 ## [5.45.2-bb.1] - 2023-09-18
 ### Updated
 - Updated Cypress to 13.x

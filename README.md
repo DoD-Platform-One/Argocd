@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.45.2-bb.1](https://img.shields.io/badge/Version-5.45.2--bb.1-informational?style=flat-square) ![AppVersion: v2.8.2](https://img.shields.io/badge/AppVersion-v2.8.2-informational?style=flat-square)
+![Version: 5.46.7-bb.0](https://img.shields.io/badge/Version-5.46.7--bb.0-informational?style=flat-square) ![AppVersion: v2.8.2](https://img.shields.io/badge/AppVersion-v2.8.2-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -327,12 +327,12 @@ helm install argocd chart/
 | redis.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | redis.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `redis.pdb.minAvailable` |
 | redis.image.repository | string | `"registry1.dso.mil/ironbank/opensource/redis/redis7"` | Redis repository |
-| redis.image.tag | string | `"7.2.0"` | Redis tag |
+| redis.image.tag | string | `"7.2.1"` | Redis tag |
 | redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
-| redis.exporter.image.repository | string | `"public.ecr.aws/bitnami/redis-exporter"` | Repository to use for the redis-exporter |
-| redis.exporter.image.tag | string | `"1.52.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.repository | string | `"ironbank/bitnami/analytics/redis-exporter"` | Repository to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"v1.54.0"` | Tag to use for the redis-exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
 | redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
 | redis.exporter.resources | object | `{}` | Resource limits and requests for redis-exporter sidecar |
@@ -564,6 +564,7 @@ helm install argocd chart/
 | repoServer.initContainers | list | `[]` | Init containers to add to the repo server pods |
 | repoServer.volumeMounts | list | `[]` | Additional volumeMounts to the repo server main container |
 | repoServer.volumes | list | `[]` | Additional volumes to the repo server pod |
+| repoServer.useEphemeralHelmWorkingDir | bool | `true` | Toggle the usage of a ephemeral Helm working directory |
 | repoServer.deploymentAnnotations | object | `{}` | Annotations to be added to repo server Deployment |
 | repoServer.podAnnotations | object | `{}` | Annotations to be added to repo server pods |
 | repoServer.podLabels | object | `{}` | Labels to be added to repo server pods |
