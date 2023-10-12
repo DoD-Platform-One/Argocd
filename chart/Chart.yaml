@@ -3,7 +3,7 @@ appVersion: v2.8.4
 kubeVersion: ">=1.23.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 5.46.7-bb.3
+version: 5.46.7-bb.4
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -30,7 +30,7 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.8.2
+    - Argocd: v2.8.4
   helm.sh/images: |
     - name: argocd
       image: registry1.dso.mil/ironbank/big-bang/argocd:v2.8.4

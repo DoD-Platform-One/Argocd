@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.46.7-bb.4] - 2023-10-11
+### Updated
+- Updated annotation for bigbang.dev/applicationVersions to 2.8.4 in chart.yaml
+
 ## [5.46.7-bb.3] - 2023-10-06
 ### Updated
 - Updated OSCAL to 1.1.1
