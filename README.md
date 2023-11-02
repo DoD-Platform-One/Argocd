@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.46.7-bb.5](https://img.shields.io/badge/Version-5.46.7--bb.5-informational?style=flat-square) ![AppVersion: v2.8.4](https://img.shields.io/badge/AppVersion-v2.8.4-informational?style=flat-square)
+![Version: 5.46.7-bb.6](https://img.shields.io/badge/Version-5.46.7--bb.6-informational?style=flat-square) ![AppVersion: v2.8.4](https://img.shields.io/badge/AppVersion-v2.8.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -332,7 +332,7 @@ helm install argocd chart/
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | redis.exporter.image.repository | string | `"ironbank/bitnami/analytics/redis-exporter"` | Repository to use for the redis-exporter |
-| redis.exporter.image.tag | string | `"v1.54.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"v1.55.0"` | Tag to use for the redis-exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
 | redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
 | redis.exporter.resources | object | `{}` | Resource limits and requests for redis-exporter sidecar |

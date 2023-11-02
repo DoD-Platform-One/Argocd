@@ -1262,7 +1262,7 @@ redis:
       # -- Repository to use for the redis-exporter
       repository: ironbank/bitnami/analytics/redis-exporter
       # -- Tag to use for the redis-exporter
-      tag: v1.54.0
+      tag: v1.55.0
       # -- Image pull policy for the redis-exporter
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""

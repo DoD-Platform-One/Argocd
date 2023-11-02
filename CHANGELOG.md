@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.46.7-bb.6] - 2023-10-31
+### Updated
+- Update redis-exporter to v1.55.0
+
 ## [5.46.7-bb.5] - 2023-10-24
 ### Updated
 - Updating contributing file to link to external github contributions
