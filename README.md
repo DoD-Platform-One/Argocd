@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.46.7-bb.6](https://img.shields.io/badge/Version-5.46.7--bb.6-informational?style=flat-square) ![AppVersion: v2.8.4](https://img.shields.io/badge/AppVersion-v2.8.4-informational?style=flat-square)
+![Version: 5.46.7-bb.7](https://img.shields.io/badge/Version-5.46.7--bb.7-informational?style=flat-square) ![AppVersion: v2.8.4](https://img.shields.io/badge/AppVersion-v2.8.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -326,8 +326,8 @@ helm install argocd chart/
 | redis.pdb.annotations | object | `{}` | Annotations to be added to Redis pdb |
 | redis.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | redis.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `redis.pdb.minAvailable` |
-| redis.image.repository | string | `"registry1.dso.mil/ironbank/opensource/redis/redis7"` | Redis repository |
-| redis.image.tag | string | `"7.2.1"` | Redis tag |
+| redis.image.repository | string | `"ironbank/bitnami/redis"` | Redis repository |
+| redis.image.tag | string | `"7.2.2"` | Redis tag |
 | redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
@@ -366,6 +366,12 @@ helm install argocd chart/
 | redis.serviceAccount.automountServiceAccountToken | bool | `false` | Automount API credentials for the Service Account |
 | redis.service.annotations | object | `{}` | Redis service annotations |
 | redis.service.labels | object | `{}` | Additional redis service labels |
+| redis.master.containerSecurityContext.enabled | bool | `true` |  |
+| redis.master.containerSecurityContext.runAsUser | int | `999` |  |
+| redis.master.containerSecurityContext.runAsGroup | int | `999` |  |
+| redis.replica.containerSecurityContext.enabled | bool | `true` |  |
+| redis.replica.containerSecurityContext.runAsUser | int | `999` |  |
+| redis.replica.containerSecurityContext.runAsGroup | int | `999` |  |
 | redis.metrics.enabled | bool | `false` | Deploy metrics service |
 | redis.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
 | redis.metrics.service.clusterIP | string | `"None"` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
@@ -383,7 +389,10 @@ helm install argocd chart/
 | redis.metrics.serviceMonitor.namespace | string | `""` | Prometheus ServiceMonitor namespace |
 | redis.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
 | redis.metrics.serviceMonitor.annotations | object | `{}` | Prometheus ServiceMonitor annotations |
-| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"metrics":{"enabled":true},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
+| redis.metrics.containerSecurityContext.enabled | bool | `true` |  |
+| redis.metrics.containerSecurityContext.runAsUser | int | `999` |  |
+| redis.metrics.containerSecurityContext.runAsGroup | int | `999` |  |
+| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"metrics":{"containerSecurityContext":{"enabled":true,"runAsGroup":1001,"runAsUser":1001},"enabled":true},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
 | externalRedis.host | string | `""` | External Redis server host |
 | externalRedis.username | string | `""` | External Redis username |
 | externalRedis.password | string | `""` | External Redis password |

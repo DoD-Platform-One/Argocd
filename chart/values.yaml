@@ -1244,9 +1244,9 @@ redis:
   ## Redis image
   image:
     # -- Redis repository
-    repository: registry1.dso.mil/ironbank/opensource/redis/redis7
+    repository: ironbank/bitnami/redis
     # -- Redis tag
-    tag: 7.2.1
+    tag: 7.2.2
     # -- Redis image pull policy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: IfNotPresent
@@ -1412,6 +1412,18 @@ redis:
     # -- Additional redis service labels
     labels: {}
 
+  master:
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 999
+      runAsGroup: 999
+
+  replica:
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 999
+      runAsGroup: 999
+
   metrics:
     # -- Deploy metrics service
     enabled: false
@@ -1455,6 +1467,11 @@ redis:
       # -- Prometheus ServiceMonitor annotations
       annotations: {}
 
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 999
+      runAsGroup: 999
+
 # -- BigBang HA Redis Passthrough
 redis-bb:
   enabled: true
@@ -1470,6 +1487,10 @@ redis-bb:
       - private-registry
   metrics:
     enabled: true
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsGroup: 1001
 
   master:
     resources:
@@ -1480,6 +1501,7 @@ redis-bb:
         memory: 256Mi
         cpu: 100m
     containerSecurityContext:
+      enabled: true
       runAsUser: 1001
       runAsGroup: 1001
       runAsNonRoot: true
@@ -1495,6 +1517,7 @@ redis-bb:
         memory: 256Mi
         cpu: 100m
     containerSecurityContext:
+      enabled: true
       runAsUser: 1001
       runAsGroup: 1001
       runAsNonRoot: true
