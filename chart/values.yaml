@@ -60,7 +60,7 @@ upgradeJob:
   enabled: true
   image:
     repository: registry1.dso.mil/ironbank/big-bang/base
-    tag: 2.0.0
+    tag: 2.1.0
     imagePullPolicy: IfNotPresent
 # Big Bang Continuous Integration Testing Only
 bbtests:
@@ -72,6 +72,12 @@ bbtests:
       cypress_user: "admin"
       cypress_password: "Password123"
       cypress_timeout: "120000"
+    resources:
+      requests:
+        cpu: 2
+        memory: 2Gi
+
+
 
 ## Argo CD configuration
 ## Ref: https://github.com/argoproj/argo-cd
@@ -1246,7 +1252,7 @@ redis:
     # -- Redis repository
     repository: ironbank/bitnami/redis
     # -- Redis tag
-    tag: 7.2.2
+    tag: 7.2.3
     # -- Redis image pull policy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: IfNotPresent
