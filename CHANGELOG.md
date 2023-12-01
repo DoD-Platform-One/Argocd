@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.46.7-bb.9] - 2023-11-28
+### Updated
+- Updated redis to 7.2.3
+- Bumped Redis chart dependency to `18.3.2-bb.1`
+- Updated bigbang base chart dependancy to `2.1.0`
+
 ## [5.46.7-bb.8] - 2023-11-03
 ### Updated
 - Updated remote `gluon` chart dependency to 0.4.4
