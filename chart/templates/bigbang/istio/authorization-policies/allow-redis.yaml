@@ -1,0 +1,15 @@
+{{- if and .Values.istio.enabled .Values.istio.hardened.enabled -}}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-redis-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  action: ALLOW
+  rules:
+  - to:
+    - operation:
+        ports: 
+        - "6379"
+        - "9121"
+{{- end }}

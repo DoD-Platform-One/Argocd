@@ -12,6 +12,12 @@ sso:
 networkPolicies:
   enabled: true
 
+istio:
+  enabled: true
+  injection: "enabled"
+  hardened:
+    enabled: true
+
 redis-bb:
   enabled: true
   # pass throughs to BigBang's redis
