@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 5.46.7-bb.9](https://img.shields.io/badge/Version-5.46.7--bb.9-informational?style=flat-square) ![AppVersion: v2.8.4](https://img.shields.io/badge/AppVersion-v2.8.4-informational?style=flat-square)
+![Version: 5.46.7-bb.10](https://img.shields.io/badge/Version-5.46.7--bb.10-informational?style=flat-square) ![AppVersion: v2.8.4](https://img.shields.io/badge/AppVersion-v2.8.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -47,6 +47,27 @@ helm install argocd chart/
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | domain | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` | Toggle BigBang istio integration |
+| istio.hardened.enabled | bool | `false` |  |
+| istio.hardened.customAuthorizationPolicies | list | `[]` |  |
+| istio.hardened.monitoring.enabled | bool | `true` |  |
+| istio.hardened.monitoring.namespaces[0] | string | `"monitoring"` |  |
+| istio.hardened.monitoring.principals[0] | string | `"cluster.local/ns/monitoring/sa/monitoring-grafana"` |  |
+| istio.hardened.monitoring.principals[1] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager"` |  |
+| istio.hardened.monitoring.principals[2] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator"` |  |
+| istio.hardened.monitoring.principals[3] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus"` |  |
+| istio.hardened.monitoring.principals[4] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics"` |  |
+| istio.hardened.monitoring.principals[5] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter"` |  |
+| istio.hardened.argocd.enabled | bool | `true` |  |
+| istio.hardened.argocd.namespaces[0] | string | `"argocd"` |  |
+| istio.hardened.argocd.principals[0] | string | `"cluster.local/ns/argocd/sa/argocd-application-controller"` |  |
+| istio.hardened.argocd.principals[1] | string | `"cluster.local/ns/argocd/sa/argocd-applicationset-controller"` |  |
+| istio.hardened.argocd.principals[2] | string | `"cluster.local/ns/argocd/sa/argocd-argocd-redis-bb"` |  |
+| istio.hardened.argocd.principals[3] | string | `"cluster.local/ns/argocd/sa/argocd-argocd-repo-server"` |  |
+| istio.hardened.argocd.principals[4] | string | `"cluster.local/ns/argocd/sa/argocd-dex-server"` |  |
+| istio.hardened.argocd.principals[5] | string | `"cluster.local/ns/argocd/sa/argocd-notifications-controller"` |  |
+| istio.hardened.argocd.principals[6] | string | `"cluster.local/ns/argocd/sa/argocd-server"` |  |
+| istio.hardened.argocd.principals[7] | string | `"cluster.local/ns/argocd/sa/upgrade-job-svc-account"` |  |
+| istio.hardened.argocd.principals[8] | string | `"cluster.local/ns/argocd/sa/argocd-argocd-redis-bb-metrics"` |  |
 | istio.injection | string | `"disabled"` | Toggle BigBang istio injection |
 | istio.mtls | object | `{"mode":"STRICT"}` | Default argocd peer authentication |
 | istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
@@ -70,6 +91,8 @@ helm install argocd chart/
 | bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
 | bbtests.cypress.envs.cypress_password | string | `"Password123"` |  |
 | bbtests.cypress.envs.cypress_timeout | string | `"120000"` |  |
+| bbtests.cypress.resources.requests.cpu | int | `2` |  |
+| bbtests.cypress.resources.requests.memory | string | `"2Gi"` |  |
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
