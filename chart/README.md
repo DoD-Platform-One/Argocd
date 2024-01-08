@@ -105,6 +105,10 @@ For full list of changes please check ArtifactHub [changelog].
 
 Highlighted versions provide information about additional steps that should be performed by user when upgrading to newer version.
 
+### 5.52.0
+Because [Argo CD Extensions] is now deprecated and no further changes will be made, we switched to [Argo CD Extension Installer], adding an Argo CD Extension Installer to init-container in the Argo CD API server.
+If you used old mechanism, please move to new mechanism. For more details, please refer `.Values.server.extensions` in values.yaml.
+
 ### 5.35.0
 This version supports Kubernetes version `>=1.23.0-0`. The current supported version of Kubernetes is v1.24 or later and we align with the Amazon EKS calendar, because many AWS users follow a conservative approach.
 
@@ -115,14 +119,22 @@ The manifests are now using [`tini` as entrypoint][tini], instead of `entrypoint
 This means that the deployment manifests have to be updated after upgrading to Argo CD v2.7, and before upgrading to Argo CD v2.8 later.
 In case the manifests are updated before moving to Argo CD v2.8, the containers will not be able to start.
 
+### 5.26.0
+
+This version adds support for Config Management Plugins using the sidecar model and configured in a ConfigMap named `argocd-cmp-cm`.
+Users will need to migrate from the previous `argocd-cm` ConfigMap method to using the sidecar method before Argo CD v2.8. See the [Argo CD CMP migration guide](https://argo-cd.readthedocs.io/en/stable/operator-manual/config-management-plugins/#migrating-from-argocd-cm-plugins) for more specifics.
+
+To migrate your plugins, you can now set the `configs.cmp.create` to `true` and move your plugins from `configs.cm` to `configs.cmp.plugins`.
+You will also need to configure the sidecar containers under `repoServer.extraContainers` and ensure you are mounting any custom volumes you need from `repoServer.volumes` into here also.
+
 ### 5.24.0
 
-This versions adds additional global parameters for scheduling (`nodeSelector`, `tolerations`, `topologySpreadConstraints`).
+This version adds additional global parameters for scheduling (`nodeSelector`, `tolerations`, `topologySpreadConstraints`).
 Default `global.affinity` rules can be disabled when `none` value is used for the preset.
 
 ### 5.22.0
 
-This versions adds `global.affinity` options that are used as a presets. Override on component level works as before and replaces the default preset completely.
+This version adds `global.affinity` options that are used as a presets. Override on component level works as before and replaces the default preset completely.
 
 ### 5.19.0
 
@@ -449,6 +461,7 @@ NAME: my-release
 | configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
 | configs.gpg.annotations | object | `{}` | Annotations to be added to argocd-gpg-keys-cm configmap |
 | configs.gpg.keys | object | `{}` (See [values.yaml]) | [GnuPG] public keys to add to the keyring |
+| configs.params."application.namespaces" | string | `""` | Enables [Applications in any namespace] |
 | configs.params."applicationsetcontroller.enable.progressive.syncs" | bool | `false` | Enables use of the Progressive Syncs capability |
 | configs.params."applicationsetcontroller.policy" | string | `"sync"` | Modify how application is synced between the generator and the cluster. One of: `sync`, `create-only`, `create-update`, `create-delete` |
 | configs.params."controller.operation.processors" | int | `10` | Number of application operation processors |
@@ -561,6 +574,7 @@ NAME: my-release
 | controller.serviceAccount.labels | object | `{}` | Labels applied to created service account |
 | controller.serviceAccount.name | string | `"argocd-application-controller"` | Service account name |
 | controller.statefulsetAnnotations | object | `{}` | Annotations for the application controller StatefulSet |
+| controller.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | controller.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | controller.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller |
 | controller.volumeMounts | list | `[]` | Additional volumeMounts to the application controller main container |
@@ -653,6 +667,7 @@ NAME: my-release
 | repoServer.serviceAccount.create | bool | `true` | Create repo server service account |
 | repoServer.serviceAccount.labels | object | `{}` | Labels applied to created service account |
 | repoServer.serviceAccount.name | string | `""` | Repo server service account name |
+| repoServer.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | repoServer.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | repoServer.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the repo server |
 | repoServer.useEphemeralHelmWorkingDir | bool | `true` | Toggle the usage of a ephemeral Helm working directory |
@@ -707,10 +722,11 @@ NAME: my-release
 | server.env | list | `[]` | Environment variables to pass to Argo CD server |
 | server.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to Argo CD server |
 | server.extensions.containerSecurityContext | object | See [values.yaml] | Server UI extensions container-level security context |
-| server.extensions.enabled | bool | `false` | Enable support for Argo UI extensions |
+| server.extensions.enabled | bool | `false` | Enable support for Argo CD extensions |
+| server.extensions.extensionList | list | `[]` (See [values.yaml]) | Extensions for Argo CD |
 | server.extensions.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for extensions |
-| server.extensions.image.repository | string | `"ghcr.io/argoproj-labs/argocd-extensions"` | Repository to use for extensions image |
-| server.extensions.image.tag | string | `"v0.2.1"` | Tag to use for extensions image |
+| server.extensions.image.repository | string | `"quay.io/argoprojlabs/argocd-extension-installer"` | Repository to use for extension installer image |
+| server.extensions.image.tag | string | `"v0.0.1"` | Tag to use for extension installer image |
 | server.extensions.resources | object | `{}` | Resource limits and requests for the argocd-extensions container |
 | server.extraArgs | list | `[]` | Additional command line arguments to pass to Argo CD server |
 | server.extraContainers | list | `[]` | Additional containers to be added to the server pod |
@@ -807,6 +823,7 @@ NAME: my-release
 | server.serviceAccount.create | bool | `true` | Create server service account |
 | server.serviceAccount.labels | object | `{}` | Labels applied to created service account |
 | server.serviceAccount.name | string | `"argocd-server"` | Server service account name |
+| server.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | server.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | server.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the Argo CD server |
 | server.volumeMounts | list | `[]` | Additional volumeMounts to the server main container |
@@ -915,6 +932,7 @@ server:
 | dex.servicePortHttp | int | `5556` | Service port for HTTP access |
 | dex.servicePortHttpName | string | `"http"` | Service port name for HTTP access |
 | dex.servicePortMetrics | int | `5558` | Service port for metrics access |
+| dex.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | dex.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | dex.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to dex |
 | dex.volumeMounts | list | `[]` | Additional volumeMounts to the dex main container |
@@ -986,6 +1004,7 @@ server:
 | redis.serviceAccount.create | bool | `false` | Create a service account for the redis pod |
 | redis.serviceAccount.name | string | `""` | Service account name for redis pod |
 | redis.servicePort | int | `6379` | Redis service port |
+| redis.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | redis.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | redis.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to redis |
 | redis.volumeMounts | list | `[]` | Additional volumeMounts to the redis container |
@@ -1001,12 +1020,14 @@ The main options are listed here:
 |-----|------|---------|-------------|
 | redis-ha.additionalAffinities | object | `{}` | Additional affinities to add to the Redis server pods. |
 | redis-ha.affinity | string | `""` | Assign custom [affinity] rules to the Redis pods. |
+| redis-ha.containerSecurityContext | object | See [values.yaml] | Redis HA statefulset container-level security context |
 | redis-ha.enabled | bool | `false` | Enables the Redis HA subchart and disables the custom Redis single node deployment |
 | redis-ha.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis-ha.exporter.image | string | `"public.ecr.aws/bitnami/redis-exporter"` | Repository to use for the redis-exporter |
 | redis-ha.exporter.tag | string | `"1.53.0"` | Tag to use for the redis-exporter |
 | redis-ha.haproxy.additionalAffinities | object | `{}` | Additional affinities to add to the haproxy pods. |
 | redis-ha.haproxy.affinity | string | `""` | Assign custom [affinity] rules to the haproxy pods. |
+| redis-ha.haproxy.containerSecurityContext | object | See [values.yaml] | HAProxy container-level security context |
 | redis-ha.haproxy.enabled | bool | `true` | Enabled HAProxy LoadBalancing/Proxy |
 | redis-ha.haproxy.hardAntiAffinity | bool | `true` | Whether the haproxy pods should be forced to run on separate nodes. |
 | redis-ha.haproxy.metrics.enabled | bool | `true` | HAProxy enable prometheus metric scraping |
@@ -1134,6 +1155,7 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | applicationSet.serviceAccount.create | bool | `true` | Create ApplicationSet controller service account |
 | applicationSet.serviceAccount.labels | object | `{}` | Labels applied to created service account |
 | applicationSet.serviceAccount.name | string | `"argocd-applicationset-controller"` | ApplicationSet controller service account name |
+| applicationSet.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | applicationSet.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | applicationSet.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the ApplicationSet controller |
 | applicationSet.webhook.ingress.annotations | object | `{}` | Additional ingress annotations |
@@ -1152,6 +1174,7 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 |-----|------|---------|-------------|
 | notifications.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | notifications.argocdUrl | string | `nil` | Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates |
+| notifications.clusterRoleRules.rules | list | `[]` | List of custom rules for the notifications controller's ClusterRole resource |
 | notifications.cm.create | bool | `true` | Whether helm chart creates notifications controller config map |
 | notifications.containerPorts.metrics | int | `9001` | Metrics container port |
 | notifications.containerSecurityContext | object | See [values.yaml] | Notification controller container-level security Context |
@@ -1212,6 +1235,7 @@ If you want to use an existing Redis (eg. a managed service from a cloud provide
 | notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | Notification controller service account name |
 | notifications.subscriptions | list | `[]` | Contains centrally managed global application subscriptions |
 | notifications.templates | object | `{}` | The notification template is used to generate the notification content |
+| notifications.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | notifications.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | notifications.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller |
 | notifications.triggers | object | `{}` | The trigger defines the condition when the notification should be sent |
@@ -1243,3 +1267,6 @@ Autogenerated from chart metadata using [helm-docs](https://github.com/norwoodj/
 [tini]: https://github.com/argoproj/argo-cd/pull/12707
 [EKS EoL]: https://endoflife.date/amazon-eks
 [Kubernetes Compatibility Matrix]: https://argo-cd.readthedocs.io/en/stable/operator-manual/installation/#supported-versions
+[Applications in any namespace]: https://argo-cd.readthedocs.io/en/stable/operator-manual/app-any-namespace/#applications-in-any-namespace
+[Argo CD Extensions]: https://github.com/argoproj-labs/argocd-extensions?tab=readme-ov-file#deprecation-notice
+[Argo CD Extension Installer]: https://github.com/argoproj-labs/argocd-extension-installer
