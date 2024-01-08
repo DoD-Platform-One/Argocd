@@ -23,14 +23,21 @@ The below details the steps required to update to a new version of the Argocd pa
 NOTE: For these testing steps it is good to do them on both a clean install and an upgrade. For clean install, point argocd to your branch. For an upgrade do an install with argocd pointing to the latest tag, then perform a helm upgrade with argocd pointing to your branch.
 
 You will want to install with:
+- Istio enabled
 - Argocd enabled
     - Set `admin` password for testing determinism (this sets password to `Password123`)
-    - ``` 
-        configs:
-            secret:
-                argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
-        ```
-- Istio enabled
+
+The above can be accomplished with the following overrides for Big Bang:
+```yaml
+istio:
+  enabled: true
+addons:
+  argocd: enabled
+  values:
+    configs:
+      secret:
+        argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
+```
 
 Testing Steps:
 - Ensure all resources have reconciled and are healthy
@@ -102,7 +109,7 @@ monitoring:
 networkPolicies:
   # -- Toggle BigBang networkPolicies integration
   enabled: false
-  ingressLabels: 
+  ingressLabels:
     app: istio-ingressgateway
     istio: ingressgateway
   # -- Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster
@@ -113,11 +120,11 @@ upgradeJob:
   enabled: true
   image:
     repository: registry1.dso.mil/ironbank/big-bang/base
-    tag: 2.0.0
+    tag: 2.1.0
     imagePullPolicy: IfNotPresent
 ```
 
-There are instances where the helm chart templates for Kubernetes resources in this package will need to have helm template values that will be a necessary addtion to the upstream templates.
+There are instances where the helm chart templates for Kubernetes resources in this package will need to have helm template values that will be a necessary addition to the upstream templates.
 
 ## Monitoring
 

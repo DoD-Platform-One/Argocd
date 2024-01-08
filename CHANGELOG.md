@@ -3,6 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.52.0-bb.0] - 2024-01-08
+### Updated
+- Bumping application version to `v2.9.3` from `v2.8.4`
+- Update chart version to 5.52.0-bb.0
+
 ## [5.46.7-bb.11] - 2024-01-05
 ### Changed
 - Bumped Redis chart dependency to `18.3.2-bb.2`
@@ -93,12 +98,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [5.39.0-bb.0] - 2023-07-14
 ### Updated
 - Updated to Argo 2.7.7
-- Updated to dex 2.37.0 
+- Updated to dex 2.37.0
 - Updated to redis 7.0.12
 
 ## [5.36.1-bb.0] - 2023-06-21
 ### Updated
-- updated argocd appversion 
+- updated argocd appversion
 
 ## [5.33.1-bb.2] - 2023-06-06
 ### Updated
@@ -149,7 +154,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [5.27.1-bb.0] - 2023-03-22
 ### Updated
 - Updated to Argo 2.6.6
-- Updated to dex 2.36.0 
+- Updated to dex 2.36.0
 
 
 ## [5.22.1-bb.2] - 2023-03-14
