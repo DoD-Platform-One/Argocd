@@ -17,15 +17,6 @@ export const standardLogin = (user, pass) => {
   })
 }
 
-export const keycloakLogin = (user, pass) => {
-  cy.get('a > .argo-button').click()
-  cy.get('input[id="username"]').type(user)
-  cy.get('input[id="password"]').type(pass)
-  cy.get('input[id="kc-login"]').click()
-  cy.get('input[id="kc-accept"]').click()
-  cy.get('input[id="kc-login"]').click()
-}
-
 export const createApplication = () => {
   cy.get('button[qe-id="applications-list-button-new-app"]').click()
   cy.get('input[qeid="application-create-field-app-name"]').type(applicationName)
@@ -59,7 +50,8 @@ describe('ArgoCD Test', () => {
   it('Should log into the system', () => {
     cy.visit(`${Cypress.env('url')}/login`)
     if (Cypress.env('keycloak_test_enable')) {
-      keycloakLogin(Cypress.env('tnr_username'), Cypress.env('tnr_password'))
+      cy.get('a > .argo-button').click()
+      cy.performKeycloakLogin(Cypress.env('tnr_username'), Cypress.env('tnr_password'))
     } else {
       standardLogin(Cypress.env('user'), Cypress.env('password'))
     }
@@ -72,7 +64,7 @@ describe('ArgoCD Test', () => {
       cy.wrap(appDiv).find('[qe-id="applications-tiles-health-status"]', {timeout: customTimeout}).should('contain', 'Healthy')
     })
   })
-  it('Should delete created application', () => {
+  it('Should delete application', () => {
     cy.visit(`${Cypress.env('url')}/${applicationName}`)
     deleteApplication();
   })

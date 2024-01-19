@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [5.52.0-bb.1] - 2024-01-16
+### Updated
+- Updated gluon to 0.4.7
+- Renamed cypress test file and updated cypress test to use shared command for keycloak login
+- Combined create and delete application in Cypress test to one test so it only attempts to delete if creation was successful
+- Removed cypress config as it is now using shared config from gluon
+
 ## [5.52.0-bb.0] - 2024-01-08
 ### Updated
 - Bumping application version to `v2.9.3` from `v2.8.4`
