@@ -1,6 +1,6 @@
-# argocd
+# argo-cd
 
-![Version: 5.52.0-bb.1](https://img.shields.io/badge/Version-5.52.0--bb.1-informational?style=flat-square) ![AppVersion: v2.9.3](https://img.shields.io/badge/AppVersion-v2.9.3-informational?style=flat-square)
+![Version: 5.53.1-bb.0](https://img.shields.io/badge/Version-5.53.1--bb.0-informational?style=flat-square) ![AppVersion: v2.9.4](https://img.shields.io/badge/AppVersion-v2.9.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -31,7 +31,7 @@ https://helm.sh/docs/intro/install/
 * Clone down the repository
 * cd into directory
 ```bash
-helm install argocd chart/
+helm install argo-cd chart/
 ```
 
 ## Values
@@ -93,6 +93,8 @@ helm install argocd chart/
 | bbtests.cypress.envs.cypress_timeout | string | `"120000"` |  |
 | bbtests.cypress.resources.requests.cpu | int | `2` |  |
 | bbtests.cypress.resources.requests.memory | string | `"2Gi"` |  |
+| bbtests.cypress.resources.limits.cpu | int | `4` |  |
+| bbtests.cypress.resources.limits.memory | string | `"4Gi"` |  |
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
@@ -107,7 +109,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.9.3"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.9.4"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -602,6 +604,7 @@ helm install argocd chart/
 | repoServer.initContainers | list | `[]` | Init containers to add to the repo server pods |
 | repoServer.volumeMounts | list | `[]` | Additional volumeMounts to the repo server main container |
 | repoServer.volumes | list | `[]` | Additional volumes to the repo server pod |
+| repoServer.existingVolumes | object | `{}` | Volumes to be used in replacement of emptydir on default volumes |
 | repoServer.useEphemeralHelmWorkingDir | bool | `true` | Toggle the usage of a ephemeral Helm working directory |
 | repoServer.deploymentAnnotations | object | `{}` | Annotations to be added to repo server Deployment |
 | repoServer.podAnnotations | object | `{}` | Annotations to be added to repo server pods |
