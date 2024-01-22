@@ -30,3 +30,15 @@ redis-bb:
   networkPolicies:
     enabled: true
     controlPlaneCidr: 0.0.0.0/0
+
+kyvernoPolicies:
+  values:
+    policies:
+      require-non-root-user:
+          exclude:
+            any:
+            - resources:
+                namespaces:
+                - argocd
+                names:
+                - guestbook*
