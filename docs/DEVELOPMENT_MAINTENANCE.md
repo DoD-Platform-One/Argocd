@@ -4,7 +4,7 @@ The below details the steps required to update to a new version of the Argocd pa
 
 1. Review the [upstream release notes](https://github.com/argoproj/argo-cd/releases) for the update you are going to, as well as any versions skipped over between the last BB release and this one. Note any breaking changes and new features.
 
-2. Use `kpt` to pull the upstream chart via the latest tag that corresponds to the application version
+2. Use `kpt` to pull the upstream chart via the latest tag that corresponds to the application version. `kpt pkg update chart@argo-cd-<version> --strategy alpha-git-patch`
 
 3. Based on the upstream changelog review from earlier, make any changes required to resolve breaking changes and reconcile the Big Bang modifications.
 
