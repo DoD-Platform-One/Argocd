@@ -1,6 +1,6 @@
-# argo-cd
+# argocd
 
-![Version: 5.53.1-bb.0](https://img.shields.io/badge/Version-5.53.1--bb.0-informational?style=flat-square) ![AppVersion: v2.9.4](https://img.shields.io/badge/AppVersion-v2.9.4-informational?style=flat-square)
+![Version: 5.53.1-bb.1](https://img.shields.io/badge/Version-5.53.1--bb.1-informational?style=flat-square) ![AppVersion: v2.9.4](https://img.shields.io/badge/AppVersion-v2.9.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -31,7 +31,7 @@ https://helm.sh/docs/intro/install/
 * Clone down the repository
 * cd into directory
 ```bash
-helm install argo-cd chart/
+helm install argocd chart/
 ```
 
 ## Values
