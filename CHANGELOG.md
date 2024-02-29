@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.1.0-bb.2] - 2024-02-29
+### Fixed
+- Fixed chart name to be `argocd` rather than `argo-cd`
+
 ## [6.1.0-bb.1] - 2024-02-29
 ### Fixed
 - Added `before-hook-creation` delete policy to upgrade hook job resources (#addresses #144)
