@@ -191,6 +191,11 @@ data:
   {{- end }}
 ```
 
+Additionally, there is an extra conditional check added to `argocd-secret.yaml` to ensure that if `.Values.sso.keycloakClientSecret` AND `.Values.sso.enabled` are set, then the secret should be populated.
+```yaml
+  {{- if or .Values.configs.secret.githubSecret (or .Values.configs.secret.gitlabSecret .Values.configs.secret.bitbucketUUID .Values.configs.secret.bitbucketServerSecret .Values.configs.secret.gogsSecret (and .Values.configs.secret.azureDevops.username .Values.configs.secret.azureDevops.password) .Values.configs.secret.argocdServerAdminPassword .Values.configs.secret.extra (and .Values.sso.keycloakClientSecret .Values.sso.enabled)) }}
+```
+
 ## Chart.yaml
 
 The `Chart.yaml` file has a number of changes to support Big Bang needs:
