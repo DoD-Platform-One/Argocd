@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.7.2-bb.0] - 2024-03-14
+### Updated
+- Update ArgoCD chart to 6.7.2
+- Updated ArgoCD application version to v2.10.3
+- Update gluon to 0.4.8
+
 ## [6.1.0-bb.3] - 2024-03-12
 ### Fixed
 - Fixed issue where the `argocd-secret` template was not having its `data` block populated, even if `sso.keycloakClientSecret` was set

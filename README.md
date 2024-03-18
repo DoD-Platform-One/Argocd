@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 6.1.0-bb.3](https://img.shields.io/badge/Version-6.1.0--bb.3-informational?style=flat-square) ![AppVersion: v2.10.1](https://img.shields.io/badge/AppVersion-v2.10.1-informational?style=flat-square)
+![Version: 6.7.2-bb.0](https://img.shields.io/badge/Version-6.7.2--bb.0-informational?style=flat-square) ![AppVersion: v2.10.3](https://img.shields.io/badge/AppVersion-v2.10.3-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -110,7 +110,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.10.1"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.10.3"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -197,7 +197,9 @@ helm install argocd chart/
 | configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/ |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | controller.name | string | `"application-controller"` | Application controller name string |
-| controller.replicas | int | `1` | The number of application controller pods to run. Additional replicas will cause sharding of managed clusters across number of replicas. |
+| controller.replicas | int | `1` | The number of application controller pods to run. Additional replicas will cause sharding of managed clusters across number of replicas. # With dynamic cluster distribution turned on, sharding of the clusters will gracefully # rebalance if the number of replica's changes or one becomes unhealthy. (alpha) |
+| controller.dynamicClusterDistribution | bool | `false` | Enable dynamic cluster distribution (alpha) Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution # This is done using a deployment instead of a statefulSet # When replicas are added or removed, the sharding algorithm is re-run to ensure that the # clusters are distributed according to the algorithm. If the algorithm is well-balanced, # like round-robin, then the shards will be well-balanced. |
+| controller.heartbeatTime | int | `10` | Application controller heartbeat time Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution/#working-of-dynamic-distribution |
 | controller.revisionHistoryLimit | int | `5` | Maximum number of controller revisions that will be maintained in StatefulSet history |
 | controller.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the application controller |
 | controller.pdb.labels | object | `{}` | Labels to be added to application controller pdb |
@@ -216,6 +218,7 @@ helm install argocd chart/
 | controller.volumeMounts | list | `[]` | Additional volumeMounts to the application controller main container |
 | controller.volumes | list | `[]` | Additional volumes to the application controller pod |
 | controller.statefulsetAnnotations | object | `{}` | Annotations for the application controller StatefulSet |
+| controller.deploymentAnnotations | object | `{}` | Annotations for the application controller Deployment |
 | controller.podAnnotations | object | `{}` | Annotations to be added to application controller pods |
 | controller.podLabels | object | `{}` | Labels to be added to application controller pods |
 | controller.resources | object | `{"limits":{"cpu":"500m","memory":"3Gi"},"requests":{"cpu":"500m","memory":"3Gi"}}` | Resource limits and requests for the application controller pods |
@@ -321,12 +324,18 @@ helm install argocd chart/
 | dex.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for Dex server pods |
 | dex.containerSecurityContext | object | See [values.yaml] | Dex container-level security context |
 | dex.livenessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Dex >= 2.28.0 |
+| dex.livenessProbe.httpPath | string | `"/healthz/live"` | Http path to use for the liveness probe |
+| dex.livenessProbe.httpPort | string | `"metrics"` | Http port to use for the liveness probe |
+| dex.livenessProbe.httpScheme | string | `"HTTP"` | Scheme to use for for the liveness probe (can be HTTP or HTTPS) |
 | dex.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | dex.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | dex.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | dex.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | dex.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | dex.readinessProbe.enabled | bool | `false` | Enable Kubernetes readiness probe for Dex >= 2.28.0 |
+| dex.readinessProbe.httpPath | string | `"/healthz/ready"` | Http path to use for the readiness probe |
+| dex.readinessProbe.httpPort | string | `"metrics"` | Http port to use for the readiness probe |
+| dex.readinessProbe.httpScheme | string | `"HTTP"` | Scheme to use for for the liveness probe (can be HTTP or HTTPS) |
 | dex.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | dex.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | dex.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
@@ -359,12 +368,12 @@ helm install argocd chart/
 | redis.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | redis.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `redis.pdb.minAvailable` |
 | redis.image.repository | string | `"ironbank/bitnami/redis"` | Redis repository |
-| redis.image.tag | string | `"7.2.3"` | Redis tag |
+| redis.image.tag | string | `"7.2.4"` | Redis tag |
 | redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | redis.exporter.image.repository | string | `"ironbank/bitnami/analytics/redis-exporter"` | Repository to use for the redis-exporter |
-| redis.exporter.image.tag | string | `"v1.57.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"v1.58.0"` | Tag to use for the redis-exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
 | redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
 | redis.exporter.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Redis exporter (optional) |
@@ -583,10 +592,10 @@ helm install argocd chart/
 | server.ingress.pathType | string | `"Prefix"` | Ingress path type. One of `Exact`, `Prefix` or `ImplementationSpecific` |
 | server.ingress.tls | bool | `false` | Enable TLS configuration for the hostname defined at `server.ingress.hostname` # TLS certificate will be retrieved from a TLS secret `argocd-server-tls` # You can create this secret via `certificate` or `certificateSecret` option |
 | server.ingress.extraHosts | list | `[]` (See [values.yaml]) | The list of additional hostnames to be covered by ingress record |
-| server.ingress.extraPaths | list | `[]` (See [values.yaml]) | Additional ingress paths |
-| server.ingress.extraRules | list | `[]` (See [values.yaml]) | Additional ingress rules |
+| server.ingress.extraPaths | list | `[]` (See [values.yaml]) | Additional ingress paths # Note: Supports use of custom Helm templates |
+| server.ingress.extraRules | list | `[]` (See [values.yaml]) | Additional ingress rules # Note: Supports use of custom Helm templates |
 | server.ingress.extraTls | list | `[]` (See [values.yaml]) | Additional TLS configuration |
-| server.ingress.aws.backendProtocolVersion | string | `"HTTP2"` | Backend protocol version for the AWS ALB gRPC service # This tells AWS to send traffic from the ALB using HTTP2. Can use gRPC as well if you want to leverage gRPC specific features |
+| server.ingress.aws.backendProtocolVersion | string | `"GRPC"` | Backend protocol version for the AWS ALB gRPC service # This tells AWS to send traffic from the ALB using gRPC. # For more information: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html#health-check-settings |
 | server.ingress.aws.serviceType | string | `"NodePort"` | Service type for the AWS ALB gRPC service # Can be of type NodePort or ClusterIP depending on which mode you are running. # Instance mode needs type NodePort, IP mode needs type ClusterIP # Ref: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/how-it-works/#ingress-traffic |
 | server.ingress.gke.backendConfig | object | `{}` (See [values.yaml]) | Google [BackendConfig] resource, for use with the GKE Ingress Controller # Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters |
 | server.ingress.gke.frontendConfig | object | `{}` (See [values.yaml]) | Google [FrontendConfig] resource, for use with the GKE Ingress Controller # Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters |
@@ -601,8 +610,8 @@ helm install argocd chart/
 | server.ingressGrpc.pathType | string | `"Prefix"` | Ingress path type for dedicated [gRPC-ingress]. One of `Exact`, `Prefix` or `ImplementationSpecific` |
 | server.ingressGrpc.tls | bool | `false` | Enable TLS configuration for the hostname defined at `server.ingressGrpc.hostname` # TLS certificate will be retrieved from a TLS secret with name: `argocd-server-grpc-tls` |
 | server.ingressGrpc.extraHosts | list | `[]` (See [values.yaml]) | The list of additional hostnames to be covered by ingress record |
-| server.ingressGrpc.extraPaths | list | `[]` (See [values.yaml]) | Additional ingress paths for dedicated [gRPC-ingress] |
-| server.ingressGrpc.extraRules | list | `[]` (See [values.yaml]) | Additional ingress rules |
+| server.ingressGrpc.extraPaths | list | `[]` (See [values.yaml]) | Additional ingress paths for dedicated [gRPC-ingress] # Note: Supports use of custom Helm templates |
+| server.ingressGrpc.extraRules | list | `[]` (See [values.yaml]) | Additional ingress rules # Note: Supports use of custom Helm templates |
 | server.ingressGrpc.extraTls | list | `[]` (See [values.yaml]) | Additional TLS configuration for dedicated [gRPC-ingress] |
 | server.route.enabled | bool | `false` | Enable an OpenShift Route for the Argo CD server |
 | server.route.annotations | object | `{}` | Openshift Route annotations |
@@ -800,8 +809,9 @@ helm install argocd chart/
 | applicationSet.ingress.tls | bool | `false` | Enable TLS configuration for the hostname defined at `applicationSet.webhook.ingress.hostname` # TLS certificate will be retrieved from a TLS secret with name:`argocd-applicationset-controller-tls` |
 | applicationSet.ingress.extraHosts | list | `[]` (See [values.yaml]) | The list of additional hostnames to be covered by ingress record |
 | applicationSet.ingress.extraPaths | list | `[]` (See [values.yaml]) | Additional ingress paths |
-| applicationSet.ingress.extraRules | list | `[]` (See [values.yaml]) | Additional ingress rules |
+| applicationSet.ingress.extraRules | list | `[]` (See [values.yaml]) | Additional ingress rules # Note: Supports use of custom Helm templates |
 | applicationSet.ingress.extraTls | list | `[]` (See [values.yaml]) | Additional ingress TLS configuration |
+| applicationSet.allowAnyNamespace | bool | `false` | Enable ApplicationSet in any namespace feature |
 | notifications.enabled | bool | `true` | Enable notifications controller |
 | notifications.name | string | `"notifications-controller"` | Notifications controller name string |
 | notifications.argocdUrl | string | `""` (defaults to https://`global.domain`) | Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates |
@@ -824,7 +834,8 @@ helm install argocd chart/
 | notifications.extraVolumeMounts | list | `[]` | List of extra mounts to add (normally used with extraVolumes) |
 | notifications.extraVolumes | list | `[]` | List of extra volumes to add |
 | notifications.context | object | `{}` | Define user-defined context # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/#defining-user-defined-context |
-| notifications.secret.create | bool | `true` | Whether helm chart creates notifications controller secret |
+| notifications.secret.create | bool | `true` | Whether helm chart creates notifications controller secret # If true, will create a secret with the name below. Otherwise, will assume existence of a secret with that name. |
+| notifications.secret.name | string | `"argocd-notifications-secret"` | notifications controller Secret name |
 | notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
 | notifications.secret.labels | object | `{}` | key:value pairs of labels to be added to the secret |
 | notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret # Can be used for templates, notification services etc. Some examples given below. # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/ |
