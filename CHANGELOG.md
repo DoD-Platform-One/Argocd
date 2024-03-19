@@ -3,52 +3,56 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.7.2-bb.1] - 2024-03-19
+### Changed
+- Update ArgoCD chart name to `argocd`
+
 ## [6.7.2-bb.0] - 2024-03-14
-### Updated
+### Changed
 - Update ArgoCD chart to 6.7.2
 - Updated ArgoCD application version to v2.10.3
 - Update gluon to 0.4.8
 
 ## [6.1.0-bb.3] - 2024-03-12
-### Fixed
+### Changed
 - Fixed issue where the `argocd-secret` template was not having its `data` block populated, even if `sso.keycloakClientSecret` was set
 
 ## [6.1.0-bb.2] - 2024-02-29
-### Fixed
+### Changed
 - Fixed chart name to be `argocd` rather than `argo-cd`
 
 ## [6.1.0-bb.1] - 2024-02-29
-### Fixed
+### Changed
 - Added `before-hook-creation` delete policy to upgrade hook job resources (#addresses #144)
 
 ## [6.1.0-bb.0] - 2024-02-22
-### Updated
+### Changed
 - Update ArgoCD chart to 6.1.0
 - Updated ArgoCD application version to v2.10.1
 
 ## [5.53.1-bb.2] - 2024-01-23
-### Updated
+### Changed
 - Update Redis dependency chart to 18.7.1-bb.1
 
 ## [5.53.1-bb.1] - 2024-01-22
-### Fixed
+### Changed
 - Fixed chart name from previous update
 
 ## [5.53.1-bb.0] - 2024-01-22
-### Updated
+### Changed
 - Updated application version to `v2.9.4` from `v2.9.3`
 - Updated chart version to 5.53.1-bb.0
 - Update Redis dependency chart to 18.7.1-bb.0
 
 ## [5.52.0-bb.1] - 2024-01-16
-### Updated
+### Changed
 - Updated gluon to 0.4.7
 - Renamed cypress test file and updated cypress test to use shared command for keycloak login
 - Combined create and delete application in Cypress test to one test so it only attempts to delete if creation was successful
 - Removed cypress config as it is now using shared config from gluon
 
 ## [5.52.0-bb.0] - 2024-01-08
-### Updated
+### Changed
 - Bumping application version to `v2.9.3` from `v2.8.4`
 - Update chart version to 5.52.0-bb.0
 
