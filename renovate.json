@@ -5,7 +5,7 @@
     "dependencyDashboardHeader": "- [ ] Sync upstream helm chart version with updated dependencies.",
     "dependencyDashboardTitle": "Renovate: Upgrade ArgoCD Package Dependencies",
     "draftPR": true,
-    "enabledManagers": ["regex"],
+    "enabledManagers": ["regex", "helmv3"],
     "ignorePaths": ["chart/charts/**"],
     "labels": ["argocd","renovate"],
     "commitMessagePrefix": "SKIP UPDATE CHECK",
