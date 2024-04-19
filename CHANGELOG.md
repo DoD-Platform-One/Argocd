@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.7.2-bb.2] - 2024-04-19
+### Changed
+- Update ArgoCD application version to 2.10.6
+- Update gluon to 0.4.9
+- Update dexidp dependency to 2.39.1
+
 ## [6.7.2-bb.1] - 2024-03-19
 ### Changed
 - Update ArgoCD chart name to `argocd`

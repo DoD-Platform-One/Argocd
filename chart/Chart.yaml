@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.10.3
+appVersion: v2.10.6
 kubeVersion: ">=1.23.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 6.7.2-bb.1
+version: 6.7.2-bb.2
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -23,23 +23,23 @@ dependencies:
   condition: redis-bb.enabled
   alias: redis-bb
 - name: gluon
-  version: "0.4.8"
+  version: "0.4.9"
   repository: "oci://registry1.dso.mil/bigbang"
 - name: argocd-apps
   version: "0.0.9"
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.10.3
+    - Argocd: v2.10.6
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.10.3
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.10.6
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
     - name: dex
       condition: dex.enabled
-      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.38.0
+      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.39.1
     - name: redis
       condition: redis-bb.enabled
       image: registry1.dso.mil/ironbank/bitnami/redis:7.2.4
