@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.10.6
+appVersion: v2.10.7
 kubeVersion: ">=1.23.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 6.7.2-bb.2
+version: 6.7.15-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -30,10 +30,10 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.10.6
+    - Argocd: v2.10.7
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.10.6
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.10.7
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -48,4 +48,4 @@ annotations:
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.58.0
   artifacthub.io/changes: |
     - kind: changed
-      description: Bump argo-cd to v2.10.3
+      description: Pre-set statusbadge.url to global.domain when statusbadge is enabled

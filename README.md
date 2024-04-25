@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 6.7.2-bb.2](https://img.shields.io/badge/Version-6.7.2--bb.2-informational?style=flat-square) ![AppVersion: v2.10.6](https://img.shields.io/badge/AppVersion-v2.10.6-informational?style=flat-square)
+![Version: 6.7.15-bb.0](https://img.shields.io/badge/Version-6.7.15--bb.0-informational?style=flat-square) ![AppVersion: v2.10.7](https://img.shields.io/badge/AppVersion-v2.10.7-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -110,7 +110,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.10.6"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.10.7"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -142,6 +142,7 @@ helm install argocd chart/
 | configs.cm."admin.enabled" | bool | `true` | Enable local admin user # Ref: https://argo-cd.readthedocs.io/en/latest/faq/#how-to-disable-admin-user |
 | configs.cm."timeout.reconciliation" | string | `"180s"` | Timeout to discover if a new manifests version got published to the repository |
 | configs.cm."timeout.hard.reconciliation" | string | `"0s"` | Timeout to refresh application data as well as target manifests cache |
+| configs.cm."statusbadge.enabled" | bool | `false` | Enable Status Badge # Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/status-badge/ |
 | configs.params.create | bool | `true` | Create the argocd-cmd-params-cm configmap If false, it is expected the configmap will be created by something else. |
 | configs.params.annotations | object | `{}` | Annotations to be added to the argocd-cmd-params-cm ConfigMap |
 | configs.params."otlp.address" | string | `""` | Open-Telemetry collector address: (e.g. "otel-collector:4317") |
@@ -217,6 +218,7 @@ helm install argocd chart/
 | controller.initContainers | list | `[]` | Init containers to add to the application controller pod # If your target Kubernetes cluster(s) require a custom credential (exec) plugin # you could use this (and the same in the server pod) to provide such executable # Ref: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#client-go-credential-plugins # Note: Supports use of custom Helm templates |
 | controller.volumeMounts | list | `[]` | Additional volumeMounts to the application controller main container |
 | controller.volumes | list | `[]` | Additional volumes to the application controller pod |
+| controller.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for application controller |
 | controller.statefulsetAnnotations | object | `{}` | Annotations for the application controller StatefulSet |
 | controller.deploymentAnnotations | object | `{}` | Annotations for the application controller Deployment |
 | controller.podAnnotations | object | `{}` | Annotations to be added to application controller pods |
@@ -238,6 +240,7 @@ helm install argocd chart/
 | controller.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | controller.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | controller.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| controller.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | controller.serviceAccount.create | bool | `true` | Create a service account for the application controller |
 | controller.serviceAccount.name | string | `"argocd-application-controller"` | Service account name |
 | controller.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -307,6 +310,7 @@ helm install argocd chart/
 | dex.initContainers | list | `[]` | Init containers to add to the dex pod # Note: Supports use of custom Helm templates |
 | dex.volumeMounts | list | `[]` | Additional volumeMounts to the dex main container |
 | dex.volumes | list | `[]` | Additional volumes to the dex pod |
+| dex.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for Dex server |
 | dex.certificateSecret.enabled | bool | `false` | Create argocd-dex-server-tls secret |
 | dex.certificateSecret.labels | object | `{}` | Labels to be added to argocd-dex-server-tls secret |
 | dex.certificateSecret.annotations | object | `{}` | Annotations to be added to argocd-dex-server-tls secret |
@@ -342,6 +346,7 @@ helm install argocd chart/
 | dex.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | dex.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | dex.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
+| dex.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | dex.serviceAccount.create | bool | `true` | Create dex service account |
 | dex.serviceAccount.name | string | `"argocd-dex-server"` | Dex service account name |
 | dex.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -426,6 +431,7 @@ helm install argocd chart/
 | redis.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | redis.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to redis # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | redis.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
+| redis.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | redis.serviceAccount.create | bool | `false` | Create a service account for the redis pod |
 | redis.serviceAccount.name | string | `""` | Service account name for redis pod |
 | redis.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -458,7 +464,9 @@ helm install argocd chart/
 | redis.metrics.containerSecurityContext.enabled | bool | `true` |  |
 | redis.metrics.containerSecurityContext.runAsUser | int | `999` |  |
 | redis.metrics.containerSecurityContext.runAsGroup | int | `999` |  |
-| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"metrics":{"containerSecurityContext":{"enabled":true,"runAsGroup":1001,"runAsUser":1001},"enabled":true},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
+| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"metrics":{"containerSecurityContext":{"enabled":true,"runAsGroup":1001,"runAsUser":1001},"enabled":true,"labels":{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"},"metrics":null},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
+| redis-bb.metrics.labels | object | `{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"}` | Custom labels for the haproxy pod. This is relevant for Argo CD CLI. |
+| redis-bb.metrics.containerSecurityContext | object | `{"enabled":true,"runAsGroup":1001,"runAsUser":1001}` | HAProxy enable prometheus metric scraping |
 | externalRedis.host | string | `""` | External Redis server host |
 | externalRedis.username | string | `""` | External Redis username |
 | externalRedis.password | string | `""` | External Redis password |
@@ -489,7 +497,7 @@ helm install argocd chart/
 | server.lifecycle | object | `{}` | Specify postStart and preStop lifecycle hooks for your argo-cd-server container |
 | server.extensions.enabled | bool | `false` | Enable support for Argo CD extensions |
 | server.extensions.image.repository | string | `"quay.io/argoprojlabs/argocd-extension-installer"` | Repository to use for extension installer image |
-| server.extensions.image.tag | string | `"v0.0.1"` | Tag to use for extension installer image |
+| server.extensions.image.tag | string | `"v0.0.5"` | Tag to use for extension installer image |
 | server.extensions.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for extensions |
 | server.extensions.extensionList | list | `[]` (See [values.yaml]) | Extensions for Argo CD # Ref: https://github.com/argoproj-labs/argocd-extension-metrics#install-ui-extension |
 | server.extensions.containerSecurityContext | object | See [values.yaml] | Server UI extensions container-level security context |
@@ -498,6 +506,7 @@ helm install argocd chart/
 | server.initContainers | list | `[]` | Init containers to add to the server pod # If your target Kubernetes cluster(s) require a custom credential (exec) plugin # you could use this (and the same in the application controller pod) to provide such executable # Ref: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#client-go-credential-plugins |
 | server.volumeMounts | list | `[]` | Additional volumeMounts to the server main container |
 | server.volumes | list | `[]` | Additional volumes to the server pod |
+| server.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for the Argo CD server |
 | server.deploymentAnnotations | object | `{}` | Annotations to be added to server Deployment |
 | server.podAnnotations | object | `{}` | Annotations to be added to server pods |
 | server.podLabels | object | `{}` | Labels to be added to server pods |
@@ -577,6 +586,7 @@ helm install argocd chart/
 | server.metrics.serviceMonitor.namespace | string | `""` | Prometheus ServiceMonitor namespace |
 | server.metrics.serviceMonitor.additionalLabels | object | `{}` | Prometheus ServiceMonitor labels |
 | server.metrics.serviceMonitor.annotations | object | `{}` | Prometheus ServiceMonitor annotations |
+| server.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | server.serviceAccount.create | bool | `true` | Create server service account |
 | server.serviceAccount.name | string | `"argocd-server"` | Server service account name |
 | server.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -618,6 +628,8 @@ helm install argocd chart/
 | server.route.hostname | string | `""` | Hostname of OpenShift Route |
 | server.route.termination_type | string | `"passthrough"` | Termination type of Openshift Route |
 | server.route.termination_policy | string | `"None"` | Termination policy of Openshift Route |
+| server.clusterRoleRules.enabled | bool | `false` | Enable custom rules for the server's ClusterRole resource |
+| server.clusterRoleRules.rules | list | `[]` | List of custom rules for the server's ClusterRole resource |
 | repoServer.name | string | `"repo-server"` | Repo server name |
 | repoServer.replicas | int | `1` | The number of repo server pods to run |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
@@ -645,6 +657,7 @@ helm install argocd chart/
 | repoServer.volumeMounts | list | `[]` | Additional volumeMounts to the repo server main container |
 | repoServer.volumes | list | `[]` | Additional volumes to the repo server pod |
 | repoServer.existingVolumes | object | `{}` | Volumes to be used in replacement of emptydir on default volumes |
+| repoServer.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for repo server |
 | repoServer.useEphemeralHelmWorkingDir | bool | `true` | Toggle the usage of a ephemeral Helm working directory |
 | repoServer.deploymentAnnotations | object | `{}` | Annotations to be added to repo server Deployment |
 | repoServer.podAnnotations | object | `{}` | Annotations to be added to repo server pods |
@@ -703,6 +716,7 @@ helm install argocd chart/
 | repoServer.metrics.serviceMonitor.annotations | object | `{}` | Prometheus ServiceMonitor annotations |
 | repoServer.clusterRoleRules.enabled | bool | `false` | Enable custom rules for the Repo server's Cluster Role resource |
 | repoServer.clusterRoleRules.rules | list | `[]` | List of custom rules for the Repo server's Cluster Role resource |
+| repoServer.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | repoServer.serviceAccount.create | bool | `true` | Create repo server service account |
 | repoServer.serviceAccount.name | string | `""` | Repo server service account name |
 | repoServer.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -728,6 +742,7 @@ helm install argocd chart/
 | applicationSet.initContainers | list | `[]` | Init containers to add to the ApplicationSet controller pod # Note: Supports use of custom Helm templates |
 | applicationSet.extraVolumeMounts | list | `[]` | List of extra mounts to add (normally used with extraVolumes) |
 | applicationSet.extraVolumes | list | `[]` | List of extra volumes to add |
+| applicationSet.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for applicationSet controller |
 | applicationSet.metrics.enabled | bool | `false` | Deploy metrics service |
 | applicationSet.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
 | applicationSet.metrics.service.clusterIP | string | `""` | Metrics service clusterIP. `None` makes a "headless service" (no virtual IP) |
@@ -751,6 +766,7 @@ helm install argocd chart/
 | applicationSet.service.type | string | `"ClusterIP"` | ApplicationSet service type |
 | applicationSet.service.port | int | `7000` | ApplicationSet service port |
 | applicationSet.service.portName | string | `"http-webhook"` | ApplicationSet service port name |
+| applicationSet.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | applicationSet.serviceAccount.create | bool | `true` | Create ApplicationSet controller service account |
 | applicationSet.serviceAccount.name | string | `"argocd-applicationset-controller"` | ApplicationSet controller service account name |
 | applicationSet.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |
@@ -870,6 +886,7 @@ helm install argocd chart/
 | notifications.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | notifications.deploymentStrategy | object | `{"type":"Recreate"}` | Deployment strategy to be added to the notifications controller Deployment |
 | notifications.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the notifications controller pods |
+| notifications.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | notifications.serviceAccount.create | bool | `true` | Create notifications controller service account |
 | notifications.serviceAccount.name | string | `"argocd-notifications-controller"` | Notification controller service account name |
 | notifications.serviceAccount.annotations | object | `{}` | Annotations applied to created service account |

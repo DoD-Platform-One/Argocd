@@ -168,7 +168,7 @@ global:
     # -- If defined, a repository applied to all Argo CD deployments
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-    tag: v2.10.6
+    tag: v2.10.7
     # -- If defined, a imagePullPolicy applied to all Argo CD deployments
     imagePullPolicy: IfNotPresent
 
@@ -295,6 +295,10 @@ configs:
 
     # -- Timeout to refresh application data as well as target manifests cache
     timeout.hard.reconciliation: 0s
+
+    # -- Enable Status Badge
+    ## Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/status-badge/
+    statusbadge.enabled: false
 
     # Dex configuration
     # dex.config: |
@@ -789,6 +793,13 @@ controller:
   #  - name: custom-tools
   #    emptyDir: {}
 
+  ## Application controller emptyDir volumes
+  emptyDir:
+    # -- EmptyDir size limit for application controller
+    # @default -- `""` (defaults not set if not specified i.e. no size limit)
+    sizeLimit: ""
+    # sizeLimit: "1Gi"
+
   # -- Annotations for the application controller StatefulSet
   statefulsetAnnotations: {}
 
@@ -878,6 +889,9 @@ controller:
     # - maxSkew: 1
     #   topologyKey: topology.kubernetes.io/zone
     #   whenUnsatisfiable: DoNotSchedule
+
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: true
 
   serviceAccount:
     # -- Create a service account for the application controller
@@ -1107,6 +1121,13 @@ dex:
   # -- Additional volumes to the dex pod
   volumes: []
 
+  ## Dex server emptyDir volumes
+  emptyDir:
+    # -- EmptyDir size limit for Dex server
+    # @default -- `""` (defaults not set if not specified i.e. no size limit)
+    sizeLimit: ""
+    # sizeLimit: "1Gi"
+
   # TLS certificate configuration via Secret
   ## Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/tls/#configuring-tls-to-argocd-dex-server
   ## Note: Issuing certificates via cert-manager in not supported right now because it's not possible to restart Dex automatically without extra controllers.
@@ -1215,6 +1236,9 @@ dex:
 
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30
+
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: true
 
   serviceAccount:
     # -- Create dex service account
@@ -1520,6 +1544,9 @@ redis:
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30
 
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: true
+
   serviceAccount:
     # -- Create a service account for the redis pod
     create: false
@@ -1611,6 +1638,11 @@ redis-bb:
       - private-registry
   metrics:
     enabled: true
+    # --  Custom labels for the haproxy pod. This is relevant for Argo CD CLI.
+    labels:
+      app.kubernetes.io/name: argocd-redis-ha-haproxy
+    metrics:
+      # -- HAProxy enable prometheus metric scraping
     containerSecurityContext:
       enabled: true
       runAsUser: 1001
@@ -1819,7 +1851,7 @@ server:
       # -- Repository to use for extension installer image
       repository: "quay.io/argoprojlabs/argocd-extension-installer"
       # -- Tag to use for extension installer image
-      tag: "v0.0.1"
+      tag: "v0.0.5"
       # -- Image pull policy for extensions
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""
@@ -1906,6 +1938,13 @@ server:
   volumes: []
   #  - name: custom-tools
   #    emptyDir: {}
+
+  ## Argo CD server emptyDir volumes
+  emptyDir:
+    # -- EmptyDir size limit for the Argo CD server
+    # @default -- `""` (defaults not set if not specified i.e. no size limit)
+    sizeLimit: ""
+    # sizeLimit: "1Gi"
 
   # -- Annotations to be added to server Deployment
   deploymentAnnotations: {}
@@ -2150,6 +2189,9 @@ server:
       # -- Prometheus ServiceMonitor annotations
       annotations: {}
 
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: true
+
   serviceAccount:
     # -- Create server service account
     create: true
@@ -2359,6 +2401,14 @@ server:
     # -- Termination policy of Openshift Route
     termination_policy: None
 
+  ## Enable this and set the rules: to whatever custom rules you want for the Cluster Role resource.
+  ## Defaults to off
+  clusterRoleRules:
+    # -- Enable custom rules for the server's ClusterRole resource
+    enabled: false
+    # -- List of custom rules for the server's ClusterRole resource
+    rules: []
+
 ## Repo Server
 repoServer:
   # -- Repo server name
@@ -2522,6 +2572,13 @@ repoServer:
   #  plugins:
   #    persistentVolumeClaim:
   #      claimName: pvc-argocd-repo-server-plugins
+
+  ## RepoServer emptyDir volumes
+  emptyDir:
+    # -- EmptyDir size limit for repo server
+    # @default -- `""` (defaults not set if not specified i.e. no size limit)
+    sizeLimit: ""
+    # sizeLimit: "1Gi"
 
   # -- Toggle the usage of a ephemeral Helm working directory
   useEphemeralHelmWorkingDir: true
@@ -2714,6 +2771,9 @@ repoServer:
     # -- List of custom rules for the Repo server's Cluster Role resource
     rules: []
 
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: true
+
   ## Repo server service account
   ## If create is set to true, make sure to uncomment the name and update the rbac section below
   serviceAccount:
@@ -2812,6 +2872,13 @@ applicationSet:
   # -- List of extra volumes to add
   extraVolumes: []
 
+  ## ApplicationSet controller emptyDir volumes
+  emptyDir:
+    # -- EmptyDir size limit for applicationSet controller
+    # @default -- `""` (defaults not set if not specified i.e. no size limit)
+    sizeLimit: ""
+    # sizeLimit: "1Gi"
+
   ## Metrics service configuration
   metrics:
     # -- Deploy metrics service
@@ -2867,6 +2934,9 @@ applicationSet:
     port: 7000
     # -- ApplicationSet service port name
     portName: http-webhook
+
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: true
 
   serviceAccount:
     # -- Create ApplicationSet controller service account
@@ -3332,6 +3402,9 @@ notifications:
   # -- Priority class for the notifications controller pods
   # @default -- `""` (defaults to global.priorityClassName)
   priorityClassName: ""
+
+  # -- Automount API credentials for the Service Account into the pod.
+  automountServiceAccountToken: true
 
   serviceAccount:
     # -- Create notifications controller service account
