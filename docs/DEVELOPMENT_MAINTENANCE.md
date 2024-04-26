@@ -44,7 +44,7 @@ addons:
 Testing Steps:
 - Ensure all resources have reconciled and are healthy
 - Ensure the application is resolvable at `argocd.bigbang.dev`
-- Run the cyrpress tests to confirm functionality of adding and deleting an application via the UI
+- Run the cypress tests to confirm functionality of adding and deleting an application via the UI
 
 When in doubt with any testing or upgrade steps ask one of the CODEOWNERS for assistance.
 
