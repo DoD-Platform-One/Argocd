@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 6.7.15-bb.0](https://img.shields.io/badge/Version-6.7.15--bb.0-informational?style=flat-square) ![AppVersion: v2.10.7](https://img.shields.io/badge/AppVersion-v2.10.7-informational?style=flat-square)
+![Version: 6.7.15-bb.1](https://img.shields.io/badge/Version-6.7.15--bb.0-informational?style=flat-square) ![AppVersion: v2.10.7](https://img.shields.io/badge/AppVersion-v2.10.7-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -81,6 +81,7 @@ helm install argocd chart/
 | networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
 | networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
 | networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` | Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints) Used by package NetworkPolicies to allow Kube API access |
+| networkPolicies.additionalPolicies | list | `[]` |  |
 | upgradeJob.enabled | bool | `true` |  |
 | upgradeJob.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/base"` |  |
 | upgradeJob.image.tag | string | `"2.1.0"` |  |
