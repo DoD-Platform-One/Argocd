@@ -201,7 +201,11 @@ global:
 
   # -- Toggle and define pod-level security context.
   # @default -- `{}` (See [values.yaml])
-  securityContext: {}
+  securityContext:
+    capabilities:
+      drop:
+        - all
+        
   #  runAsUser: 999
   #  runAsGroup: 999
   #  fsGroup: 999
