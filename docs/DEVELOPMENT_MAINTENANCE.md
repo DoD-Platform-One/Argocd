@@ -34,16 +34,17 @@ The above can be accomplished with the following overrides for Big Bang:
 istio:
   enabled: true
 addons:
-  argocd: enabled
-  values:
-    configs:
-      secret:
-        argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
+  argocd: 
+    enabled: true
+    values:
+      configs:
+        secret:
+          argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
 ```
 
 Testing Steps:
 - Ensure all resources have reconciled and are healthy
-- Ensure the application is resolvable at `argocd.bigbang.dev`
+- Ensure the application is resolvable at `argocd.dev.bigbang.mil`
 - Run the cypress tests to confirm functionality of adding and deleting an application via the UI
 
 When in doubt with any testing or upgrade steps ask one of the CODEOWNERS for assistance.
