@@ -3,9 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [6.7.15-bb.4] - 2024-05-08
+### Added
+- Added Istio Sidecar to restrict egress traffic to REGISTRY_ONLY 
+- Added Istio ServiceEntry
+- Added istiohardened doc  
+
 ## [6.7.15-bb.3] - 2024-05-03
 ### Changed
 - Updated gluon from 0.4.10 -> 0.5.0
+(Update gluon Docker tag to v0.5.0)
 
 ## [6.7.15-bb.2] - 2024-04-30
 ### Changed

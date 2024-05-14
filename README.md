@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 6.7.15-bb.3](https://img.shields.io/badge/Version-6.7.15--bb.3-informational?style=flat-square) ![AppVersion: v2.10.7](https://img.shields.io/badge/AppVersion-v2.10.7-informational?style=flat-square)
+![Version: 6.7.15-bb.4](https://img.shields.io/badge/Version-6.7.15--bb.4-informational?style=flat-square) ![AppVersion: v2.10.7](https://img.shields.io/badge/AppVersion-v2.10.7-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -48,6 +48,8 @@ helm install argocd chart/
 | domain | string | `"bigbang.dev"` |  |
 | istio.enabled | bool | `false` | Toggle BigBang istio integration |
 | istio.hardened.enabled | bool | `false` |  |
+| istio.hardened.outboundTrafficPolicyMode | string | `"REGISTRY_ONLY"` |  |
+| istio.hardened.customServiceEntries | list | `[]` |  |
 | istio.hardened.customAuthorizationPolicies | list | `[]` |  |
 | istio.hardened.monitoring.enabled | bool | `true` |  |
 | istio.hardened.monitoring.namespaces[0] | string | `"monitoring"` |  |
