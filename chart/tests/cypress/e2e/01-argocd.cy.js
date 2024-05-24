@@ -33,8 +33,8 @@ export const createApplication = () => {
 
 export const deleteApplication = () => {
   cy.get('.fa-times-circle').click()
-  cy.get('input[qeid="name-field-delete-confirmation"]').click({force: true})
-  cy.get('input[qeid="name-field-delete-confirmation"]').type(applicationName)
+  cy.get('input[qeid="name-field-delete-confirmation"]').focus()
+  cy.get('input[qeid="name-field-delete-confirmation"]').type(applicationName, {force: true})
   cy.get('button[qe-id="prompt-popup-ok-button"]').click()
 
   //Wait for the application card to disappear before validating its gone
