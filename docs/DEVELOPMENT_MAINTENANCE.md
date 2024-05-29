@@ -129,6 +129,13 @@ upgradeJob:
 
 There are instances where the helm chart templates for Kubernetes resources in this package will need to have helm template values that will be a necessary addition to the upstream templates.
 
+Disable `redisSecretInit`
+```yaml
+redisSecretInit:
+  # -- Enable Redis secret initialization. If disabled, secret must be provisioned by alternative methods
+  enabled: false
+```
+
 ## Monitoring
 
 The Kubernetes `Service` and `ServiceMonitor` templates used for metrics collection in this package, currently named `metrics.yaml` and `servicemonitor.yaml`, have a notable addition of a values key to the conditional statements to the templates:

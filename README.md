@@ -1,6 +1,6 @@
 # argocd
 
-![Version: 6.11.0-bb.0](https://img.shields.io/badge/Version-6.11.0--bb.0-informational?style=flat-square) ![AppVersion: v2.11.0](https://img.shields.io/badge/AppVersion-v2.11.0-informational?style=flat-square)
+![Version: 6.11.0-bb.1](https://img.shields.io/badge/Version-6.11.0--bb.1-informational?style=flat-square) ![AppVersion: v2.11.0](https://img.shields.io/badge/AppVersion-v2.11.0-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -477,7 +477,7 @@ helm install argocd chart/
 | externalRedis.port | int | `6379` | External Redis server port |
 | externalRedis.existingSecret | string | `""` | The name of an existing secret with Redis credentials (must contain key `redis-password`). When it's set, the `externalRedis.password` parameter is ignored |
 | externalRedis.secretAnnotations | object | `{}` | External Redis Secret annotations |
-| redisSecretInit.enabled | bool | `true` | Enable Redis secret initialization. If disabled, secret must be provisioned by alternative methods |
+| redisSecretInit.enabled | bool | `false` | Enable Redis secret initialization. If disabled, secret must be provisioned by alternative methods |
 | redisSecretInit.name | string | `"redis-secret-init"` | Redis secret-init name |
 | redisSecretInit.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the Redis secret-init Job |
 | redisSecretInit.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the Redis secret-init Job |
