@@ -1,6 +1,6 @@
-# argo-cd
+# argocd
 
-![Version: 6.11.1-bb.0](https://img.shields.io/badge/Version-6.11.1--bb.0-informational?style=flat-square) ![AppVersion: v2.11.2](https://img.shields.io/badge/AppVersion-v2.11.2-informational?style=flat-square)
+![Version: 6.11.1-bb.1](https://img.shields.io/badge/Version-6.11.1--bb.1-informational?style=flat-square) ![AppVersion: v2.11.2](https://img.shields.io/badge/AppVersion-v2.11.2-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -31,7 +31,7 @@ https://helm.sh/docs/intro/install/
 * Clone down the repository
 * cd into directory
 ```bash
-helm install argo-cd chart/
+helm install argocd chart/
 ```
 
 ## Values
@@ -301,7 +301,7 @@ helm install argo-cd chart/
 | dex.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | dex.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `dex.pdb.minAvailable` |
 | dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.39.1"` | Dex image tag |
+| dex.image.tag | string | `"v2.40.0"` | Dex image tag |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | dex.initImage.repository | string | `""` (defaults to global.image.repository) | Argo CD init image repository |

@@ -3,7 +3,7 @@ appVersion: v2.11.2
 kubeVersion: ">=1.23.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 6.11.1-bb.0
+version: 6.11.1-bb.1
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -39,7 +39,7 @@ annotations:
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
     - name: dex
       condition: dex.enabled
-      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.39.1
+      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.40.0
     - name: redis
       condition: redis-bb.enabled
       image: registry1.dso.mil/ironbank/bitnami/redis:7.2.5
