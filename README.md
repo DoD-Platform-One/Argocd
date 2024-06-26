@@ -5,12 +5,14 @@
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
 ## Upstream References
+
 * <https://github.com/argoproj/argo-helm>
 
 * <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
 * <https://github.com/argoproj/argo-cd>
 
 ## Learn More
+
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
 
@@ -24,12 +26,13 @@ Kubernetes: `>=1.23.0-0`
 
 Install Helm
 
-https://helm.sh/docs/intro/install/
+<https://helm.sh/docs/intro/install/>
 
 ## Deployment
 
 * Clone down the repository
 * cd into directory
+
 ```bash
 helm install argocd chart/
 ```
@@ -102,7 +105,7 @@ helm install argocd chart/
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
 | apiVersionOverrides | object | `{}` |  |
-| createAggregateRoles | bool | `false` | Create aggregated roles that extend existing cluster roles to interact with argo-cd resources # Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles |
+| createAggregateRoles | bool | `false` | Create aggregated roles that extend existing cluster roles to interact with argo-cd resources # Ref: <https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles> |
 | createClusterRoles | bool | `true` | Create cluster roles for cluster-wide installation. # Used when you manage applications in the same cluster where Argo CD runs |
 | openshift.enabled | bool | `false` | enables using arbitrary uid for argo repo server |
 | crds.install | bool | `true` | Install and upgrade CRDs |
@@ -133,19 +136,19 @@ helm install argocd chart/
 | global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `none`, `soft` or `hard` |
 | global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `none`, `soft` or `hard` |
 | global.affinity.nodeAffinity.matchExpressions | list | `[]` | Default match expressions for node affinity |
-| global.topologySpreadConstraints | list | `[]` | Default [TopologySpreadConstraints] rules for all components # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector of the component |
+| global.topologySpreadConstraints | list | `[]` | Default [TopologySpreadConstraints] rules for all components # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector of the component |
 | global.deploymentStrategy | object | `{}` | Deployment strategy for the all deployed Deployments |
 | global.env | list | `[]` | Environment variables to pass to all deployed Deployments |
 | global.certificateAnnotations | object | `{}` | Annotations for the all deployed Certificates |
 | configs.cm.create | bool | `true` | Create the argocd-cm configmap for [declarative setup] |
 | configs.cm.annotations | object | `{}` | Annotations to be added to argocd-cm configmap |
 | configs.cm."application.instanceLabelKey" | string | `"argocd.argoproj.io/instance"` | The name of tracking label used by Argo CD for resource pruning |
-| configs.cm."server.rbac.log.enforce.enable" | bool | `false` | Enable logs RBAC enforcement # Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/upgrading/2.3-2.4/#enable-logs-rbac-enforcement |
-| configs.cm."exec.enabled" | bool | `false` | Enable exec feature in Argo UI # Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/rbac/#exec-resource |
-| configs.cm."admin.enabled" | bool | `true` | Enable local admin user # Ref: https://argo-cd.readthedocs.io/en/latest/faq/#how-to-disable-admin-user |
+| configs.cm."server.rbac.log.enforce.enable" | bool | `false` | Enable logs RBAC enforcement # Ref: <https://argo-cd.readthedocs.io/en/latest/operator-manual/upgrading/2.3-2.4/#enable-logs-rbac-enforcement> |
+| configs.cm."exec.enabled" | bool | `false` | Enable exec feature in Argo UI # Ref: <https://argo-cd.readthedocs.io/en/latest/operator-manual/rbac/#exec-resource> |
+| configs.cm."admin.enabled" | bool | `true` | Enable local admin user # Ref: <https://argo-cd.readthedocs.io/en/latest/faq/#how-to-disable-admin-user> |
 | configs.cm."timeout.reconciliation" | string | `"180s"` | Timeout to discover if a new manifests version got published to the repository |
 | configs.cm."timeout.hard.reconciliation" | string | `"0s"` | Timeout to refresh application data as well as target manifests cache |
-| configs.cm."statusbadge.enabled" | bool | `false` | Enable Status Badge # Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/status-badge/ |
+| configs.cm."statusbadge.enabled" | bool | `false` | Enable Status Badge # Ref: <https://argo-cd.readthedocs.io/en/stable/user-guide/status-badge/> |
 | configs.params.create | bool | `true` | Create the argocd-cmd-params-cm configmap If false, it is expected the configmap will be created by something else. |
 | configs.params.annotations | object | `{}` | Annotations to be added to the argocd-cmd-params-cm ConfigMap |
 | configs.params."otlp.address" | string | `""` | Open-Telemetry collector address: (e.g. "otel-collector:4317") |
@@ -181,7 +184,7 @@ helm install argocd chart/
 | configs.cmp.create | bool | `false` | Create the argocd-cmp-cm configmap |
 | configs.cmp.annotations | object | `{}` | Annotations to be added to argocd-cmp-cm configmap |
 | configs.cmp.plugins | object | `{}` | Plugin yaml files to be added to argocd-cmp-cm |
-| configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] # Ref: # - https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters # - https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials # - https://argo-cd.readthedocs.io/en/stable/user-guide/projects/#project-scoped-repositories-and-clusters |
+| configs.clusterCredentials | list | `[]` (See [values.yaml]) | Provide one or multiple [external cluster credentials] # Ref: # - <https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters> # - <https://argo-cd.readthedocs.io/en/stable/operator-manual/security/#external-cluster-credentials> # - <https://argo-cd.readthedocs.io/en/stable/user-guide/projects/#project-scoped-repositories-and-clusters> |
 | configs.credentialTemplates | object | `{}` | Repository credentials to be used as Templates for other repos # Creates a secret for each key/value specified below to create repository credentials |
 | configs.credentialTemplatesAnnotations | object | `{}` | Annotations to be added to `configs.credentialTemplates` Secret |
 | configs.repositories | object | `{}` | Repositories list to be used by applications # Creates a secret for each key/value specified below to create repositories # Note: the last example in the list would use a repository credential template, configured under "configs.credentialTemplates". |
@@ -196,15 +199,15 @@ helm install argocd chart/
 | configs.secret.gogsSecret | string | `""` | Shared secret for authenticating Gogs webhook events |
 | configs.secret.azureDevops.username | string | `""` | Shared secret username for authenticating Azure DevOps webhook events |
 | configs.secret.azureDevops.password | string | `""` | Shared secret password for authenticating Azure DevOps webhook events |
-| configs.secret.extra | object | `{}` | add additional secrets to be added to argocd-secret # Custom secrets. Useful for injecting SSO secrets into environment variables. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets # Note that all values must be non-empty. |
+| configs.secret.extra | object | `{}` | add additional secrets to be added to argocd-secret # Custom secrets. Useful for injecting SSO secrets into environment variables. # Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets> # Note that all values must be non-empty. |
 | configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'` |
 | configs.secret.argocdServerAdminPasswordMtime | string | `""` (defaults to current time) | Admin password modification time. Eg. `"2006-01-02T15:04:05Z"` |
-| configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/ |
+| configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/> |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
 | controller.name | string | `"application-controller"` | Application controller name string |
 | controller.replicas | int | `1` | The number of application controller pods to run. Additional replicas will cause sharding of managed clusters across number of replicas. # With dynamic cluster distribution turned on, sharding of the clusters will gracefully # rebalance if the number of replica's changes or one becomes unhealthy. (alpha) |
-| controller.dynamicClusterDistribution | bool | `false` | Enable dynamic cluster distribution (alpha) Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution # This is done using a deployment instead of a statefulSet # When replicas are added or removed, the sharding algorithm is re-run to ensure that the # clusters are distributed according to the algorithm. If the algorithm is well-balanced, # like round-robin, then the shards will be well-balanced. |
-| controller.heartbeatTime | int | `10` | Application controller heartbeat time Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution/#working-of-dynamic-distribution |
+| controller.dynamicClusterDistribution | bool | `false` | Enable dynamic cluster distribution (alpha) Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution> # This is done using a deployment instead of a statefulSet # When replicas are added or removed, the sharding algorithm is re-run to ensure that the # clusters are distributed according to the algorithm. If the algorithm is well-balanced, # like round-robin, then the shards will be well-balanced. |
+| controller.heartbeatTime | int | `10` | Application controller heartbeat time Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution/#working-of-dynamic-distribution> |
 | controller.revisionHistoryLimit | int | `5` | Maximum number of controller revisions that will be maintained in StatefulSet history |
 | controller.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the application controller |
 | controller.pdb.labels | object | `{}` | Labels to be added to application controller pdb |
@@ -219,7 +222,7 @@ helm install argocd chart/
 | controller.env | list | `[]` | Environment variables to pass to application controller |
 | controller.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to application controller |
 | controller.extraContainers | list | `[]` | Additional containers to be added to the application controller pod # Note: Supports use of custom Helm templates |
-| controller.initContainers | list | `[]` | Init containers to add to the application controller pod # If your target Kubernetes cluster(s) require a custom credential (exec) plugin # you could use this (and the same in the server pod) to provide such executable # Ref: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#client-go-credential-plugins # Note: Supports use of custom Helm templates |
+| controller.initContainers | list | `[]` | Init containers to add to the application controller pod # If your target Kubernetes cluster(s) require a custom credential (exec) plugin # you could use this (and the same in the server pod) to provide such executable # Ref: <https://kubernetes.io/docs/reference/access-authn-authz/authentication/#client-go-credential-plugins> # Note: Supports use of custom Helm templates |
 | controller.volumeMounts | list | `[]` | Additional volumeMounts to the application controller main container |
 | controller.volumes | list | `[]` | Additional volumes to the application controller pod |
 | controller.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for application controller |
@@ -243,7 +246,7 @@ helm install argocd chart/
 | controller.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | controller.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | controller.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| controller.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| controller.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | controller.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | controller.serviceAccount.create | bool | `true` | Create a service account for the application controller |
 | controller.serviceAccount.name | string | `"argocd-application-controller"` | Service account name |
@@ -364,7 +367,7 @@ helm install argocd chart/
 | dex.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | dex.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | dex.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| dex.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| dex.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to dex # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | dex.deploymentStrategy | object | `{}` | Deployment strategy to be added to the Dex server Deployment |
 | dex.logFormat | string | `""` (defaults to global.logging.format) | Dex log format. Either `text` or `json` |
 | dex.logLevel | string | `""` (defaults to global.logging.level) | Dex log level. One of: `debug`, `info`, `warn`, `error` |
@@ -433,7 +436,7 @@ helm install argocd chart/
 | redis.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | redis.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | redis.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| redis.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to redis # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| redis.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to redis # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | redis.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | redis.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | redis.serviceAccount.create | bool | `false` | Create a service account for the redis pod |
@@ -504,7 +507,7 @@ helm install argocd chart/
 | server.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. |
-| server.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
+| server.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD server Ref: <https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/> |
 | server.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the Argo CD server |
 | server.pdb.labels | object | `{}` | Labels to be added to Argo CD server pdb |
 | server.pdb.annotations | object | `{}` | Annotations to be added to Argo CD server pdb |
@@ -522,11 +525,11 @@ helm install argocd chart/
 | server.extensions.image.repository | string | `"quay.io/argoprojlabs/argocd-extension-installer"` | Repository to use for extension installer image |
 | server.extensions.image.tag | string | `"v0.0.5"` | Tag to use for extension installer image |
 | server.extensions.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for extensions |
-| server.extensions.extensionList | list | `[]` (See [values.yaml]) | Extensions for Argo CD # Ref: https://github.com/argoproj-labs/argocd-extension-metrics#install-ui-extension |
+| server.extensions.extensionList | list | `[]` (See [values.yaml]) | Extensions for Argo CD # Ref: <https://github.com/argoproj-labs/argocd-extension-metrics#install-ui-extension> |
 | server.extensions.containerSecurityContext | object | See [values.yaml] | Server UI extensions container-level security context |
 | server.extensions.resources | object | `{}` | Resource limits and requests for the argocd-extensions container |
 | server.extraContainers | list | `[]` | Additional containers to be added to the server pod # Note: Supports use of custom Helm templates |
-| server.initContainers | list | `[]` | Init containers to add to the server pod # If your target Kubernetes cluster(s) require a custom credential (exec) plugin # you could use this (and the same in the application controller pod) to provide such executable # Ref: https://kubernetes.io/docs/reference/access-authn-authz/authentication/#client-go-credential-plugins |
+| server.initContainers | list | `[]` | Init containers to add to the server pod # If your target Kubernetes cluster(s) require a custom credential (exec) plugin # you could use this (and the same in the application controller pod) to provide such executable # Ref: <https://kubernetes.io/docs/reference/access-authn-authz/authentication/#client-go-credential-plugins> |
 | server.volumeMounts | list | `[]` | Additional volumeMounts to the server main container |
 | server.volumes | list | `[]` | Additional volumes to the server pod |
 | server.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for the Argo CD server |
@@ -555,14 +558,14 @@ helm install argocd chart/
 | server.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | server.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | server.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| server.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the Argo CD server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| server.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the Argo CD server # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | server.deploymentStrategy | object | `{}` | Deployment strategy to be added to the server Deployment |
 | server.certificate.enabled | bool | `false` | Deploy a Certificate resource (requires cert-manager) |
 | server.certificate.secretName | string | `"argocd-server-tls"` | The name of the Secret that will be automatically created and managed by this Certificate resource |
 | server.certificate.domain | string | `""` (defaults to global.domain) | Certificate primary domain (commonName) |
 | server.certificate.additionalHosts | list | `[]` | Certificate Subject Alternate Names (SANs) |
-| server.certificate.duration | string | `""` (defaults to 2160h = 90d if not specified) | The requested 'duration' (i.e. lifetime) of the certificate. # Ref: https://cert-manager.io/docs/usage/certificate/#renewal |
-| server.certificate.renewBefore | string | `""` (defaults to 360h = 15d if not specified) | How long before the expiry a certificate should be renewed. # Ref: https://cert-manager.io/docs/usage/certificate/#renewal |
+| server.certificate.duration | string | `""` (defaults to 2160h = 90d if not specified) | The requested 'duration' (i.e. lifetime) of the certificate. # Ref: <https://cert-manager.io/docs/usage/certificate/#renewal> |
+| server.certificate.renewBefore | string | `""` (defaults to 360h = 15d if not specified) | How long before the expiry a certificate should be renewed. # Ref: <https://cert-manager.io/docs/usage/certificate/#renewal> |
 | server.certificate.issuer.group | string | `""` | Certificate issuer group. Set if using an external issuer. Eg. `cert-manager.io` |
 | server.certificate.issuer.kind | string | `""` | Certificate issuer kind. Either `Issuer` or `ClusterIssuer` |
 | server.certificate.issuer.name | string | `""` | Certificate issuer name. Eg. `letsencrypt` |
@@ -571,7 +574,7 @@ helm install argocd chart/
 | server.certificate.privateKey.algorithm | string | `"RSA"` | Algorithm used to generate certificate private key. One of: `RSA`, `Ed25519` or `ECDSA` |
 | server.certificate.privateKey.size | int | `2048` | Key bit size of the private key. If algorithm is set to `Ed25519`, size is ignored. |
 | server.certificate.annotations | object | `{}` | Annotations to be applied to the Server Certificate |
-| server.certificate.usages | list | `[]` | Usages for the certificate ## Ref: https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.KeyUsage |
+| server.certificate.usages | list | `[]` | Usages for the certificate ## Ref: <https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.KeyUsage> |
 | server.certificateSecret.enabled | bool | `false` | Create argocd-server-tls secret |
 | server.certificateSecret.annotations | object | `{}` | Annotations to be added to argocd-server-tls secret |
 | server.certificateSecret.labels | object | `{}` | Labels to be added to argocd-server-tls secret |
@@ -587,7 +590,7 @@ helm install argocd chart/
 | server.service.servicePortHttpName | string | `"http"` | Server service http port name, can be used to route traffic via istio |
 | server.service.servicePortHttpsName | string | `"https"` | Server service https port name, can be used to route traffic via istio |
 | server.service.loadBalancerIP | string | `""` | LoadBalancer will get created with the IP specified in this field |
-| server.service.loadBalancerSourceRanges | list | `[]` | Source IP ranges to allow access to service from # Ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service |
+| server.service.loadBalancerSourceRanges | list | `[]` | Source IP ranges to allow access to service from # Ref: <https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service> |
 | server.service.externalIPs | list | `[]` | Server service external IPs |
 | server.service.externalTrafficPolicy | string | `""` | Denotes if this Service desires to route external traffic to node-local or cluster-wide endpoints |
 | server.service.sessionAffinity | string | `""` | Used to maintain session affinity. Supports `ClientIP` and `None` |
@@ -618,7 +621,7 @@ helm install argocd chart/
 | server.ingress.enabled | bool | `false` | Enable an ingress resource for the Argo CD server |
 | server.ingress.controller | string | `"generic"` | Specific implementation for ingress controller. One of `generic`, `aws` or `gke` # Additional configuration might be required in related configuration sections |
 | server.ingress.labels | object | `{}` | Additional ingress labels |
-| server.ingress.annotations | object | `{}` | Additional ingress annotations # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-1-ssl-passthrough |
+| server.ingress.annotations | object | `{}` | Additional ingress annotations # Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-1-ssl-passthrough> |
 | server.ingress.ingressClassName | string | `""` | Defines which ingress controller will implement the resource |
 | server.ingress.hostname | string | `""` (defaults to global.domain) | Argo CD server hostname |
 | server.ingress.path | string | `"/"` | The path to Argo CD server |
@@ -628,11 +631,11 @@ helm install argocd chart/
 | server.ingress.extraPaths | list | `[]` (See [values.yaml]) | Additional ingress paths # Note: Supports use of custom Helm templates |
 | server.ingress.extraRules | list | `[]` (See [values.yaml]) | Additional ingress rules # Note: Supports use of custom Helm templates |
 | server.ingress.extraTls | list | `[]` (See [values.yaml]) | Additional TLS configuration |
-| server.ingress.aws.backendProtocolVersion | string | `"GRPC"` | Backend protocol version for the AWS ALB gRPC service # This tells AWS to send traffic from the ALB using gRPC. # For more information: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html#health-check-settings |
-| server.ingress.aws.serviceType | string | `"NodePort"` | Service type for the AWS ALB gRPC service # Can be of type NodePort or ClusterIP depending on which mode you are running. # Instance mode needs type NodePort, IP mode needs type ClusterIP # Ref: https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/how-it-works/#ingress-traffic |
-| server.ingress.gke.backendConfig | object | `{}` (See [values.yaml]) | Google [BackendConfig] resource, for use with the GKE Ingress Controller # Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters |
-| server.ingress.gke.frontendConfig | object | `{}` (See [values.yaml]) | Google [FrontendConfig] resource, for use with the GKE Ingress Controller # Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters |
-| server.ingress.gke.managedCertificate.create | bool | `true` | Create ManagedCertificate resource and annotations for Google Load balancer # Ref: https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs |
+| server.ingress.aws.backendProtocolVersion | string | `"GRPC"` | Backend protocol version for the AWS ALB gRPC service # This tells AWS to send traffic from the ALB using gRPC. # For more information: <https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html#health-check-settings> |
+| server.ingress.aws.serviceType | string | `"NodePort"` | Service type for the AWS ALB gRPC service # Can be of type NodePort or ClusterIP depending on which mode you are running. # Instance mode needs type NodePort, IP mode needs type ClusterIP # Ref: <https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/how-it-works/#ingress-traffic> |
+| server.ingress.gke.backendConfig | object | `{}` (See [values.yaml]) | Google [BackendConfig] resource, for use with the GKE Ingress Controller # Ref: <https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters> |
+| server.ingress.gke.frontendConfig | object | `{}` (See [values.yaml]) | Google [FrontendConfig] resource, for use with the GKE Ingress Controller # Ref: <https://cloud.google.com/kubernetes-engine/docs/how-to/ingress-features#configuring_ingress_features_through_frontendconfig_parameters> |
+| server.ingress.gke.managedCertificate.create | bool | `true` | Create ManagedCertificate resource and annotations for Google Load balancer # Ref: <https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs> |
 | server.ingress.gke.managedCertificate.extraDomains | list | `[]` | Additional domains for ManagedCertificate resource |
 | server.ingressGrpc.enabled | bool | `false` | Enable an ingress resource for the Argo CD server for dedicated [gRPC-ingress] |
 | server.ingressGrpc.annotations | object | `{}` | Additional ingress annotations for dedicated [gRPC-ingress] |
@@ -661,7 +664,7 @@ helm install argocd chart/
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. |
-| repoServer.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD repo server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
+| repoServer.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD repo server Ref: <https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/> |
 | repoServer.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the repo server |
 | repoServer.pdb.labels | object | `{}` | Labels to be added to repo server pdb |
 | repoServer.pdb.annotations | object | `{}` | Annotations to be added to repo server pdb |
@@ -675,7 +678,7 @@ helm install argocd chart/
 | repoServer.env | list | `[]` | Environment variables to pass to repo server |
 | repoServer.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to repo server |
 | repoServer.lifecycle | object | `{}` | Specify postStart and preStop lifecycle hooks for your argo-repo-server container |
-| repoServer.extraContainers | list | `[]` | Additional containers to be added to the repo server pod # Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/config-management-plugins/ # Note: Supports use of custom Helm templates |
+| repoServer.extraContainers | list | `[]` | Additional containers to be added to the repo server pod # Ref: <https://argo-cd.readthedocs.io/en/stable/user-guide/config-management-plugins/> # Note: Supports use of custom Helm templates |
 | repoServer.initContainers | list | `[]` | Init containers to add to the repo server pods |
 | repoServer.volumeMounts | list | `[]` | Additional volumeMounts to the repo server main container |
 | repoServer.volumes | list | `[]` | Additional volumes to the repo server pod |
@@ -706,7 +709,7 @@ helm install argocd chart/
 | repoServer.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | repoServer.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | repoServer.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
-| repoServer.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the repo server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| repoServer.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the repo server # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | repoServer.deploymentStrategy | object | `{}` | Deployment strategy to be added to the repo server Deployment |
 | repoServer.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the repo server pods |
 | repoServer.certificateSecret.enabled | bool | `false` | Create argocd-repo-server-tls secret |
@@ -821,15 +824,15 @@ helm install argocd chart/
 | applicationSet.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | applicationSet.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | applicationSet.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
-| applicationSet.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the ApplicationSet controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| applicationSet.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the ApplicationSet controller # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | applicationSet.deploymentStrategy | object | `{}` | Deployment strategy to be added to the ApplicationSet controller Deployment |
 | applicationSet.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the ApplicationSet controller pods |
 | applicationSet.certificate.enabled | bool | `false` | Deploy a Certificate resource (requires cert-manager) |
 | applicationSet.certificate.secretName | string | `"argocd-applicationset-controller-tls"` | The name of the Secret that will be automatically created and managed by this Certificate resource |
 | applicationSet.certificate.domain | string | `""` (defaults to global.domain) | Certificate primary domain (commonName) |
 | applicationSet.certificate.additionalHosts | list | `[]` | Certificate Subject Alternate Names (SANs) |
-| applicationSet.certificate.duration | string | `""` (defaults to 2160h = 90d if not specified) | The requested 'duration' (i.e. lifetime) of the certificate. # Ref: https://cert-manager.io/docs/usage/certificate/#renewal |
-| applicationSet.certificate.renewBefore | string | `""` (defaults to 360h = 15d if not specified) | How long before the expiry a certificate should be renewed. # Ref: https://cert-manager.io/docs/usage/certificate/#renewal |
+| applicationSet.certificate.duration | string | `""` (defaults to 2160h = 90d if not specified) | The requested 'duration' (i.e. lifetime) of the certificate. # Ref: <https://cert-manager.io/docs/usage/certificate/#renewal> |
+| applicationSet.certificate.renewBefore | string | `""` (defaults to 360h = 15d if not specified) | How long before the expiry a certificate should be renewed. # Ref: <https://cert-manager.io/docs/usage/certificate/#renewal> |
 | applicationSet.certificate.issuer.group | string | `""` | Certificate issuer group. Set if using an external issuer. Eg. `cert-manager.io` |
 | applicationSet.certificate.issuer.kind | string | `""` | Certificate issuer kind. Either `Issuer` or `ClusterIssuer` |
 | applicationSet.certificate.issuer.name | string | `""` | Certificate issuer name. Eg. `letsencrypt` |
@@ -872,12 +875,12 @@ helm install argocd chart/
 | notifications.initContainers | list | `[]` | Init containers to add to the notifications controller pod # Note: Supports use of custom Helm templates |
 | notifications.extraVolumeMounts | list | `[]` | List of extra mounts to add (normally used with extraVolumes) |
 | notifications.extraVolumes | list | `[]` | List of extra volumes to add |
-| notifications.context | object | `{}` | Define user-defined context # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/#defining-user-defined-context |
+| notifications.context | object | `{}` | Define user-defined context # For more information: <https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/#defining-user-defined-context> |
 | notifications.secret.create | bool | `true` | Whether helm chart creates notifications controller secret # If true, will create a secret with the name below. Otherwise, will assume existence of a secret with that name. |
 | notifications.secret.name | string | `"argocd-notifications-secret"` | notifications controller Secret name |
 | notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
 | notifications.secret.labels | object | `{}` | key:value pairs of labels to be added to the secret |
-| notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret # Can be used for templates, notification services etc. Some examples given below. # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/ |
+| notifications.secret.items | object | `{}` | Generic key:value pairs to be inserted into the secret # Can be used for templates, notification services etc. Some examples given below. # For more information: <https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/> |
 | notifications.metrics.enabled | bool | `false` | Enables prometheus metrics server |
 | notifications.metrics.port | int | `9001` | Metrics port |
 | notifications.metrics.service.type | string | `"ClusterIP"` | Metrics service type |
@@ -893,7 +896,7 @@ helm install argocd chart/
 | notifications.metrics.serviceMonitor.tlsConfig | object | `{}` | Prometheus ServiceMonitor tlsConfig |
 | notifications.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | notifications.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
-| notifications.notifiers | object | See [values.yaml] | Configures notification services such as slack, email or custom webhook # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/ |
+| notifications.notifiers | object | See [values.yaml] | Configures notification services such as slack, email or custom webhook # For more information: <https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/> |
 | notifications.deploymentAnnotations | object | `{}` | Annotations to be applied to the notifications controller Deployment |
 | notifications.podAnnotations | object | `{}` | Annotations to be applied to the notifications controller Pods |
 | notifications.podLabels | object | `{}` | Labels to be applied to the notifications controller Pods |
@@ -906,7 +909,7 @@ helm install argocd chart/
 | notifications.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | notifications.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
 | notifications.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
-| notifications.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
+| notifications.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the application controller # Ref: <https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/> # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | notifications.deploymentStrategy | object | `{"type":"Recreate"}` | Deployment strategy to be added to the notifications controller Deployment |
 | notifications.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the notifications controller pods |
 | notifications.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
@@ -917,9 +920,9 @@ helm install argocd chart/
 | notifications.serviceAccount.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account |
 | notifications.cm.create | bool | `true` | Whether helm chart creates notifications controller config map |
 | notifications.clusterRoleRules.rules | list | `[]` | List of custom rules for the notifications controller's ClusterRole resource |
-| notifications.subscriptions | list | `[]` | Contains centrally managed global application subscriptions # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/subscriptions/ |
-| notifications.templates | object | `{}` | The notification template is used to generate the notification content # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/ |
-| notifications.triggers | object | `{}` | The trigger defines the condition when the notification should be sent # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/ |
+| notifications.subscriptions | list | `[]` | Contains centrally managed global application subscriptions # For more information: <https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/subscriptions/> |
+| notifications.templates | object | `{}` | The notification template is used to generate the notification content # For more information: <https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/templates/> |
+| notifications.triggers | object | `{}` | The trigger defines the condition when the notification should be sent # For more information: <https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/triggers/> |
 | notifications.bots.slack.enabled | bool | `false` | Enable slack bot # You have to set secret.notifiers.slack.signingSecret |
 | notifications.bots.slack.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the Slack bot |
 | notifications.bots.slack.pdb.labels | object | `{}` | Labels to be added to Slack bot pdb |
@@ -946,10 +949,10 @@ helm install argocd chart/
 | notifications.bots.slack.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | notifications.bots.slack.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | notifications.bots.slack.nodeSelector | object | `{}` | [Node selector] |
-| argocd-apps.applications | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
-| argocd-apps.projects | list | `[]` (See [values.yaml]) | Deploy Argo CD Projects within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
-| argocd-apps.applicationsets | list | `[]` (See [values.yaml]) | Deploy Argo CD ApplicationSets within this helm release # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/ |
-| argocd-apps.extensions | list | `[]` (See [values.yaml]) | Deploy Argo UI Extensions within this helm release # This function in tech preview stage, do expect unstability or breaking changes in newer versions. Bump image.tag if necessary. # Ref: https://github.com/argoproj-labs/argocd-extensions |
+| argocd-apps.applications | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications within this helm release # Ref: <https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/> |
+| argocd-apps.projects | list | `[]` (See [values.yaml]) | Deploy Argo CD Projects within this helm release # Ref: <https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/> |
+| argocd-apps.applicationsets | list | `[]` (See [values.yaml]) | Deploy Argo CD ApplicationSets within this helm release # Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/> |
+| argocd-apps.extensions | list | `[]` (See [values.yaml]) | Deploy Argo UI Extensions within this helm release # This function in tech preview stage, do expect unstability or breaking changes in newer versions. Bump image.tag if necessary. # Ref: <https://github.com/argoproj-labs/argocd-extensions> |
 
 ## Contributing
 
