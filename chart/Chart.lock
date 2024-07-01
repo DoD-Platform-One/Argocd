@@ -1,12 +1,12 @@
 dependencies:
 - name: redis
   repository: oci://registry1.dso.mil/bigbang
-  version: 19.5.0-bb.0
+  version: 19.5.5-bb.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.5.0
 - name: argocd-apps
   repository: file://./deps/argocd-apps
   version: 0.0.9
-digest: sha256:ec602eb6518f9f6471e9137adf1de14d5fb30794af9c20375adcdbd2a245da40
-generated: "2024-06-03T16:44:32.774539-04:00"
+digest: sha256:6051503ca39b04af463b85a8e62e53b2b6c5f3d79c3b4e9a9b8e6e709f9caac1
+generated: "2024-06-25T06:14:32.640201312Z"
