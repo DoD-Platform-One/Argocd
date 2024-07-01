@@ -235,3 +235,23 @@ Merge Argo Params Configuration with Preset Configuration
 {{ $key }}: {{ toString $value | toYaml }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Expand the namespace of the release.
+Allows overriding it for multi-namespace deployments in combined charts.
+*/}}
+{{- define "argo-cd.namespace" -}}
+{{- default .Release.Namespace .Values.namespaceOverride | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
+{{/*
+Dual stack definition
+*/}}
+{{- define "argo-cd.dualStack" -}}
+{{- with .Values.global.dualStack.ipFamilyPolicy }}
+ipFamilyPolicy: {{ . }}
+{{- end }}
+{{- with .Values.global.dualStack.ipFamilies }}
+ipFamilies: {{ toYaml . | nindent 4 }}
+{{- end }}
+{{- end }}
