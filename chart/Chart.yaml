@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.11.3
+appVersion: v2.11.4
 kubeVersion: ">=1.23.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 7.3.2-bb.1
+version: 7.3.4-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -30,10 +30,10 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.11.3
+    - Argocd: v2.11.4
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.11.3
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.11.4
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -47,5 +47,5 @@ annotations:
       condition: redis-bb.metrics.enabled
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.61.0
   artifacthub.io/changes: |
-    - kind: added
-      description: Add support for passing redis - sentinel credentials
+    - kind: changed
+      description: Bump argo-cd to v2.11.4

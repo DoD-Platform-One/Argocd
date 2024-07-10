@@ -282,6 +282,12 @@ spec:
                 name: argocd-cmd-params-cm
                 key: controller.diff.server.side
                 optional: true
+          - name: ARGOCD_IGNORE_NORMALIZER_JQ_TIMEOUT
+            valueFrom:
+              configMapKeyRef:
+                name: argocd-cmd-params-cm
+                key: controller.ignore.normalizer.jq.timeout
+                optional: true
         {{- with .Values.controller.envFrom }}
         envFrom:
           {{- toYaml . | nindent 10 }}
@@ -374,4 +380,3 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       dnsPolicy: {{ .Values.controller.dnsPolicy }}
-
