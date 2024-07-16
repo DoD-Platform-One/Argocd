@@ -129,6 +129,8 @@ upgradeJob:
 
 There are instances where the helm chart templates for Kubernetes resources in this package will need to have helm template values that will be a necessary addition to the upstream templates.
 
+Big Bang is using bb-redis with the `argocd-secret`, therefore redisSecretInit is disabled by default. 
+
 Disable `redisSecretInit`
 ```yaml
 redisSecretInit:
