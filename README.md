@@ -10,6 +10,10 @@ A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kub
 * <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
 * <https://github.com/argoproj/argo-cd>
 
+### Upstream Release Notes
+
+The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
+
 ## Learn More
 * [Application Overview](docs/overview.md)
 * [Other Documentation](docs/)
