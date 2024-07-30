@@ -1,10 +1,10 @@
 # Files that require bigbang integration testing
 
-### See [bb MR testing](./docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart.
+### See [bb MR testing](./docs/test-package-against-bb.md) for details regarding testing changes against bigbang umbrella chart
 
-There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within argocd (see: [istio templates](./chart/templates/bigbang/istio/), [network policy templates](./chart/templates/bigbang/networkpolicies/), [service entry templates](./chart/templates/bigbang/serviceentries/)). 
+There are certain integrations within the bigbang ecosystem and this package that require additional testing outside of the specific package tests ran during CI.  This is a requirement when files within those integrations are changed, as to avoid causing breaks up through the bigbang umbrella.  Currently, these include changes to the istio implementation within argocd (see: [istio templates](./chart/templates/bigbang/istio/), [network policy templates](./chart/templates/bigbang/networkpolicies/), [service entry templates](./chart/templates/bigbang/serviceentries/)).
 
-Be aware that any changes to files listed in the [Big Bang Chart Additions](#big-bang-chart-additions) section will also require a codeowner to validate the changes using above method, to ensure that they do not affect the package or its integrations adversely. 
+Be aware that any changes to files listed in the [Big Bang Chart Additions](#big-bang-chart-additions) section will also require a codeowner to validate the changes using above method, to ensure that they do not affect the package or its integrations adversely.
 
 Be sure to also test against monitoring locally as it is integrated by default with these high-impact service control packages, and needs to be validated using the necessary chart values beneath `istio.hardened` block with `monitoring.enabled` set to true as part of your dev-overrides.yaml
 
@@ -35,11 +35,13 @@ The below details the steps required to update to a new version of the Argocd pa
 NOTE: For these testing steps it is good to do them on both a clean install and an upgrade. For clean install, point argocd to your branch. For an upgrade do an install with argocd pointing to the latest tag, then perform a helm upgrade with argocd pointing to your branch.
 
 You will want to install with:
+
 - Istio enabled
 - Argocd enabled
-    - Set `admin` password for testing determinism (this sets password to `Password123`)
+  - Set `admin` password for testing determinism (this sets password to `Password123`)
 
 The above can be accomplished with the following overrides for Big Bang:
+
 ```yaml
 istio:
   enabled: true
@@ -53,6 +55,7 @@ addons:
 ```
 
 Testing Steps:
+
 - Ensure all resources have reconciled and are healthy
 - Ensure the application is resolvable at `argocd.dev.bigbang.mil`
 - Run the cypress tests to confirm functionality of adding and deleting an application via the UI
@@ -139,9 +142,10 @@ upgradeJob:
 
 There are instances where the helm chart templates for Kubernetes resources in this package will need to have helm template values that will be a necessary addition to the upstream templates.
 
-Big Bang is using bb-redis with the `argocd-secret`, therefore redisSecretInit is disabled by default. 
+Big Bang is using bb-redis with the `argocd-secret`, therefore redisSecretInit is disabled by default.
 
 Disable `redisSecretInit`
+
 ```yaml
 redisSecretInit:
   # -- Enable Redis secret initialization. If disabled, secret must be provisioned by alternative methods
@@ -163,6 +167,7 @@ Example:
 ```
 
 ## automountServiceAccountToken
+
 The mutating Kyverno policy named `update-automountserviceaccounttokens` is leveraged to harden all ServiceAccounts in this package with `automountServiceAccountToken: false`. This policy is configured by namespace in the Big Bang umbrella chart repository at [chart/templates/kyverno-policies/values.yaml](https://repo1.dso.mil/big-bang/bigbang/-/blob/master/chart/templates/kyverno-policies/values.yaml?ref_type=heads).
 
 This policy revokes access to the K8s API for Pods utilizing said ServiceAccounts. If a Pod truly requires access to the K8s API (for app functionality), the Pod is added to the `pods:` array of the same mutating policy. This grants the Pod access to the API, and creates a Kyverno PolicyException to prevent an alert.
@@ -212,6 +217,7 @@ data:
 ```
 
 Additionally, there is an extra conditional check added to `argocd-secret.yaml` to ensure that if `.Values.sso.keycloakClientSecret` AND `.Values.sso.enabled` are set, then the secret should be populated.
+
 ```yaml
   {{- if or .Values.configs.secret.githubSecret (or .Values.configs.secret.gitlabSecret .Values.configs.secret.bitbucketUUID .Values.configs.secret.bitbucketServerSecret .Values.configs.secret.gogsSecret (and .Values.configs.secret.azureDevops.username .Values.configs.secret.azureDevops.password) .Values.configs.secret.argocdServerAdminPassword .Values.configs.secret.extra (and .Values.sso.keycloakClientSecret .Values.sso.enabled)) }}
 ```
@@ -219,6 +225,7 @@ Additionally, there is an extra conditional check added to `argocd-secret.yaml` 
 ## Chart.yaml
 
 The `Chart.yaml` file has a number of changes to support Big Bang needs:
+
 - `-bb.x` version appended
 - Chart renamed to `argocd` for consistency across BB
 - Annotations added for images and app versions

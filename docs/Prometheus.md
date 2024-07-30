@@ -1,12 +1,14 @@
 # Prometheus & ArgoCD
+
 - Configuration Items
   Istio ServiceMonitors for ArgoCD are deployed as a separate ArgoCD Application from apps/service-monitors
   There are 3 that get deployed:
-   * argocd-app-metrics
-   * argocd-repo-metrics
-   * argocd-server-metrics
+  - argocd-app-metrics
+  - argocd-repo-metrics
+  - argocd-server-metrics
 - List of metrics gathered
-  * ### argocd-server metrics port 8083
+
+- ### argocd-server metrics port 8083
 
        ```
        # HELP argocd_redis_request_duration Redis requests duration.
@@ -1544,7 +1546,7 @@
        process_virtual_memory_max_bytes -1
        ```
 
-   * ### argocd-repo-server metrics port 8084
+  - ### argocd-repo-server metrics port 8084
 
        ```
        # HELP argocd_git_request_total Number of git requests performed by repo server
@@ -1680,7 +1682,7 @@
        process_virtual_memory_max_bytes -1
        ```
 
-   * ### argocd-application-controller port 8082
+  - ### argocd-application-controller port 8082
 
        ```
        # HELP argocd_app_info Information about application.
@@ -2108,9 +2110,8 @@
        workqueue_work_duration_seconds_count{name="app_reconciliation_queue"} 2327
        ```
 
-
 - Useful queries
-  * argocd_app_info{health_status="Healthy"}
-  * argocd_app_info{sync_status="Synced"}
-  * argocd_git_request_total{request_type="fetch"}
-  * argocd_app_sync_total{dest_server="https://kubernetes.default.svc",project="managed-apps"}
+  - argocd_app_info{health_status="Healthy"}
+  - argocd_app_info{sync_status="Synced"}
+  - argocd_git_request_total{request_type="fetch"}
+  - argocd_app_sync_total{dest_server="<https://kubernetes.default.svc",project="managed-apps"}>

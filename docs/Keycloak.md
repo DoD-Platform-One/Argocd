@@ -1,7 +1,9 @@
 # ArgoCD Keycloak Configuration
+
 This document will explain how to configure keycloak with argocd. This assumes you have the sample manifests applied.
 
 ## Configuration items
+
 * Keycloak
 * ArgoCD
 
@@ -9,7 +11,7 @@ These are the items you need to do after keycloak and argocd are working on your
 
 ### Keycloak Configuration
 
-- Create an argocd client scope with the following mappings
+* Create an argocd client scope with the following mappings
 
   | Name      | Mapper Type      | Mapper Selection Sub | Token Claim Name   | Claim JSON Type |
   |-----------|------------------|----------------------|--------------------|-----------------|
@@ -21,6 +23,7 @@ These are the items you need to do after keycloak and argocd are working on your
   | username  | User Property    | username             | preferred_username | String          |
 
 Keycloak client configuration should look like the following:
+
 ```json
 {
   "clientId": "il2_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_argocd",
@@ -89,6 +92,7 @@ Keycloak client configuration should look like the following:
 ```
 
 User Permission:
+
 * Go to Realm
 * Click on Users tab on the left pane
 * Set "User Enabled" to yes and Email Verified to on.
@@ -96,6 +100,7 @@ User Permission:
 * Go to Groups tab and select "Impact Level 2 Authorized" and click Join up to the right.
 
 Client Configuration
+
 * Go to Configured realm (eg: baby-yoda)
 * Click on Clients
 * Click on Il2_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_argocd
@@ -103,22 +108,27 @@ Client Configuration
 * Press Regenerate Secret and copy it to clipboard
 
 ### ArgoCD Configuration
+
 Update chart/values.yaml to enable sso and ArgoCD keycloak client secret:
+
 1. modify values.yaml. This will apply changes to argo-cm argo-rbac-cm and argo-secret:
+
 ```
 # SSO Additions
 sso:
   enabled: true <--change to true
   keycloakClientSecret: <place secret here>
 ```
+
 2. Apply helm chart:
+
 ```
 helm upgrade -i -n argocd --create-namespace argocd chart/
 ```
 
 3. Restart ArgoCD to apply changes by executing  "kubectl -n argocd delete pod --all" within bastion or environment.
 
-4. Go to https://argocd.<domain>.<tld> select login with keycloak and use the created username and password. 
+4. Go to <https://argocd>.<domain>.<tld> select login with keycloak and use the created username and password.
 
 ## OIDC Custom CA
 

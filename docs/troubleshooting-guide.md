@@ -21,6 +21,7 @@ argocd admin settings validate \
 ```
 
 This should produce output similar to this:
+
 ```bash
 INFO[0000] Starting configmap/secret informers          
 INFO[0000] Configmap/secret informer synced             
@@ -75,6 +76,7 @@ This is the component that serves the API and UI of ArgoCD.
 For this component to function properly in Big Bang, TLS must be disabled because TLS is terminated at the Istio ingress gateway before routing to the backend service. This results in a faulty redirect and the UI will be inaccessible.
 
 As of this release, the TLS configuration for `argocd-server` is stored in the `argocd-cmd-params-cm` configmap using the `server.insecure` key. This should be set to `server.insecure: "true"`.
+
 ### More Troubleshooting
 
 See the [troubleshooting guide](https://argo-cd.readthedocs.io/en/stable/operator-manual/troubleshooting/)

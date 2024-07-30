@@ -1,6 +1,7 @@
+<!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 7.3.9-bb.0](https://img.shields.io/badge/Version-7.3.9--bb.0-informational?style=flat-square) ![AppVersion: v2.11.5](https://img.shields.io/badge/AppVersion-v2.11.5-informational?style=flat-square)
+![Version: 7.3.11-bb.0](https://img.shields.io/badge/Version-7.3.11--bb.0-informational?style=flat-square) ![AppVersion: v2.11.7](https://img.shields.io/badge/AppVersion-v2.11.7-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -117,7 +118,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.11.5"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.11.7"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -388,7 +389,7 @@ helm install argocd chart/
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | redis.exporter.image.repository | string | `"ironbank/bitnami/analytics/redis-exporter"` | Repository to use for the redis-exporter |
-| redis.exporter.image.tag | string | `"v1.59.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"v1.62.0"` | Tag to use for the redis-exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
 | redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
 | redis.exporter.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Redis exporter (optional) |
@@ -961,3 +962,8 @@ helm install argocd chart/
 ## Contributing
 
 Please see the [contributing guide](./CONTRIBUTING.md) if you are interested in contributing.
+
+---
+
+_This file is programatically generated using `helm-docs` and some BigBang-specific templates. The `gluon` repository has [instructions for regenerating package READMEs](https://repo1.dso.mil/big-bang/product/packages/gluon/-/blob/master/docs/bb-package-readme.md)._
+
