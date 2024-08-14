@@ -184,7 +184,7 @@ global:
     # -- If defined, a repository applied to all Argo CD deployments
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-    tag: v2.11.7
+    tag: v2.12.0
     # -- If defined, a imagePullPolicy applied to all Argo CD deployments
     imagePullPolicy: IfNotPresent
 
@@ -1107,7 +1107,7 @@ dex:
     # -- Dex image repository
     repository: registry1.dso.mil/ironbank/opensource/dexidp/dex
     # -- Dex image tag
-    tag: v2.40.0
+    tag: v2.41.1
     # -- Dex imagePullPolicy
     # @default -- `""` (defaults to global.image.imagePullPolicy)
     imagePullPolicy: ""

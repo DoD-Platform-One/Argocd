@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 7.3.11-bb.0](https://img.shields.io/badge/Version-7.3.11--bb.0-informational?style=flat-square) ![AppVersion: v2.11.7](https://img.shields.io/badge/AppVersion-v2.11.7-informational?style=flat-square)
+![Version: 7.4.0-bb.0](https://img.shields.io/badge/Version-7.4.0--bb.0-informational?style=flat-square) ![AppVersion: v2.12.0](https://img.shields.io/badge/AppVersion-v2.12.0-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -25,7 +25,7 @@ The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/
 * Kubernetes config installed in `~/.kube/config`
 * Helm installed
 
-Kubernetes: `>=1.23.0-0`
+Kubernetes: `>=1.25.0-0`
 
 Install Helm
 
@@ -118,7 +118,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.11.7"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.12.0"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -308,7 +308,7 @@ helm install argocd chart/
 | dex.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | dex.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `dex.pdb.minAvailable` |
 | dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.40.0"` | Dex image tag |
+| dex.image.tag | string | `"v2.41.1"` | Dex image tag |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | dex.initImage.repository | string | `""` (defaults to global.image.repository) | Argo CD init image repository |
