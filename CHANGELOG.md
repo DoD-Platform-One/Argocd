@@ -4,6 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [7.4.0-bb.0] - 2024-08-09
+
+### Changed
+
+- Update gluon 0.5.2 -> 0.5.3
+- Update registry1.dso.mil/ironbank/big-bang/argocd v2.11.7 -> v.2.12.0
+- Update registry1.dso.mil/ironbank/opensource/dexidp/dex v2.40.0 -> v2.41.1
+
 ## [7.3.11-bb.0] - 2024-07-29
 
 ### Changed

@@ -4,9 +4,9 @@ dependencies:
   version: 19.6.2-bb.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
-  version: 0.5.2
+  version: 0.5.3
 - name: argocd-apps
   repository: file://./deps/argocd-apps
   version: 0.0.9
-digest: sha256:9e6320ad376743f9224eb450ff0189404e13809412511bc399c5471a1d5a5be8
-generated: "2024-07-27T06:16:12.488093758Z"
+digest: sha256:c712b58ee9b9be4e98a6367d9e1d6c79fdea826f3ee91c2baab2946378f14c97
+generated: "2024-08-09T06:23:19.842701429Z"
