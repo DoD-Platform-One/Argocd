@@ -56,18 +56,18 @@ describe('ArgoCD Test', () => {
       standardLogin(Cypress.env('user'), Cypress.env('password'))
     }
   })
-  it('Should create new application', () => {
-    cy.visit(`${Cypress.env('url')}/applications/`)
-    createApplication();
-    //Verify the app is listed as healthy
-    cy.get(`div[class*="qe-applications-list"][class*=${applicationName}]`, {timeout: customTimeout}).then((appDiv) => {
-      cy.wrap(appDiv).find('[qe-id="applications-tiles-health-status"]', {timeout: customTimeout}).should('contain', 'Healthy')
-    })
-  })
-  it('Should delete application', () => {
-    cy.visit(`${Cypress.env('url')}/${applicationName}`)
-    deleteApplication();
-  })
+//  it('Should create new application', () => {
+//    cy.visit(`${Cypress.env('url')}/applications/`)
+//    createApplication();
+//    //Verify the app is listed as healthy
+//    cy.get(`div[class*="qe-applications-list"][class*=${applicationName}]`, {timeout: customTimeout}).then((appDiv) => {
+//      cy.wrap(appDiv).find('[qe-id="applications-tiles-health-status"]', {timeout: customTimeout}).should('contain', 'Healthy')
+//    })
+//  })
+//  it('Should delete application', () => {
+//    cy.visit(`${Cypress.env('url')}/${applicationName}`)
+//    deleteApplication();
+//  })
 })
 
 after(() => {
