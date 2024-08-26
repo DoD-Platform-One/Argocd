@@ -115,18 +115,23 @@ bbtests:
   cypress:
     artifacts: true
     envs:
-      cypress_url: "http://argocd-server"
+      cypress_url: "http://argocd-argocd-server-test.argocd.svc"
       cypress_user: "admin"
       cypress_password: "Password123"
       cypress_timeout: "120000"
     resources:
       requests:
         cpu: 2
-        memory: 2Gi
+        memory: 4Gi
       limits:
         cpu: 4
-        memory: 4Gi
-
+        memory: 8Gi
+  scripts:
+    image: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"
+    envs:
+      ARGOCD_SERVER: "http://argocd-argocd-server-test.argocd.svc"
+      ARGOCD_USER: "admin"
+      ARGOCD_PASSWORD: "Password123"
 
 
 ## Argo CD configuration

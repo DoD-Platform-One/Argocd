@@ -1,0 +1,38 @@
+{{- if .Values.bbtests }}
+{{- if .Values.bbtests.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    "helm.sh/hook": test-success
+    # low weight means these should come up before the cypress and script tests
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-failed,hook-succeeded
+  labels:
+    helm-test: enabled
+  name: {{ .Release.Name }}-argocd-server-test
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: {{ .Values.server.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.server.service.servicePortHttp }}
+      targetPort: {{ .Values.server.containerPorts.server }}
+    {{- if eq .Values.server.service.type "NodePort" }}
+      nodePort: {{ .Values.server.service.nodePortHttp }}
+    {{- end }}
+    - name: {{ .Values.server.service.servicePortHttpsName }}
+      protocol: TCP
+      port: {{ .Values.server.service.servicePortHttps }}
+      targetPort: {{ .Values.server.containerPorts.server }}
+    {{- if eq .Values.server.service.type "NodePort" }}
+      nodePort: {{ .Values.server.service.nodePortHttps }}
+    {{- end }}
+    {{- with .Values.server.service.servicePortHttpsAppProtocol }}
+      appProtocol: {{ . }}
+    {{- end }}
+  selector:
+    {{- include "argo-cd.selectorLabels" (dict "context" . "name" .Values.server.name) | nindent 4 }}
+  type: ClusterIP
+{{- end }}
+{{- end }}
