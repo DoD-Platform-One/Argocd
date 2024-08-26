@@ -95,14 +95,18 @@ helm install argocd chart/
 | upgradeJob.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | bbtests.enabled | bool | `false` |  |
 | bbtests.cypress.artifacts | bool | `true` |  |
-| bbtests.cypress.envs.cypress_url | string | `"http://argocd-server"` |  |
+| bbtests.cypress.envs.cypress_url | string | `"http://argocd-argocd-server-test.argocd.svc"` |  |
 | bbtests.cypress.envs.cypress_user | string | `"admin"` |  |
 | bbtests.cypress.envs.cypress_password | string | `"Password123"` |  |
 | bbtests.cypress.envs.cypress_timeout | string | `"120000"` |  |
 | bbtests.cypress.resources.requests.cpu | int | `2` |  |
-| bbtests.cypress.resources.requests.memory | string | `"2Gi"` |  |
+| bbtests.cypress.resources.requests.memory | string | `"4Gi"` |  |
 | bbtests.cypress.resources.limits.cpu | int | `4` |  |
-| bbtests.cypress.resources.limits.memory | string | `"4Gi"` |  |
+| bbtests.cypress.resources.limits.memory | string | `"8Gi"` |  |
+| bbtests.scripts.image | string | `"registry1.dso.mil/bigbang-ci/devops-tester:1.1.1"` |  |
+| bbtests.scripts.envs.ARGOCD_SERVER | string | `"http://argocd-argocd-server-test.argocd.svc"` |  |
+| bbtests.scripts.envs.ARGOCD_USER | string | `"admin"` |  |
+| bbtests.scripts.envs.ARGOCD_PASSWORD | string | `"Password123"` |  |
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
