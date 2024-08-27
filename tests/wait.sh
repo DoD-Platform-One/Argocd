@@ -1,5 +1,4 @@
 #!/bin/bash
-set -u
 
 function slog() {
   # structured logging output, with colors
