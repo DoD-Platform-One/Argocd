@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eo pipefail
 
 # Swagger API specs are available on your local argo server!
 #   https://argocd.dev.bigbang.mil/swagger-ui
