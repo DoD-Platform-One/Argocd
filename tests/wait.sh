@@ -107,5 +107,6 @@ wait_project() {
 
    waitDeploymentRollout
 
+   # undo local restrictions so we don't break other CI
    set -e
 }

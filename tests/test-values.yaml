@@ -12,6 +12,9 @@ sso:
 networkPolicies:
   enabled: true
 
+server:
+  replicas: 2
+
 redis-bb:
   enabled: true
   # pass throughs to BigBang's redis
@@ -24,15 +27,3 @@ redis-bb:
   networkPolicies:
     enabled: true
     controlPlaneCidr: 0.0.0.0/0
-
-kyvernoPolicies:
-  values:
-    policies:
-      require-non-root-user:
-          exclude:
-            any:
-            - resources:
-                namespaces:
-                - argocd
-                names:
-                - guestbook*
