@@ -94,8 +94,8 @@ curlRetry "$ARGOCD_SERVER/api/v1/applications?upsert=true&validate=true" \
         },
         "project": "default",
         "source": {
-            "path": "guestbook",
-            "repoURL": "https://repo1.dso.mil/big-bang/apps/sandbox/argo-example-guestbook-app.git",
+            "path": "helloworld",
+            "repoURL": "https://repo1.dso.mil/big-bang/apps/sandbox/argocd-example-helloworld-app.git",
             "targetRevision": "HEAD"
         },
         "syncPolicy": {
@@ -226,7 +226,6 @@ function main() {
   wait_app_gone "${token}" "${appName}"
 
   slog "✅ All tests passed!"
-  exit 0
 }
 
 main

@@ -1546,7 +1546,7 @@
        process_virtual_memory_max_bytes -1
        ```
 
-  - ### argocd-repo-server metrics port 8084
+- ### argocd-repo-server metrics port 8084
 
        ```
        # HELP argocd_git_request_total Number of git requests performed by repo server
@@ -1682,7 +1682,7 @@
        process_virtual_memory_max_bytes -1
        ```
 
-  - ### argocd-application-controller port 8082
+- ### argocd-application-controller port 8082
 
        ```
        # HELP argocd_app_info Information about application.

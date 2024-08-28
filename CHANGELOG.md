@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [7.4.0-bb.1] - 2024-08-22
+
+### Changed
+
+- Updated cypress test to use new test project
+- Removed kyverno policy overrides from test values
+
 ## [7.4.0-bb.0] - 2024-08-09
 
 ### Changed
