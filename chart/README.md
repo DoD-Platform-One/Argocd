@@ -317,7 +317,7 @@ Steps to roteate the secret when using the helm chart (bold step is additional t
 * Delete `argocd-redis` secret in the namespace where Argo CD is installed.
 
   ```bash
-  kubectl delete secret argocd-redis -n <argocd namesapce>
+  kubectl delete secret argocd-redis -n <argocd namespace>
   ```
 
 * **Perform a helm upgrade**
@@ -1554,6 +1554,12 @@ If you use an External Redis (See Option 3 above), this Job is not deployed.
 | notifications.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the notifications controller |
 | notifications.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | notifications.initContainers | list | `[]` | Init containers to add to the notifications controller pod |
+| notifications.livenessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for notifications controller Pods |
+| notifications.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
+| notifications.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
+| notifications.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
+| notifications.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
+| notifications.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | notifications.logFormat | string | `""` (defaults to global.logging.format) | Notifications controller log format. Either `text` or `json` |
 | notifications.logLevel | string | `""` (defaults to global.logging.level) | Notifications controller log level. One of: `debug`, `info`, `warn`, `error` |
 | notifications.metrics.enabled | bool | `false` | Enables prometheus metrics server |
@@ -1582,6 +1588,12 @@ If you use an External Redis (See Option 3 above), this Job is not deployed.
 | notifications.podAnnotations | object | `{}` | Annotations to be applied to the notifications controller Pods |
 | notifications.podLabels | object | `{}` | Labels to be applied to the notifications controller Pods |
 | notifications.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the notifications controller pods |
+| notifications.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for notifications controller Pods |
+| notifications.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
+| notifications.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
+| notifications.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
+| notifications.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
+| notifications.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | notifications.resources | object | `{}` | Resource limits and requests for the notifications controller |
 | notifications.secret.annotations | object | `{}` | key:value pairs of annotations to be added to the secret |
 | notifications.secret.create | bool | `true` | Whether helm chart creates notifications controller secret |
