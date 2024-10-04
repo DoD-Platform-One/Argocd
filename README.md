@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 7.5.2-bb.1](https://img.shields.io/badge/Version-7.5.2--bb.1-informational?style=flat-square) ![AppVersion: v2.12.3](https://img.shields.io/badge/AppVersion-v2.12.3-informational?style=flat-square)
+![Version: 7.6.6-bb.0](https://img.shields.io/badge/Version-7.6.6--bb.0-informational?style=flat-square) ![AppVersion: v2.12.4](https://img.shields.io/badge/AppVersion-v2.12.4-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -119,10 +119,11 @@ helm install argocd chart/
 | crds.annotations | object | `{}` | Annotations to be added to all CRDs |
 | crds.additionalLabels | object | `{}` | Addtional labels to be added to all CRDs |
 | global.domain | string | `"argocd.example.com"` | Default domain used by all components # Used for ingresses, certificates, SSO, notifications, etc. |
+| global.runtimeClassName | string | `""` | Runtime class name for all components |
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.12.3"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.12.4"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -170,10 +171,12 @@ helm install argocd chart/
 | configs.params."server.staticassets" | string | `"/shared/app"` | Directory path that contains additional static assets |
 | configs.params."server.disable.auth" | bool | `false` | Disable Argo CD RBAC for user authentication |
 | configs.params."server.enable.gzip" | bool | `true` | Enable GZIP compression |
+| configs.params."server.enable.proxy.extension" | bool | `false` | Enable proxy extension feature. (proxy extension is in Alpha phase) |
 | configs.params."server.x.frame.options" | string | `"sameorigin"` | Set X-Frame-Options header in HTTP responses to value. To disable, set to "". |
 | configs.params."reposerver.parallelism.limit" | int | `0` | Limit on number of concurrent manifests generate requests. Any value less the 1 means no limit. |
 | configs.params."applicationsetcontroller.policy" | string | `"sync"` | Modify how application is synced between the generator and the cluster. One of: `sync`, `create-only`, `create-update`, `create-delete` |
 | configs.params."applicationsetcontroller.enable.progressive.syncs" | bool | `false` | Enables use of the Progressive Syncs capability |
+| configs.params."applicationsetcontroller.namespaces" | string | `""` | A list of glob patterns specifying where to look for ApplicationSet resources. (e.g. `"namespace1, namespace2"`) |
 | configs.params."application.namespaces" | string | `""` | Enables [Applications in any namespace] # List of additional namespaces where applications may be created in and reconciled from. # The namespace where Argo CD is installed to will always be allowed. # Set comma-separated list. (e.g. app-team-one, app-team-two) |
 | configs.params."controller.ignore.normalizer.jq.timeout" | string | `"1s"` | JQ Path expression timeout # By default, the evaluation of a JQPathExpression is limited to one second. # If you encounter a "JQ patch execution timed out" error message due to a complex JQPathExpression # that requires more time to evaluate, you can extend the timeout period. |
 | configs.rbac.create | bool | `true` | Create the argocd-rbac-cm configmap with ([Argo CD RBAC policy]) definitions. If false, it is expected the configmap will be created by something else. Argo CD will not work if there is no configmap created with the name above. |
@@ -215,6 +218,7 @@ helm install argocd chart/
 | controller.name | string | `"application-controller"` | Application controller name string |
 | controller.replicas | int | `1` | The number of application controller pods to run. Additional replicas will cause sharding of managed clusters across number of replicas. # With dynamic cluster distribution turned on, sharding of the clusters will gracefully # rebalance if the number of replica's changes or one becomes unhealthy. (alpha) |
 | controller.dynamicClusterDistribution | bool | `false` | Enable dynamic cluster distribution (alpha) Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution # This is done using a deployment instead of a statefulSet # When replicas are added or removed, the sharding algorithm is re-run to ensure that the # clusters are distributed according to the algorithm. If the algorithm is well-balanced, # like round-robin, then the shards will be well-balanced. |
+| controller.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for the application controller |
 | controller.heartbeatTime | int | `10` | Application controller heartbeat time Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution/#working-of-dynamic-distribution |
 | controller.revisionHistoryLimit | int | `5` | Maximum number of controller revisions that will be maintained in StatefulSet history |
 | controller.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the application controller |
@@ -292,6 +296,7 @@ helm install argocd chart/
 | dex.enabled | bool | `true` | Enable dex |
 | dex.name | string | `"dex-server"` | Dex name |
 | dex.extraArgs | list | `[]` | Additional command line arguments to pass to the Dex server |
+| dex.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for Dex |
 | dex.metrics.enabled | bool | `false` | Deploy metrics service |
 | dex.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | dex.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -382,6 +387,7 @@ helm install argocd chart/
 | redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.name | string | `"redis"` | Redis name |
+| redis.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for redis |
 | redis.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the Redis |
 | redis.pdb.labels | object | `{}` | Labels to be added to Redis pdb |
 | redis.pdb.annotations | object | `{}` | Annotations to be added to Redis pdb |
@@ -509,6 +515,7 @@ helm install argocd chart/
 | redisSecretInit.tolerations | list | `[]` (defaults to global.tolerations) | Tolerations to be added to the Redis secret-init Job |
 | server.name | string | `"server"` | Argo CD server name |
 | server.replicas | int | `1` | The number of server pods to run |
+| server.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for the Argo CD server |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
 | server.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the Argo CD server [HPA] |
 | server.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the Argo CD server [HPA] |
@@ -668,6 +675,7 @@ helm install argocd chart/
 | server.clusterRoleRules.rules | list | `[]` | List of custom rules for the server's ClusterRole resource |
 | repoServer.name | string | `"repo-server"` | Repo server name |
 | repoServer.replicas | int | `1` | The number of repo server pods to run |
+| repoServer.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for the repo server |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
 | repoServer.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the repo server [HPA] |
 | repoServer.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the repo server [HPA] |
@@ -762,6 +770,7 @@ helm install argocd chart/
 | applicationSet.enabled | bool | `true` | Enable ApplicationSet controller |
 | applicationSet.name | string | `"applicationset-controller"` | ApplicationSet controller name string |
 | applicationSet.replicas | int | `1` | The number of ApplicationSet controller pods to run |
+| applicationSet.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for the ApplicationSet controller |
 | applicationSet.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the ApplicationSet controller |
 | applicationSet.pdb.labels | object | `{}` | Labels to be added to ApplicationSet controller pdb |
 | applicationSet.pdb.annotations | object | `{}` | Annotations to be added to ApplicationSet controller pdb |
@@ -866,6 +875,7 @@ helm install argocd chart/
 | notifications.enabled | bool | `true` | Enable notifications controller |
 | notifications.name | string | `"notifications-controller"` | Notifications controller name string |
 | notifications.argocdUrl | string | `""` (defaults to https://`global.domain`) | Argo CD dashboard url; used in place of {{.context.argocdUrl}} in templates |
+| notifications.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for the notifications controller |
 | notifications.pdb.enabled | bool | `false` | Deploy a [PodDisruptionBudget] for the notifications controller |
 | notifications.pdb.labels | object | `{}` | Labels to be added to notifications controller pdb |
 | notifications.pdb.annotations | object | `{}` | Annotations to be added to notifications controller pdb |

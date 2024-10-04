@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.12.3
+appVersion: v2.12.4
 kubeVersion: ">=1.25.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 7.5.2-bb.1
+version: 7.6.6-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -30,12 +30,12 @@ dependencies:
   repository: "file://./deps/argocd-apps"
 annotations:
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.12.3
+    - Argocd: v2.12.4
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.12.3
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.12.4
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -49,5 +49,5 @@ annotations:
       condition: redis-bb.metrics.enabled
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.63.0
   artifacthub.io/changes: |
-    - kind: fixed
-      description: Certificate template was wrong leading to null
+    - kind: added
+      description: Value configs.params."server.enable.proxy.extension" was added
