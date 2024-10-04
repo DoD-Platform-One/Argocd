@@ -9,4 +9,4 @@ dependencies:
   repository: file://./deps/argocd-apps
   version: 0.0.9
 digest: sha256:92f788e0c0b7ccb681f6158a5ec9ce0b23ff1ea8a53b0907f630c1ca310a43bf
-generated: "2024-09-30T10:38:12.327089492-06:00"
+generated: "2024-09-30T13:15:31.057452-05:00"

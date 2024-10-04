@@ -4,11 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [7.5.2-bb.1] - 2024-09-30
+## [7.6.6-bb.0] - 2024-09-30
 
 ### Changed
 
-- Updated redis-20.0.1-bb.1.tgz dependency chart
+- update ironbank/big-bang/argocd v2.12.3 -> v2.12.4
+- update registry1.dso.mil/ironbank/big-bang/argocd v2.12.3 -> v2.12.4
 
 ## [7.5.2-bb.0] - 2024-09-16
 
