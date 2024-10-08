@@ -14,16 +14,3 @@ networkPolicies:
 
 server:
   replicas: 2
-
-redis-bb:
-  enabled: true
-  # pass throughs to BigBang's redis
-  # https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis/-/blob/main/chart/values.yaml
-  auth:
-    enabled: false
-  istio:
-    redis:
-      enabled: false
-  networkPolicies:
-    enabled: true
-    controlPlaneCidr: 0.0.0.0/0
