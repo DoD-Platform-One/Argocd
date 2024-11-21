@@ -1,15 +1,15 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argo-cd
 
-![Version: 7.6.12](https://img.shields.io/badge/Version-7.6.12-informational?style=flat-square) ![AppVersion: v2.12.6](https://img.shields.io/badge/AppVersion-v2.12.6-informational?style=flat-square)
+![Version: 7.7.3-bb.0](https://img.shields.io/badge/Version-7.7.3--bb.0-informational?style=flat-square) ![AppVersion: v2.13.0](https://img.shields.io/badge/AppVersion-v2.13.0-informational?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
 ## Upstream References
 - <https://github.com/argoproj/argo-helm>
 
-* <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
-* <https://github.com/argoproj/argo-cd>
+- <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
+- <https://github.com/argoproj/argo-cd>
 
 ## Upstream Release Notes
 
@@ -125,7 +125,7 @@ helm install argo-cd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.12.6"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.13.0"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -279,6 +279,7 @@ helm install argo-cd chart/
 | controller.metrics.service.portName | string | `"http-metrics"` | Metrics service port name |
 | controller.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
 | controller.metrics.serviceMonitor.interval | string | `"30s"` | Prometheus ServiceMonitor interval |
+| controller.metrics.serviceMonitor.honorLabels | bool | `false` | When true, honorLabels preserves the metric’s labels when they collide with the target’s labels. |
 | controller.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | controller.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
 | controller.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
@@ -305,6 +306,7 @@ helm install argo-cd chart/
 | dex.metrics.service.portName | string | `"http-metrics"` | Metrics service port name |
 | dex.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
 | dex.metrics.serviceMonitor.interval | string | `"30s"` | Prometheus ServiceMonitor interval |
+| dex.metrics.serviceMonitor.honorLabels | bool | `false` | When true, honorLabels preserves the metric’s labels when they collide with the target’s labels. |
 | dex.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | dex.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
 | dex.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
@@ -476,6 +478,7 @@ helm install argo-cd chart/
 | redis.metrics.service.portName | string | `"http-metrics"` | Metrics service port name |
 | redis.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
 | redis.metrics.serviceMonitor.interval | string | `"30s"` | Interval at which metrics should be scraped |
+| redis.metrics.serviceMonitor.honorLabels | bool | `false` | When true, honorLabels preserves the metric’s labels when they collide with the target’s labels. |
 | redis.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | redis.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
 | redis.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
@@ -624,6 +627,7 @@ helm install argo-cd chart/
 | server.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
 | server.metrics.serviceMonitor.interval | string | `"30s"` | Prometheus ServiceMonitor interval |
 | server.metrics.serviceMonitor.scrapeTimeout | string | `""` | Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used. |
+| server.metrics.serviceMonitor.honorLabels | bool | `false` | When true, honorLabels preserves the metric’s labels when they collide with the target’s labels. |
 | server.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | server.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
 | server.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
@@ -753,6 +757,7 @@ helm install argo-cd chart/
 | repoServer.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
 | repoServer.metrics.serviceMonitor.interval | string | `"30s"` | Prometheus ServiceMonitor interval |
 | repoServer.metrics.serviceMonitor.scrapeTimeout | string | `""` | Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used. |
+| repoServer.metrics.serviceMonitor.honorLabels | bool | `false` | When true, honorLabels preserves the metric’s labels when they collide with the target’s labels. |
 | repoServer.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | repoServer.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
 | repoServer.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
@@ -801,6 +806,7 @@ helm install argo-cd chart/
 | applicationSet.metrics.serviceMonitor.enabled | bool | `false` | Enable a prometheus ServiceMonitor |
 | applicationSet.metrics.serviceMonitor.interval | string | `"30s"` | Prometheus ServiceMonitor interval |
 | applicationSet.metrics.serviceMonitor.scrapeTimeout | string | `""` | Prometheus ServiceMonitor scrapeTimeout. If empty, Prometheus uses the global scrape timeout unless it is less than the target's scrape interval value in which the latter is used. |
+| applicationSet.metrics.serviceMonitor.honorLabels | bool | `false` | When true, honorLabels preserves the metric’s labels when they collide with the target’s labels. |
 | applicationSet.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | applicationSet.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
 | applicationSet.metrics.serviceMonitor.selector | object | `{}` | Prometheus ServiceMonitor selector |
@@ -916,6 +922,7 @@ helm install argo-cd chart/
 | notifications.metrics.serviceMonitor.annotations | object | `{}` | Prometheus ServiceMonitor annotations |
 | notifications.metrics.serviceMonitor.scheme | string | `""` | Prometheus ServiceMonitor scheme |
 | notifications.metrics.serviceMonitor.tlsConfig | object | `{}` | Prometheus ServiceMonitor tlsConfig |
+| notifications.metrics.serviceMonitor.honorLabels | bool | `false` | When true, honorLabels preserves the metric’s labels when they collide with the target’s labels. |
 | notifications.metrics.serviceMonitor.relabelings | list | `[]` | Prometheus [RelabelConfigs] to apply to samples before scraping |
 | notifications.metrics.serviceMonitor.metricRelabelings | list | `[]` | Prometheus [MetricRelabelConfigs] to apply to samples before ingestion |
 | notifications.notifiers | object | See [values.yaml] | Configures notification services such as slack, email or custom webhook # For more information: https://argo-cd.readthedocs.io/en/stable/operator-manual/notifications/services/overview/ |
