@@ -1,15 +1,15 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argo-cd
 
-![Version: 7.7.3-bb.0](https://img.shields.io/badge/Version-7.7.3--bb.0-informational?style=flat-square) ![AppVersion: v2.13.0](https://img.shields.io/badge/AppVersion-v2.13.0-informational?style=flat-square)
+![Version: 7.7.3-bb.1](https://img.shields.io/badge/Version-7.7.3--bb.1-informational?style=flat-square) ![AppVersion: v2.13.0](https://img.shields.io/badge/AppVersion-v2.13.0-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
 ## Upstream References
 - <https://github.com/argoproj/argo-helm>
 
-- <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
-- <https://github.com/argoproj/argo-cd>
+* <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
+* <https://github.com/argoproj/argo-cd>
 
 ## Upstream Release Notes
 
@@ -403,7 +403,7 @@ helm install argo-cd chart/
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | redis.exporter.image.repository | string | `"ironbank/bitnami/analytics/redis-exporter"` | Repository to use for the redis-exporter |
-| redis.exporter.image.tag | string | `"v1.63.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"v1.66.0"` | Tag to use for the redis-exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
 | redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
 | redis.exporter.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Redis exporter (optional) |
