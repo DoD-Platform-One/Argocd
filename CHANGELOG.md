@@ -4,36 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [7.7.3-bb.1] - 2024-11-22
-
-### Added
-
-- Added the maintenance track annotation and badge
-
-## [7.7.3-bb.0] - 2024-11-18
+## [7.7.5-bb.0] - 2024-12-04
 
 ### Changed
 
 - Update redis chart 20.0.1-bb.1 -> 20.2.1-bb.4
-- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.65.0 -> v1.66.0
-- Update registry1.dso.mil/ironbank/big-bang/argocd v2.12.6 -> v2.13.0
-
-## [7.6.12-bb.1] - 2024-11-06
-
-### Changed
-
-- Update redis chart 20.0.1-bb.1 -> 20.2.1-bb.4
-- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.65.0 -> v1.66.0
-
-## [7.6.12-bb.0] - 2024-10-29
-
-### Changed
-
-- Update gluon 0.5.4 -> 0.5.8
-- Update ironbank/big-bang/argocd v2.12.4 -> v2.12.6
-- Update redis chart 20.0.1-bb.1 -> 20.2.1-bb.1
-- Update registry1.dso.mil/ironbank/big-bang/argocd v2.12.4 -> v2.12.6
-- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.63.0 -> v1.65.0
+- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.63.0 -> v1.66.0
+- Update registry1.dso.mil/ironbank/big-bang/argocd v2.12.4 -> v2.13.1
+- Updated gluon from 0.5.4 -> 0.5.12
+- Update ironbank/big-bang/argocd v2.12.4 -> v2.13.1
 - Update registry1.dso.mil/ironbank/bitnami/redis 7.4.0 -> 7.4.1
 
 ## [7.6.6-bb.0] - 2024-09-30
