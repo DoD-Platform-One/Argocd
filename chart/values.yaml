@@ -938,7 +938,7 @@ controller:
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
 
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30
@@ -1243,8 +1243,8 @@ dex:
   # -- Resource limits and requests for dex
   resources:
     limits:
-      cpu: 10m
-      memory: 128Mi
+      cpu: 20m
+      memory: 256Mi
     requests:
       cpu: 10m
       memory: 128Mi
@@ -1298,7 +1298,7 @@ dex:
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
 
   readinessProbe:
     # -- Enable Kubernetes readiness probe for Dex >= 2.28.0
@@ -1318,7 +1318,7 @@ dex:
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
 
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30
@@ -1465,7 +1465,7 @@ redis:
       # -- How often (in seconds) to perform the [probe]
       periodSeconds: 15
       # -- Number of seconds after which the [probe] times out
-      timeoutSeconds: 15
+      timeoutSeconds: 30
       # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
       successThreshold: 1
       # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
@@ -1478,7 +1478,7 @@ redis:
       # -- How often (in seconds) to perform the [probe]
       periodSeconds: 15
       # -- Number of seconds after which the [probe] times out
-      timeoutSeconds: 15
+      timeoutSeconds: 30
       # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
       successThreshold: 1
       # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
@@ -1523,7 +1523,7 @@ redis:
     # -- How often (in seconds) to perform the [probe]
     periodSeconds: 15
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 15
+    timeoutSeconds: 30
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
@@ -1536,7 +1536,7 @@ redis:
     # -- How often (in seconds) to perform the [probe]
     periodSeconds: 15
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 15
+    timeoutSeconds: 30
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
@@ -1772,9 +1772,18 @@ redis-bb:
       capabilities:
         drop:
         - ALL
+    readinessProbe:
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+      tcpSocket:
+        port: 6379
   commonConfiguration: |-
     maxmemory 200mb
     save ""
+ 
 
 # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
 # the custom redis deployment is omitted
@@ -2172,7 +2181,7 @@ server:
   ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
   readinessProbe:
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
     # -- Number of seconds after the container has started before [probe] is initiated
     initialDelaySeconds: 10
     # -- How often (in seconds) to perform the [probe]
@@ -2180,11 +2189,11 @@ server:
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
 
   livenessProbe:
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
     # -- Number of seconds after the container has started before [probe] is initiated
     initialDelaySeconds: 10
     # -- How often (in seconds) to perform the [probe]
@@ -2192,7 +2201,7 @@ server:
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
 
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30
@@ -2819,7 +2828,7 @@ repoServer:
   ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/
   readinessProbe:
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
     # -- Number of seconds after the container has started before [probe] is initiated
     initialDelaySeconds: 10
     # -- How often (in seconds) to perform the [probe]
@@ -2827,11 +2836,11 @@ repoServer:
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
 
   livenessProbe:
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
     # -- Number of seconds after the container has started before [probe] is initiated
     initialDelaySeconds: 10
     # -- How often (in seconds) to perform the [probe]
@@ -2839,7 +2848,7 @@ repoServer:
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
 
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30
@@ -3199,11 +3208,11 @@ applicationSet:
     # -- How often (in seconds) to perform the [probe]
     periodSeconds: 10
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
 
   livenessProbe:
     # -- Enable Kubernetes liveness probe for ApplicationSet controller
@@ -3213,11 +3222,11 @@ applicationSet:
     # -- How often (in seconds) to perform the [probe]
     periodSeconds: 10
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
 
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30
@@ -3578,11 +3587,11 @@ notifications:
     # -- How often (in seconds) to perform the [probe]
     periodSeconds: 10
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
 
   livenessProbe:
     # -- Enable Kubernetes liveness probe for notifications controller Pods
@@ -3592,11 +3601,11 @@ notifications:
     # -- How often (in seconds) to perform the [probe]
     periodSeconds: 10
     # -- Number of seconds after which the [probe] times out
-    timeoutSeconds: 1
+    timeoutSeconds: 30
     # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
     successThreshold: 1
     # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
-    failureThreshold: 3
+    failureThreshold: 5
 
   # -- terminationGracePeriodSeconds for container lifecycle hook
   terminationGracePeriodSeconds: 30

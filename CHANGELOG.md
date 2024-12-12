@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [7.7.5-bb.1] - 2024-12-05
+
+### Changed
+
+- Updated timeouts for  readiness and liveness probes
+
 ## [7.7.5-bb.0] - 2024-12-04
 
 ### Changed
