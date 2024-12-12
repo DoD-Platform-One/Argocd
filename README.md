@@ -1,15 +1,15 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 7.7.5-bb.0](https://img.shields.io/badge/Version-7.7.5--bb.0-informational?style=flat-square) ![AppVersion: v2.13.1](https://img.shields.io/badge/AppVersion-v2.13.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 7.7.5-bb.1](https://img.shields.io/badge/Version-7.7.5--bb.1-informational?style=flat-square) ![AppVersion: v2.13.1](https://img.shields.io/badge/AppVersion-v2.13.1-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
 ## Upstream References
 - <https://github.com/argoproj/argo-helm>
 
-* <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
-* <https://github.com/argoproj/argo-cd>
+- <https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd>
+- <https://github.com/argoproj/argo-cd>
 
 ## Upstream Release Notes
 
@@ -213,7 +213,7 @@ helm install argocd chart/
 | configs.secret.azureDevops.username | string | `""` | Shared secret username for authenticating Azure DevOps webhook events |
 | configs.secret.azureDevops.password | string | `""` | Shared secret password for authenticating Azure DevOps webhook events |
 | configs.secret.extra | object | `{}` | add additional secrets to be added to argocd-secret # Custom secrets. Useful for injecting SSO secrets into environment variables. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets # Note that all values must be non-empty. |
-| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'` |
+| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD \| tr -d ':\n' \| sed 's/$2y/$2a/'` |
 | configs.secret.argocdServerAdminPasswordMtime | string | `""` (defaults to current time) | Admin password modification time. Eg. `"2006-01-02T15:04:05Z"` |
 | configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/ |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
@@ -254,7 +254,7 @@ helm install argocd chart/
 | controller.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | controller.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | controller.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
-| controller.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| controller.readinessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | controller.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | controller.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the application controller pods |
 | controller.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
@@ -359,7 +359,7 @@ helm install argocd chart/
 | dex.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | dex.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | dex.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
-| dex.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| dex.livenessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | dex.readinessProbe.enabled | bool | `false` | Enable Kubernetes readiness probe for Dex >= 2.28.0 |
 | dex.readinessProbe.httpPath | string | `"/healthz/ready"` | Http path to use for the readiness probe |
 | dex.readinessProbe.httpPort | string | `"metrics"` | Http port to use for the readiness probe |
@@ -368,7 +368,7 @@ helm install argocd chart/
 | dex.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | dex.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | dex.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
-| dex.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| dex.readinessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | dex.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | dex.automountServiceAccountToken | bool | `true` | Automount API credentials for the Service Account into the pod. |
 | dex.serviceAccount.create | bool | `true` | Create dex service account |
@@ -568,12 +568,12 @@ helm install argocd chart/
 | server.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | server.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | server.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
-| server.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| server.readinessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | server.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | server.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | server.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | server.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
-| server.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| server.livenessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | server.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | server.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the Argo CD server pods |
 | server.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
@@ -724,12 +724,12 @@ helm install argocd chart/
 | repoServer.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | repoServer.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | repoServer.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
-| repoServer.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| repoServer.readinessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | repoServer.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | repoServer.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | repoServer.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | repoServer.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
-| repoServer.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| repoServer.livenessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | repoServer.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
 | repoServer.nodeSelector | object | `{}` (defaults to global.nodeSelector) | [Node selector] |
 | repoServer.tolerations | list | `[]` (defaults to global.tolerations) | [Tolerations] for use with node taints |
@@ -839,13 +839,13 @@ helm install argocd chart/
 | applicationSet.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for ApplicationSet controller |
 | applicationSet.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | applicationSet.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
-| applicationSet.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| applicationSet.readinessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | applicationSet.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | applicationSet.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | applicationSet.livenessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for ApplicationSet controller |
 | applicationSet.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | applicationSet.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
-| applicationSet.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| applicationSet.livenessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | applicationSet.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | applicationSet.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | applicationSet.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
@@ -937,13 +937,13 @@ helm install argocd chart/
 | notifications.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for notifications controller Pods |
 | notifications.readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | notifications.readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
-| notifications.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| notifications.readinessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | notifications.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | notifications.readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | notifications.livenessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for notifications controller Pods |
 | notifications.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | notifications.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
-| notifications.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
+| notifications.livenessProbe.timeoutSeconds | int | `15` | Number of seconds after which the [probe] times out |
 | notifications.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | notifications.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | notifications.terminationGracePeriodSeconds | int | `30` | terminationGracePeriodSeconds for container lifecycle hook |
