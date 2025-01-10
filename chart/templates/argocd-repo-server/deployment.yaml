@@ -198,7 +198,11 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: {{ default (include "argo-cd.redis.fullname" .) .Values.externalRedis.existingSecret }}
+                {{- if .Values.externalRedis.host }}
                 key: redis-password
+                {{- else }}
+                key: auth
+                {{- end }}
                 optional: true
           - name: REDIS_SENTINEL_USERNAME
             valueFrom:

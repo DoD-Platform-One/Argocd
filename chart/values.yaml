@@ -192,7 +192,7 @@ global:
     # -- If defined, a repository applied to all Argo CD deployments
     repository: registry1.dso.mil/ironbank/big-bang/argocd
     # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-    tag: v2.13.1
+    tag: v2.13.2
     # -- If defined, a imagePullPolicy applied to all Argo CD deployments
     imagePullPolicy: IfNotPresent
 
@@ -1438,7 +1438,7 @@ redis:
       # -- Repository to use for the redis-exporter
       repository: ironbank/bitnami/analytics/redis-exporter
       # -- Tag to use for the redis-exporter
-      tag: v1.66.0
+      tag: "v1.67.0"
       # -- Image pull policy for the redis-exporter
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""
@@ -2035,7 +2035,7 @@ server:
       # -- Repository to use for extension installer image
       repository: "quay.io/argoprojlabs/argocd-extension-installer"
       # -- Tag to use for extension installer image
-      tag: "v0.0.5"
+      tag: "v0.0.8"
       # -- Image pull policy for extensions
       # @default -- `""` (defaults to global.image.imagePullPolicy)
       imagePullPolicy: ""
