@@ -4,6 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [7.7.10-bb.0] - 2025-01-08
+
+### Changed
+
+- Update ironbank/big-bang/argocd v2.13.1 -> v2.13.2
+- Update registry1.dso.mil/ironbank/big-bang/argocd v2.13.1 -> v2.13.2
+- Update registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.66.0 -> v1.67.0
+- Update redis chart 20.2.1-bb.4 -> 20.6.0-bb.0
+
 ## [7.7.5-bb.1] - 2024-12-05
 
 ### Changed
