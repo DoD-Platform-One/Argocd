@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v2.13.3
+appVersion: v2.14.1
 kubeVersion: ">=1.25.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 7.7.13-bb.1
+version: 7.8.0-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -31,12 +31,12 @@ dependencies:
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.13.3
+    - Argocd: v2.14.1
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.13.3
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.14.1
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -51,4 +51,4 @@ annotations:
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.67.0
   artifacthub.io/changes: |
     - kind: changed
-      description: Bump argo-cd to v2.13.3
+      description: Bump argo-cd to v2.14.1
