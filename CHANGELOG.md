@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [7.8.7-bb.0] (2025-03-05)
+### Changed
+- registry1.dso.mil/ironbank/big-bang/argocd v2.14.2 -> v2.14.3
+- ironbank/big-bang/argocd v2.14.2 -> v2.14.3
+
 ## [7.8.2-bb.0] - 2025-02-20
 
 ### Changed
