@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 7.8.7-bb.0](https://img.shields.io/badge/Version-7.8.7--bb.0-informational?style=flat-square) ![AppVersion: v2.14.3](https://img.shields.io/badge/AppVersion-v2.14.3-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 7.8.7-bb.1](https://img.shields.io/badge/Version-7.8.7--bb.1-informational?style=flat-square) ![AppVersion: v2.14.3](https://img.shields.io/badge/AppVersion-v2.14.3-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 

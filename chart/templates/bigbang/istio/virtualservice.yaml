@@ -1,4 +1,4 @@
-{{- if and (.Values.istio.enabled) (.Values.istio.argocd.enabled) -}}
+{{- if and ( or .Values.istio.enabled .Values.networkPolicies.istioNamespaceSelector ) (.Values.istio.argocd.enabled) -}}
 {{- $serviceName := include "argo-cd.server.fullname" . -}}
 {{- $servicePort := ternary .Values.server.service.servicePortHttps .Values.server.service.servicePortHttp .Values.server.ingress.tls -}}
 apiVersion: networking.istio.io/v1beta1
