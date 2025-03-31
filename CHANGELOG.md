@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [7.8.10-bb.0] (2025-03-31)
+### Changed
+- redis 20.6.2 -> 20.11.4
+- registry1.dso.mil/ironbank/big-bang/argocd v2.14.3 -> v2.14.5
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.67.0 -> v1.69.0
+
 ## [7.8.7-bb.1] - 2025-03-05
 
 ### Changed
