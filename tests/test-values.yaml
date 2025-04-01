@@ -1,16 +1,35 @@
-fullnameOverride: "argocd"
-configs:
-  secret:
-    argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
-bbtests:
-  enabled: true
-
-sso:
-  rbac:
-    policy.default: role:admin
-
-networkPolicies:
-  enabled: true
-
-server:
-  replicas: 2
+#########################
+# Disable Core Packages #
+#########################
+monitoring:
+  enabled: false
+grafana:
+  enabled: false
+neuvector:
+  enabled: false
+loki:
+  enabled: false
+promtail:
+  enabled: false
+tempo:
+  enabled: false
+kyvernoReporter:
+  enabled: false
+kiali:
+  enabled: false
+addons:
+  minioOperator:
+    enabled: false
+########################
+# Required for package #
+########################
+  argocd:
+    enabled: true
+kyvernoPolicies:
+  values:
+    bbtests:
+      enabled: false
+kyverno:
+  values:
+    bbtests:
+      enabled: false
