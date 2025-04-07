@@ -70,7 +70,7 @@
             "matchStrings": [
                 "version:\\s+(?<currentValue>.+)"
             ],
-            "depNameTemplate": "https://repo1.dso.mil/platform-one/big-bang/apps/application-utilities/redis.git",
+            "depNameTemplate": "https://repo1.dso.mil/big-bang/product/maintained/redis.git",
             "datasourceTemplate": "git-tags",
             "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-bb\\.(?<build>\\d+)$"
         },

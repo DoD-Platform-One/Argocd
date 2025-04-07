@@ -71,13 +71,15 @@ This package has a number of additions to the [upstream helm chart](https://gith
 - Network Policies
 - Helm hook jobs for automating upgrade tasks
 
+To simplify testing with SSO, it is recommended to use the override files listed in the "Deploy Bigbang" section of the Keycloak [Development and Maintenance Guide](https://repo1.dso.mil/big-bang/product/packages/keycloak/-/blob/main/docs/DEVELOPMENT_MAINTENANCE.md?ref_type=heads#deploy-bigbang).
+
 Here's the section of the `chart/values.yaml` file where these additions are configured:
 
 ```yaml
 # Big Bang Additions
 # SSO Additions
 sso:
-  enabled: false
+  enabled: true
   rbac:
     policy.csv: |
       g, Impact Level 2 Authorized, role:admin
@@ -85,8 +87,8 @@ sso:
   config:
     oidc.config: |
       name: Keycloak
-      issuer: https://login.dso.mil/auth/realms/baby-yoda
-      clientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd
+      issuer: https://keycloak.dev.bigbang.mil/auth/realms/baby-yoda
+      clientID: dev_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_argocd
       clientSecret: $oidc.keycloak.clientSecret
       requestedScopes: ["openid","ArgoCD"]
 # Optional key/secret for IAM role when using SOPS encryption in AWS.

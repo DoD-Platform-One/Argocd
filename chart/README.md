@@ -245,7 +245,7 @@ When installing Argo CD using this helm chart the user should have a similar exp
 
 To update the templates and default settings in `values.yaml` it may come in handy to look up the diff of the `manifests/install.yaml` between two versions accordingly. This can either be done directly via github and look for `manifests/install.yaml`:
 
-<https://github.com/argoproj/argo-cd/compare/v1.8.7...v2.0.0#files_bucket>
+https://github.com/argoproj/argo-cd/compare/v1.8.7...v2.0.0#files_bucket
 
 Or you clone the repository and do a local `git-diff`:
 
@@ -314,40 +314,30 @@ Upstream steps in the [FAQ] are not enough, since we chose a different approach.
 
 Steps to rotate the secret when using the helm chart (bold step is additional to upstream):
 * Delete `argocd-redis` secret in the namespace where Argo CD is installed.
-
   ```bash
   kubectl delete secret argocd-redis -n <argocd namespace>
   ```
-
 * **Perform a helm upgrade**
-
   ```bash
   helm upgrade argocd argo/argo-cd --reuse-values --wait
   ```
-
 * If you are running Redis in HA mode, restart Redis in HA.
-
   ```bash
   kubectl rollout restart deployment argocd-redis-ha-haproxy
   kubectl rollout restart statefulset argocd-redis-ha-server
   ```
-
 * If you are running Redis in non-HA mode, restart Redis.
-
   ```bash
   kubectl rollout restart deployment argocd-redis
   ```
-
 * Restart other components.
-
   ```bash
   kubectl rollout restart deployment argocd-server argocd-repo-server
   kubectl rollout restart statefulset argocd-application-controller
   ```
 
 ### 6.9.0
-
-ApplicationSet controller is always created to follow [upstream's manifest](https://github.com/argoproj/argo-cd/blob/v2.11.0/manifests/core-install/kustomization.yaml#L9).
+ApplicationSet controller is always created to follow [upstream's manifest](https://github.com/argoproj/argo-cd/blob/v2.11.0/manifests/core-install/kustomization.yaml#L9). 
 
 ### 6.4.0
 
@@ -399,7 +389,6 @@ This version supports Kubernetes version `>=1.23.0-0`. The current supported ver
 Please see more information about EoL: [Amazon EKS EoL][EKS EoL].
 
 ### 5.31.0
-
 The manifests are now using [`tini` as entrypoint][tini], instead of `entrypoint.sh`. Until Argo CD v2.8, `entrypoint.sh` is retained for upgrade compatibility.
 This means that the deployment manifests have to be updated after upgrading to Argo CD v2.7, and before upgrading to Argo CD v2.8 later.
 In case the manifests are updated before moving to Argo CD v2.8, the containers will not be able to start.
@@ -478,9 +467,9 @@ done
 
 This version **removes support for**:
 
-* deprecated repository credentials (parameter `configs.repositoryCredentials`)
-* option to run application controller as a Deployment
-* the parameters `server.additionalApplications` and `server.additionalProjects`
+- deprecated repository credentials (parameter `configs.repositoryCredentials`)
+- option to run application controller as a Deployment
+- the parameters `server.additionalApplications` and `server.additionalProjects`
 
 Please carefully read the following section if you are using these parameters!
 
@@ -658,10 +647,10 @@ server:
 
 ## Prerequisites
 
-* Kubernetes: `>=1.25.0-0`
-  * We align with [Amazon EKS calendar][EKS EoL] because there are many AWS users and it's a conservative approach.
-  * Please check [Support Matrix of Argo CD][Kubernetes Compatibility Matrix] for official info.
-* Helm v3.0.0+
+- Kubernetes: `>=1.25.0-0`
+  - We align with [Amazon EKS calendar][EKS EoL] because there are many AWS users and it's a conservative approach.
+  - Please check [Support Matrix of Argo CD][Kubernetes Compatibility Matrix] for official info.
+- Helm v3.0.0+
 
 ## Installing the Chart
 
@@ -695,6 +684,8 @@ NAME: my-release
 | openshift.enabled | bool | `false` | enables using arbitrary uid for argo repo server |
 
 ## Global Configs
+
+NOTE: Any values you put under `.Values.configs.cm` are passed to argocd-cm ConfigMap.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -761,6 +752,7 @@ NAME: my-release
 | configs.params."controller.repo.server.timeout.seconds" | int | `60` | Repo server RPC call timeout seconds. |
 | configs.params."controller.self.heal.timeout.seconds" | int | `5` | Specifies timeout between application self heal attempts |
 | configs.params."controller.status.processors" | int | `20` | Number of application status processors |
+| configs.params."controller.sync.timeout.seconds" | int | `0` | Specifies the timeout after which a sync would be terminated. 0 means no timeout |
 | configs.params."otlp.address" | string | `""` | Open-Telemetry collector address: (e.g. "otel-collector:4317") |
 | configs.params."reposerver.parallelism.limit" | int | `0` | Limit on number of concurrent manifests generate requests. Any value less the 1 means no limit. |
 | configs.params."server.basehref" | string | `"/"` | Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from / |
@@ -816,13 +808,13 @@ NAME: my-release
 | controller.deploymentAnnotations | object | `{}` | Annotations for the application controller Deployment |
 | controller.dnsConfig | object | `{}` | [DNS configuration] |
 | controller.dnsPolicy | string | `"ClusterFirst"` | Alternative DNS policy for application controller pods |
-| controller.dynamicClusterDistribution | bool | `false` | Enable dynamic cluster distribution (alpha) Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution> |
+| controller.dynamicClusterDistribution | bool | `false` | Enable dynamic cluster distribution (alpha) Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution |
 | controller.emptyDir.sizeLimit | string | `""` (defaults not set if not specified i.e. no size limit) | EmptyDir size limit for application controller |
 | controller.env | list | `[]` | Environment variables to pass to application controller |
 | controller.envFrom | list | `[]` (See [values.yaml]) | envFrom to pass to application controller |
 | controller.extraArgs | list | `[]` | Additional command line arguments to pass to application controller |
 | controller.extraContainers | list | `[]` | Additional containers to be added to the application controller pod |
-| controller.heartbeatTime | int | `10` | Application controller heartbeat time Ref: <https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution/#working-of-dynamic-distribution> |
+| controller.heartbeatTime | int | `10` | Application controller heartbeat time Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/dynamic-cluster-distribution/#working-of-dynamic-distribution |
 | controller.hostNetwork | bool | `false` | Host Network for application controller pods |
 | controller.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the application controller |
 | controller.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the application controller |
@@ -896,7 +888,7 @@ NAME: my-release
 | repoServer.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. |
 | repoServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the repo server |
 | repoServer.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the repo server [HPA] |
-| repoServer.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD repo server Ref: <https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/> |
+| repoServer.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD repo server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
 | repoServer.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the repo server [HPA] |
 | repoServer.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the repo server [HPA] |
 | repoServer.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the repo server [HPA] |
@@ -996,7 +988,7 @@ NAME: my-release
 | server.autoscaling.behavior | object | `{}` | Configures the scaling behavior of the target in both Up and Down directions. |
 | server.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server |
 | server.autoscaling.maxReplicas | int | `5` | Maximum number of replicas for the Argo CD server [HPA] |
-| server.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD server Ref: <https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/> |
+| server.autoscaling.metrics | list | `[]` | Configures custom HPA metrics for the Argo CD server Ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ |
 | server.autoscaling.minReplicas | int | `1` | Minimum number of replicas for the Argo CD server [HPA] |
 | server.autoscaling.targetCPUUtilizationPercentage | int | `50` | Average CPU utilization percentage for the Argo CD server [HPA] |
 | server.autoscaling.targetMemoryUtilizationPercentage | int | `50` | Average memory utilization percentage for the Argo CD server [HPA] |
@@ -1181,7 +1173,7 @@ NAME: my-release
 | dex.extraContainers | list | `[]` | Additional containers to be added to the dex pod |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.image.repository | string | `"ghcr.io/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.41.1"` | Dex image tag |
+| dex.image.tag | string | `"v2.42.0"` | Dex image tag |
 | dex.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | dex.initContainers | list | `[]` | Init containers to add to the dex pod |
 | dex.initImage.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Argo CD init image imagePullPolicy |
@@ -1197,8 +1189,6 @@ NAME: my-release
 | dex.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | dex.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | dex.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| dex.logFormat | string | `""` (defaults to global.logging.format) | Dex log format. Either `text` or `json` |
-| dex.logLevel | string | `""` (defaults to global.logging.level) | Dex log level. One of: `debug`, `info`, `warn`, `error` |
 | dex.metrics.enabled | bool | `false` | Deploy metrics service |
 | dex.metrics.service.annotations | object | `{}` | Metrics service annotations |
 | dex.metrics.service.labels | object | `{}` | Metrics service labels |
@@ -1271,8 +1261,8 @@ NAME: my-release
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
-| redis.exporter.image.repository | string | `"public.ecr.aws/bitnami/redis-exporter"` | Repository to use for the redis-exporter |
-| redis.exporter.image.tag | string | `"1.69.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.repository | string | `"ghcr.io/oliver006/redis_exporter"` | Repository to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"v1.69.0"` | Tag to use for the redis-exporter |
 | redis.exporter.livenessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Redis exporter |
 | redis.exporter.livenessProbe.failureThreshold | int | `5` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | redis.exporter.livenessProbe.initialDelaySeconds | int | `30` | Number of seconds after the container has started before [probe] is initiated |
@@ -1351,7 +1341,7 @@ NAME: my-release
 
 ### Option 2 - Redis HA
 
-This option uses the following third-party chart to bootstrap a clustered Redis: <https://github.com/DandyDeveloper/charts/tree/master/charts/redis-ha>.
+This option uses the following third-party chart to bootstrap a clustered Redis: https://github.com/DandyDeveloper/charts/tree/master/charts/redis-ha.
 For all available configuration options, please read upstream README and/or chart source.
 The main options are listed here:
 
@@ -1364,8 +1354,8 @@ The main options are listed here:
 | redis-ha.enabled | bool | `false` | Enables the Redis HA subchart and disables the custom Redis single node deployment |
 | redis-ha.existingSecret | string | `"argocd-redis"` | Existing Secret to use for redis-ha authentication. By default the redis-secret-init Job is generating this Secret. |
 | redis-ha.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
-| redis-ha.exporter.image | string | `"public.ecr.aws/bitnami/redis-exporter"` | Repository to use for the redis-exporter |
-| redis-ha.exporter.tag | string | `"1.58.0"` | Tag to use for the redis-exporter |
+| redis-ha.exporter.image | string | `"ghcr.io/oliver006/redis_exporter"` | Repository to use for the redis-exporter |
+| redis-ha.exporter.tag | string | `"v1.69.0"` | Tag to use for the redis-exporter |
 | redis-ha.haproxy.additionalAffinities | object | `{}` | Additional affinities to add to the haproxy pods. |
 | redis-ha.haproxy.affinity | string | `""` | Assign custom [affinity] rules to the haproxy pods. |
 | redis-ha.haproxy.containerSecurityContext | object | See [values.yaml] | HAProxy container-level security context |
@@ -1415,7 +1405,7 @@ If you use an External Redis (See Option 3 above), this Job is not deployed.
 |-----|------|---------|-------------|
 | redisSecretInit.affinity | object | `{}` | Assign custom [affinity] rules to the Redis secret-init Job |
 | redisSecretInit.containerSecurityContext | object | See [values.yaml] | Application controller container-level security context |
-| redisSecretInit.enabled | bool | `false` | Enable Redis secret initialization. If disabled, secret must be provisioned by alternative methods |
+| redisSecretInit.enabled | bool | `true` | Enable Redis secret initialization. If disabled, secret must be provisioned by alternative methods |
 | redisSecretInit.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the Redis secret-init Job |
 | redisSecretInit.image.repository | string | `""` (defaults to global.image.repository) | Repository to use for the Redis secret-init Job |
 | redisSecretInit.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the Redis secret-init Job |
@@ -1578,8 +1568,6 @@ If you use an External Redis (See Option 3 above), this Job is not deployed.
 | notifications.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | notifications.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | notifications.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| notifications.logFormat | string | `""` (defaults to global.logging.format) | Notifications controller log format. Either `text` or `json` |
-| notifications.logLevel | string | `""` (defaults to global.logging.level) | Notifications controller log level. One of: `debug`, `info`, `warn`, `error` |
 | notifications.metrics.enabled | bool | `false` | Enables prometheus metrics server |
 | notifications.metrics.port | int | `9001` | Metrics port |
 | notifications.metrics.service.annotations | object | `{}` | Metrics service annotations |

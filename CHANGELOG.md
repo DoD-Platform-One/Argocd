@@ -3,8 +3,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [7.8.11-bb.0] (2025-03-31)
+## [7.8.21-bb.0] (2025-04-02)
+
 ### Changed
+
+- Update gluon 0.5.14 -> 0.5.15
+- Update registry1.dso.mil/ironbank/big-bang/argocd v2.14.5 -> v2.14.8
+- Update argocd-apps 0.0.9 -> 2.0.2
+
+## [7.8.11-bb.0] (2025-03-31)
+
+### Changed
+
 - redis 20.6.2 -> 20.11.4
 - registry1.dso.mil/ironbank/big-bang/argocd v2.14.3 -> v2.14.5
 - registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.67.0 -> v1.69.0
