@@ -1,42 +1,43 @@
 apiVersion: v2
-appVersion: v2.14.5
+appVersion: v2.14.8
 kubeVersion: ">=1.25.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
-name: argocd
-version: 7.8.11-bb.0
+name: argo-cd
+version: 7.8.21-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
-- https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd
-- https://github.com/argoproj/argo-cd
+  - https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd
+  - https://github.com/argoproj/argo-cd
 keywords:
-- argoproj
-- argocd
-- gitops
+  - argoproj
+  - argocd
+  - gitops
 maintainers:
-- name: argoproj
-  url: https://argoproj.github.io/
+  - name: argoproj
+    url: https://argoproj.github.io/
 dependencies:
-- name: redis
-  version: 20.11.4-bb.1
-  repository: "oci://registry1.dso.mil/bigbang"
-  condition: redis-bb.enabled
-  alias: redis-bb
-- name: gluon
-  version: "0.5.14"
-  repository: "oci://registry1.dso.mil/bigbang"
-- name: argocd-apps
-  version: "0.0.9"
-  repository: "file://./deps/argocd-apps"
+  - name: redis
+    version: 20.11.4-bb.1
+    repository: "oci://registry1.dso.mil/bigbang"
+    condition: redis-bb.enabled
+    alias: redis-bb
+  - name: gluon
+    version: "0.5.15"
+    repository: "oci://registry1.dso.mil/bigbang"
+  - name: argocd-apps
+    version: "2.0.2"
+    repository: "file://./deps/argocd-apps"
+
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Argocd: v2.14.5
+    - Argocd: v2.14.8
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.14.5
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v2.14.8
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -52,3 +53,5 @@ annotations:
   artifacthub.io/changes: |
     - kind: fixed
       description: Create ServiceMonitor for dex only if dex is enabled
+
+

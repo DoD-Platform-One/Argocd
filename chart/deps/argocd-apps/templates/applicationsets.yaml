@@ -1,37 +1,48 @@
-
-{{- range .Values.applicationsets }}
+{{- range $appSetName, $appSetData:= .Values.applicationsets }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   annotations:
     "helm.sh/hook": post-install,post-upgrade
-  {{- with .additionalAnnotations }}
-    {{- range $key, $value := . }}
-    {{ $key }}: {{ $value | quote }}
+    {{- with $appSetData.additionalAnnotations }}
+      {{- range $key, $value := . }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
     {{- end }}
-  {{- end }}
-  {{- with .additionalLabels }}
+  {{- with $appSetData.additionalLabels }}
   labels:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  name: {{ .name }}
-  {{- with .namespace }}
+  name: {{ $appSetName }}
+  {{- with $appSetData.namespace }}
   namespace: {{ . }}
   {{- end }}
-spec:
-  {{- if hasKey . "goTemplate" }}
-  goTemplate: {{ .goTemplate }}
+  {{- with $appSetData.finalizers }}
+  finalizers:
+    {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .generators }}
+spec:
+  {{- if hasKey $appSetData "goTemplate" }}
+  goTemplate: {{ $appSetData.goTemplate }}
+  {{- end }}
+  {{- with $appSetData.generators }}
   generators:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .syncPolicy }}
+  {{- with $appSetData.ignoreApplicationDifferences }}
+  ignoreApplicationDifferences:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $appSetData.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $appSetData.syncPolicy }}
   syncPolicy:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .template }}
+  {{- with $appSetData.template }}
   template:
     {{- with .metadata }}
     metadata:
@@ -52,7 +63,7 @@ spec:
     {{- end }}
     {{- with .spec }}
     spec:
-      project: {{ tpl .project $ }}
+      project: {{ .project | squote }}
       {{- with .source }}
       source:
         {{- toYaml . | nindent 8 }}
@@ -76,5 +87,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     {{- end -}}
+  {{- end }}
+  {{- with $appSetData.templatePatch }}
+  templatePatch: |
+    {{- . | nindent 4 }}
   {{- end }}
 {{- end }}

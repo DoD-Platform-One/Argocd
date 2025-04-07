@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
-# argocd
+# argo-cd
 
-![Version: 7.8.11-bb.0](https://img.shields.io/badge/Version-7.8.11--bb.0-informational?style=flat-square) ![AppVersion: v2.14.5](https://img.shields.io/badge/AppVersion-v2.14.5-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 7.8.21-bb.0](https://img.shields.io/badge/Version-7.8.21--bb.0-informational?style=flat-square) ![AppVersion: v2.14.8](https://img.shields.io/badge/AppVersion-v2.14.8-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -38,7 +38,7 @@ https://helm.sh/docs/intro/install/
 - cd into directory
 
 ```bash
-helm install argocd chart/
+helm install argo-cd chart/
 ```
 
 ## Values
@@ -111,6 +111,7 @@ helm install argocd chart/
 | bbtests.scripts.envs.ARGOCD_PASSWORD | string | `"Password123"` |  |
 | nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
+| namespaceOverride | string | `.Release.Namespace` | Override the namespace |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version, which is used to evaluate certain manifests |
 | apiVersionOverrides | object | `{}` |  |
 | createAggregateRoles | bool | `false` | Create aggregated roles that extend existing cluster roles to interact with argo-cd resources # Ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#aggregated-clusterroles |
@@ -125,7 +126,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.14.5"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.14.8"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -168,6 +169,7 @@ helm install argocd chart/
 | configs.params."controller.operation.processors" | int | `10` | Number of application operation processors |
 | configs.params."controller.self.heal.timeout.seconds" | int | `5` | Specifies timeout between application self heal attempts |
 | configs.params."controller.repo.server.timeout.seconds" | int | `60` | Repo server RPC call timeout seconds. |
+| configs.params."controller.sync.timeout.seconds" | int | `0` | Specifies the timeout after which a sync would be terminated. 0 means no timeout |
 | configs.params."server.insecure" | bool | `true` | Run server without TLS # NOTE: This value should be set when you generate params by other means as it changes ports used by ingress template. |
 | configs.params."server.basehref" | string | `"/"` | Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from / |
 | configs.params."server.rootpath" | string | `""` | Used if Argo CD is running behind reverse proxy under subpath different from / |
@@ -216,7 +218,7 @@ helm install argocd chart/
 | configs.secret.azureDevops.username | string | `""` | Shared secret username for authenticating Azure DevOps webhook events |
 | configs.secret.azureDevops.password | string | `""` | Shared secret password for authenticating Azure DevOps webhook events |
 | configs.secret.extra | object | `{}` | add additional secrets to be added to argocd-secret # Custom secrets. Useful for injecting SSO secrets into environment variables. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets # Note that all values must be non-empty. |
-| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'` |
+| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with  ` htpasswd -nbBC 10  $ARGO_PWD \| tr -d ':\n' \| sed 's/$2y/$2a/' ` |
 | configs.secret.argocdServerAdminPasswordMtime | string | `""` (defaults to current time) | Admin password modification time. Eg. `"2006-01-02T15:04:05Z"` |
 | configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/ |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
@@ -389,8 +391,6 @@ helm install argocd chart/
 | dex.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | dex.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | dex.deploymentStrategy | object | `{}` | Deployment strategy to be added to the Dex server Deployment |
-| dex.logFormat | string | `""` (defaults to global.logging.format) | Dex log format. Either `text` or `json` |
-| dex.logLevel | string | `""` (defaults to global.logging.level) | Dex log level. One of: `debug`, `info`, `warn`, `error` |
 | redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
 | redis.enabled | bool | `true` | Enable redis |
 | redis.name | string | `"redis"` | Redis name |
@@ -897,8 +897,6 @@ helm install argocd chart/
 | notifications.image.tag | string | `""` (defaults to global.image.tag) | Tag to use for the notifications controller |
 | notifications.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the notifications controller |
 | notifications.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
-| notifications.logFormat | string | `""` (defaults to global.logging.format) | Notifications controller log format. Either `text` or `json` |
-| notifications.logLevel | string | `""` (defaults to global.logging.level) | Notifications controller log level. One of: `debug`, `info`, `warn`, `error` |
 | notifications.extraArgs | list | `[]` | Extra arguments to provide to the notifications controller |
 | notifications.extraEnv | list | `[]` | Additional container environment variables |
 | notifications.extraEnvFrom | list | `[]` (See [values.yaml]) | envFrom to pass to the notifications controller |

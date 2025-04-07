@@ -1,9 +1,9 @@
-{{- if and .Values.notifications.enabled (or .Values.notifications.metrics.enabled .Values.monitoring.enabled) }}
+{{- if and .Values.notifications.enabled .Values.notifications.metrics.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "argo-cd.notifications.fullname" . }}-metrics
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ include  "argo-cd.namespace" . }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.notifications.name "name" "metrics") | nindent 4 }}
     {{- with .Values.notifications.metrics.service.labels }}

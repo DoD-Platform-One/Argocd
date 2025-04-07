@@ -1,9 +1,9 @@
-{{- if or (.Values.repoServer.metrics.enabled) (.Values.monitoring.enabled) }}
+{{- if .Values.repoServer.metrics.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "argo-cd.repoServer.fullname" . }}-metrics
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ include  "argo-cd.namespace" . }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.repoServer.name "name" (printf "%s-metrics" .Values.repoServer.name)) | nindent 4 }}
     {{- with .Values.repoServer.metrics.service.labels }}

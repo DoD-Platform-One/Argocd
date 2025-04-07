@@ -9,7 +9,7 @@ metadata:
     {{- end }}
   {{- end }}
   name: {{ template "argo-cd.controller.fullname" . }}
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ include  "argo-cd.namespace" . }}
   labels:
     {{- include "argo-cd.labels" (dict "context" . "component" .Values.controller.name "name" .Values.controller.name) | nindent 4 }}
 spec:
@@ -225,19 +225,11 @@ spec:
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
-                name: {{ default (include "argo-cd.redis.fullname" .) .Values.externalRedis.existingSecret }}
-                key: redis-username
-                optional: true
+                {{- include "argo-cd.redisUsernameSecretRef" . | nindent 16 }}
           - name: REDIS_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ default "argocd-redis" .Values.externalRedis.existingSecret }}
-                {{- if .Values.externalRedis.host }}
-                key: redis-password
-                {{- else }}
-                key: auth
-                {{- end }}
-                optional: true
+                {{- include "argo-cd.redisPasswordSecretRef" . | nindent 16 }}
           - name: REDIS_SENTINEL_USERNAME
             valueFrom:
               secretKeyRef:
@@ -442,4 +434,3 @@ spec:
       {{- end }}
       dnsPolicy: {{ .Values.controller.dnsPolicy }}
 {{- end }}
-
