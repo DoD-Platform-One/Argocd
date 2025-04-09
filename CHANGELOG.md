@@ -3,6 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [7.8.23-bb.0] (2025-04-09)
+### Changed
+- registry1.dso.mil/ironbank/big-bang/argocd v2.14.8 -> v2.14.9
+
 ## [7.8.21-bb.1] (2025-04-08)
 
 ### Changed
