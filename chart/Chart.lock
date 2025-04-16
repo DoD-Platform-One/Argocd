@@ -6,7 +6,7 @@ dependencies:
   repository: oci://registry1.dso.mil/bigbang
   version: 0.5.15
 - name: argocd-apps
-  repository: file://./deps/argocd-apps
+  repository: https://argoproj.github.io/argo-helm/
   version: 2.0.2
-digest: sha256:505e789ad9047838308e101a975e3128e3b371b5e13b808129acfb8094c62f21
-generated: "2025-04-02T16:15:03.943537-04:00"
+digest: sha256:90fc2fc9ea0df12a73ab471eb7c51ef6ba824471845c904b00419ad01fa39b6a
+generated: "2025-04-15T13:25:54.313749094-05:00"
