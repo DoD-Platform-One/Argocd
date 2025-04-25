@@ -2,12 +2,12 @@
 {{- define "argocd-test.cypress-configmap" }}
 metadata:
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}
+    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}-cypress
     helm.sh/chart: {{ include "argo-cd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.server.name }}
+    app.kubernetes.io/component: {{ .Values.server.name }}-cypress
     app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
 {{- end }}
 ---
@@ -15,11 +15,11 @@ metadata:
 {{- define "argocd-test.cypress-runner" -}}
 metadata:
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}
+    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}-cypress
     helm.sh/chart: {{ include "argo-cd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.server.name }}
+    app.kubernetes.io/component: {{ .Values.server.name }}-cypress
     app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
 {{- end }}
