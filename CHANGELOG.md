@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [7.8.26-bb.0] (2025-04-17)
+### Changed
+- registry1.dso.mil/ironbank/big-bang/argocd v2.14.9 -> v2.14.10
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.69.0 -> v1.70.0
+- registry1.dso.mil/ironbank/opensource/dexidp/dex v2.41.1 -> v2.42.0
+- Update redis chart 20.11.4-bb.1 -> 20.13.0-bb.0
+
 ## [7.8.23-bb.2] (2025-04-25)
 
 ### Changed

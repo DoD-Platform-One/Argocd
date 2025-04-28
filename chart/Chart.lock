@@ -1,12 +1,12 @@
 dependencies:
 - name: redis
   repository: oci://registry1.dso.mil/bigbang
-  version: 20.11.4-bb.1
+  version: 20.13.0-bb.0
 - name: gluon
   repository: oci://registry1.dso.mil/bigbang
   version: 0.5.15
 - name: argocd-apps
   repository: https://argoproj.github.io/argo-helm/
   version: 2.0.2
-digest: sha256:90fc2fc9ea0df12a73ab471eb7c51ef6ba824471845c904b00419ad01fa39b6a
-generated: "2025-04-15T13:25:54.313749094-05:00"
+digest: sha256:28faa27daa50e1ffb3ff1d2157767eeac1e2c62627160296f609a55ae2c3c4fe
+generated: "2025-04-25T15:28:10.741922-05:00"
