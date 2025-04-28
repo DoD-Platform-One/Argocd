@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 7.8.23-bb.2](https://img.shields.io/badge/Version-7.8.23--bb.2-informational?style=flat-square) ![AppVersion: v2.14.9](https://img.shields.io/badge/AppVersion-v2.14.9-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 7.8.26-bb.0](https://img.shields.io/badge/Version-7.8.26--bb.0-informational?style=flat-square) ![AppVersion: v2.14.10](https://img.shields.io/badge/AppVersion-v2.14.10-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -126,7 +126,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.14.9"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.14.10"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -218,7 +218,7 @@ helm install argocd chart/
 | configs.secret.azureDevops.username | string | `""` | Shared secret username for authenticating Azure DevOps webhook events |
 | configs.secret.azureDevops.password | string | `""` | Shared secret password for authenticating Azure DevOps webhook events |
 | configs.secret.extra | object | `{}` | add additional secrets to be added to argocd-secret # Custom secrets. Useful for injecting SSO secrets into environment variables. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets # Note that all values must be non-empty. |
-| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD | tr -d ':\n' | sed 's/$2y/$2a/'` |
+| configs.secret.argocdServerAdminPassword | string | `""` | Bcrypt hashed admin password # Argo expects the password in the secret to be bcrypt hashed. You can create this hash with # `htpasswd -nbBC 10 "" $ARGO_PWD \| tr -d ':\n' \| sed 's/$2y/$2a/'` |
 | configs.secret.argocdServerAdminPasswordMtime | string | `""` (defaults to current time) | Admin password modification time. Eg. `"2006-01-02T15:04:05Z"` |
 | configs.styles | string | `""` (See [values.yaml]) | Define custom [CSS styles] for your argo instance. This setting will automatically mount the provided CSS and reference it in the argo configuration. # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/custom-styles/ |
 | extraObjects | list | `[]` | Array of extra K8s manifests to deploy # Note: Supports use of custom Helm templates |
@@ -326,7 +326,7 @@ helm install argocd chart/
 | dex.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | dex.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `dex.pdb.minAvailable` |
 | dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.41.1"` | Dex image tag |
+| dex.image.tag | string | `"v2.42.0"` | Dex image tag |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | dex.initImage.repository | string | `""` (defaults to global.image.repository) | Argo CD init image repository |
@@ -406,7 +406,7 @@ helm install argocd chart/
 | redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | redis.exporter.image.repository | string | `"ironbank/bitnami/analytics/redis-exporter"` | Repository to use for the redis-exporter |
-| redis.exporter.image.tag | string | `"v1.69.0"` | Tag to use for the redis-exporter |
+| redis.exporter.image.tag | string | `"v1.70.0"` | Tag to use for the redis-exporter |
 | redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
 | redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
 | redis.exporter.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Redis exporter (optional) |
