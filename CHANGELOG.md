@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [7.9.0-bb.0] (2025-05-07)
+### Changed
+- gluon 0.5.15 -> 0.5.17
+- redis 20.13.0 -> 20.13.2
+- registry1.dso.mil/ironbank/big-bang/argocd v2.14.10 -> v2.14.11
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.70.0 -> v1.71.0
+- registry1.dso.mil/ironbank/bitnami/redis 7.4.2 -> 7.4.3
+- registry1.dso.mil/ironbank/opensource/dexidp/dex v2.42.0 -> v2.42.1
+
 ## [7.8.26-bb.0] (2025-04-17)
 ### Changed
 - registry1.dso.mil/ironbank/big-bang/argocd v2.14.9 -> v2.14.10

@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 7.8.26-bb.0](https://img.shields.io/badge/Version-7.8.26--bb.0-informational?style=flat-square) ![AppVersion: v2.14.10](https://img.shields.io/badge/AppVersion-v2.14.10-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 7.9.0-bb.0](https://img.shields.io/badge/Version-7.9.0--bb.0-informational?style=flat-square) ![AppVersion: v2.14.11](https://img.shields.io/badge/AppVersion-v2.14.11-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -126,7 +126,7 @@ helm install argocd chart/
 | global.additionalLabels | object | `{}` | Common labels for the all resources |
 | global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| global.image.tag | string | `"v2.14.10"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.tag | string | `"v2.14.11"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
 | global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
 | global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
@@ -326,7 +326,7 @@ helm install argocd chart/
 | dex.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | dex.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `dex.pdb.minAvailable` |
 | dex.image.repository | string | `"registry1.dso.mil/ironbank/opensource/dexidp/dex"` | Dex image repository |
-| dex.image.tag | string | `"v2.42.0"` | Dex image tag |
+| dex.image.tag | string | `"v2.42.1"` | Dex image tag |
 | dex.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Dex imagePullPolicy |
 | dex.imagePullSecrets | list | `[]` (defaults to global.imagePullSecrets) | Secrets with credentials to pull images from a private registry |
 | dex.initImage.repository | string | `""` (defaults to global.image.repository) | Argo CD init image repository |
@@ -493,9 +493,45 @@ helm install argocd chart/
 | redis.metrics.containerSecurityContext.enabled | bool | `true` |  |
 | redis.metrics.containerSecurityContext.runAsUser | int | `999` |  |
 | redis.metrics.containerSecurityContext.runAsGroup | int | `999` |  |
-| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"metrics":{"containerSecurityContext":{"enabled":true,"runAsGroup":1001,"runAsUser":1001},"enabled":true,"labels":{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"},"metrics":null},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":5,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":6379},"timeoutSeconds":30},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
-| redis-bb.metrics.labels | object | `{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"}` | Custom labels for the haproxy pod. This is relevant for Argo CD CLI. |
-| redis-bb.metrics.containerSecurityContext | object | `{"enabled":true,"runAsGroup":1001,"runAsUser":1001}` | HAProxy enable prometheus metric scraping |
+| redis-bb | object | `{"auth":null,"enabled":true}` | BigBang HA Redis Passthrough |
+| redis-ha.enabled | bool | `false` | Enables the Redis HA subchart and disables the custom Redis single node deployment |
+| redis-ha.image.repository | string | `"public.ecr.aws/docker/library/redis"` | Redis repository |
+| redis-ha.image.tag | string | `"7.2.8-alpine"` | Redis tag # Do not upgrade to >= 7.4.0, otherwise you are no longer using an open source version of Redis |
+| redis-ha.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
+| redis-ha.exporter.image | string | `"ghcr.io/oliver006/redis_exporter"` | Repository to use for the redis-exporter |
+| redis-ha.exporter.tag | string | `"v1.69.0"` | Tag to use for the redis-exporter |
+| redis-ha.persistentVolume.enabled | bool | `false` | Configures persistence on Redis nodes |
+| redis-ha.istio.redis.enabled | bool | `false` |  |
+| redis-ha.image.pullSecrets[0] | string | `"private-registry"` |  |
+| redis-ha.metrics.enabled | bool | `true` |  |
+| redis-ha.metrics.labels | object | `{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"}` | Custom labels for the haproxy pod. This is relevant for Argo CD CLI. |
+| redis-ha.metrics.metrics | string | `nil` |  |
+| redis-ha.metrics.containerSecurityContext | object | `{"enabled":true,"runAsGroup":1001,"runAsUser":1001}` | HAProxy enable prometheus metric scraping |
+| redis-ha.master.resources.requests.memory | string | `"256Mi"` |  |
+| redis-ha.master.resources.requests.cpu | string | `"100m"` |  |
+| redis-ha.master.resources.limits.memory | string | `"256Mi"` |  |
+| redis-ha.master.resources.limits.cpu | string | `"100m"` |  |
+| redis-ha.master.containerSecurityContext.enabled | bool | `true` |  |
+| redis-ha.master.containerSecurityContext.runAsUser | int | `1001` |  |
+| redis-ha.master.containerSecurityContext.runAsGroup | int | `1001` |  |
+| redis-ha.master.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| redis-ha.master.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| redis-ha.replica.resources.requests.memory | string | `"256Mi"` |  |
+| redis-ha.replica.resources.requests.cpu | string | `"100m"` |  |
+| redis-ha.replica.resources.limits.memory | string | `"256Mi"` |  |
+| redis-ha.replica.resources.limits.cpu | string | `"100m"` |  |
+| redis-ha.replica.containerSecurityContext.enabled | bool | `true` |  |
+| redis-ha.replica.containerSecurityContext.runAsUser | int | `1001` |  |
+| redis-ha.replica.containerSecurityContext.runAsGroup | int | `1001` |  |
+| redis-ha.replica.containerSecurityContext.runAsNonRoot | bool | `true` |  |
+| redis-ha.replica.containerSecurityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| redis-ha.replica.readinessProbe.initialDelaySeconds | int | `5` |  |
+| redis-ha.replica.readinessProbe.periodSeconds | int | `10` |  |
+| redis-ha.replica.readinessProbe.timeoutSeconds | int | `30` |  |
+| redis-ha.replica.readinessProbe.successThreshold | int | `1` |  |
+| redis-ha.replica.readinessProbe.failureThreshold | int | `3` |  |
+| redis-ha.replica.readinessProbe.tcpSocket.port | int | `6379` |  |
+| redis-ha.commonConfiguration | string | `"maxmemory 200mb\nsave \"\""` |  |
 | externalRedis.host | string | `""` | External Redis server host |
 | externalRedis.username | string | `""` | External Redis username |
 | externalRedis.password | string | `""` | External Redis password |
