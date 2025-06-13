@@ -3,8 +3,22 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
-## [7.9.0-bb.0] (2025-05-07)
+
+## [8.0.10-bb.0] (2025-06-13)
+
 ### Changed
+
+- gluon 0.5.17 -> 0.6.2
+- redis 20.13.2 -> 21.0.2
+- registry1.dso.mil/ironbank/big-bang/argocd v2.14.11 -> v3.0.6
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.71.0 -> v1.73.0
+- registry1.dso.mil/ironbank/bitnami/redis 7.4.3 -> 8.0.2
+- registry1.dso.mil/ironbank/opensource/dexidp/dex v2.42.1 -> v2.43.1
+
+## [7.9.0-bb.0] (2025-05-07)
+
+### Changed
+
 - gluon 0.5.15 -> 0.5.17
 - redis 20.13.0 -> 20.13.2
 - registry1.dso.mil/ironbank/big-bang/argocd v2.14.10 -> v2.14.11
@@ -13,7 +27,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - registry1.dso.mil/ironbank/opensource/dexidp/dex v2.42.0 -> v2.42.1
 
 ## [7.8.26-bb.0] (2025-04-17)
+
 ### Changed
+
 - registry1.dso.mil/ironbank/big-bang/argocd v2.14.9 -> v2.14.10
 - registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.69.0 -> v1.70.0
 - registry1.dso.mil/ironbank/opensource/dexidp/dex v2.41.1 -> v2.42.0
@@ -22,19 +38,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [7.8.23-bb.2] (2025-04-25)
 
 ### Changed
+
 - Updated labels for cypress tests to avoid conflict
 
 ## [7.8.23-bb.1] (2025-04-15)
 
 ### Changed
+
 - Change argocd-apps dependency to refernce helm repo
 
 ### Updated
+
 - Updated argocd-apps default values
 
 ## [7.8.23-bb.0] (2025-04-09)
 
 ### Changed
+
 - registry1.dso.mil/ironbank/big-bang/argocd v2.14.8 -> v2.14.9
 
 ## [7.8.21-bb.1] (2025-04-08)
@@ -42,7 +62,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Reverted chart name from `argo-cd` to `argocd`
-
 
 ## [7.8.21-bb.0] (2025-04-02)
 
@@ -67,7 +86,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Adding dynamic namespace support in network policy for operatorless Istio compability
 
 ## [7.8.7-bb.0] (2025-03-05)
+
 ### Changed
+
 - registry1.dso.mil/ironbank/big-bang/argocd v2.14.2 -> v2.14.3
 - ironbank/big-bang/argocd v2.14.2 -> v2.14.3
 
@@ -99,7 +120,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Update registry1.dso.mil/ironbank/big-bang/argocd v2.13.2 -> v2.13.3
 - Update redis chart 20.6.0-bb.0 -> 20.6.2-bb.0
 - Update registry1.dso.mil/ironbank/bitnami/redis 7.4.1 -> 7.4.2
-
 
 ## [7.7.10-bb.0] - 2025-01-08
 

@@ -11,8 +11,8 @@ metadata:
     app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
 {{- end }}
 ---
-{{- include "gluon.tests.script-runner.overrides" (list . "argocd.script-runner") -}}
-{{- define "argocd.script-runner" -}}
+{{- include "gluon.tests.script-runner.overrides" (list . "argocd.script-runner") }}
+{{- define "argocd.script-runner" }}
 metadata:
   labels:
     app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}
