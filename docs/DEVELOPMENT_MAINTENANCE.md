@@ -14,15 +14,13 @@ The below details the steps required to update to a new version of the Argocd pa
 
 1. Review the [upstream release notes](https://github.com/argoproj/argo-cd/releases) for the update you are going to, as well as any versions skipped over between the last BB release and this one. Note any breaking changes and new features.
 
-1. Use `kpt` to pull the upstream chart via the latest tag that corresponds to the application version. `kpt pkg update chart@argo-cd-<version> --strategy alpha-git-patch`
+1. Modify the `version` in `Chart.yaml`. Also modify the `appVersion` and the `bigbang.dev/applicationVersions` to the new upstream version of Argocd.  Also confirm any additional dependency updates are in place in the `Chart.yaml`.
+
+1. Once you have configured the `Chart.yaml` with the proper versions (or validated from renovate changes), use `helm dependency update chart/` from the root of the repo to pull the new version of the upstream argocd chart, as well as any dependencies into the `chart/charts/` directory.
 
 1. Based on the upstream changelog review from earlier, make any changes required to resolve breaking changes and reconcile the Big Bang modifications.
 
-1. Modify the `version` in `Chart.yaml`. Also modify the `appVersion` and the `bigbang.dev/applicationVersions` to the new upstream version of Argocd.
-
 1. Update `CHANGELOG.md` adding an entry for the new version and noting all changes (at minimum should include `Updated Mattermost to x.x.x`).
-
-1. If there are any sub chart dependencies that need to be updated, run `helm dep update ./chart`
 
 1. Generate the `README.md` updates by following the [guide in gluon](https://repo1.dso.mil/platform-one/big-bang/apps/library-charts/gluon/-/blob/master/docs/bb-package-readme.md).
 
