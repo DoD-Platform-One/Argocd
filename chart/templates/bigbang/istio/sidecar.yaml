@@ -6,7 +6,7 @@ metadata:
   name: {{ .Release.Name }}-sidecar
   namespace: {{.Release.Namespace}}
   labels:
-    app: {{ template "argo-cd.controller.fullname". }}
+    app: {{ template "argo-cd.fullname". }}
 spec:
   outboundTrafficPolicy:
     mode: {{ .Values.istio.hardened.outboundTrafficPolicyMode }}

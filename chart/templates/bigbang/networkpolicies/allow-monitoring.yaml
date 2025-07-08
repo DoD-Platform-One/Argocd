@@ -19,9 +19,9 @@ spec:
             app: prometheus
     - ports:
         - protocol: TCP
-          port: {{ .Values.server.metrics.service.servicePort }}
+          port: {{ .Values.upstream.server.metrics.service.servicePort }}
         - protocol: TCP
-          port: {{ .Values.repoServer.metrics.service.servicePort }}
+          port: {{ .Values.upstream.repoServer.metrics.service.servicePort }}
         - protocol: TCP
-          port: {{ .Values.controller.metrics.service.servicePort }}
+          port: {{ .Values.upstream.controller.metrics.service.servicePort }}
 {{- end }}

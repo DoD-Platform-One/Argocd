@@ -1,18 +1,18 @@
 {{- if and ( or .Values.istio.enabled .Values.networkPolicies.istioNamespaceSelector ) (.Values.istio.argocd.enabled) -}}
-{{- $serviceName := include "argo-cd.server.fullname" . -}}
-{{- $servicePort := ternary .Values.server.service.servicePortHttps .Values.server.service.servicePortHttp .Values.server.ingress.tls -}}
+{{- $serviceName := printf "%s-%s" (include "argo-cd.fullname" .) .Values.upstream.server.name | trunc 63 | trimSuffix "-" -}}
+{{- $servicePort := ternary .Values.upstream.server.service.servicePortHttps .Values.upstream.server.service.servicePortHttp .Values.upstream.server.ingress.tls -}}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: {{ template "argo-cd.server.fullname" . }}
+  name: {{ template "argo-cd.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}
+    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.upstream.server.name }}
     helm.sh/chart: {{ include "argo-cd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.server.name }}
+    app.kubernetes.io/component: {{ .Values.upstream.server.name }}
   {{- if .Values.istio.argocd.labels }}
 {{ toYaml .Values.istio.argocd.labels | indent 4 }}
   {{- end }}

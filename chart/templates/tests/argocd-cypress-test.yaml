@@ -2,24 +2,24 @@
 {{- define "argocd-test.cypress-configmap" }}
 metadata:
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}-cypress
+    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.upstream.server.name }}-cypress
     helm.sh/chart: {{ include "argo-cd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.server.name }}-cypress
-    app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
+    app.kubernetes.io/component: {{ .Values.upstream.server.name }}-cypress
+    app.kubernetes.io/version: {{ default .Values.upstream.global.image.tag .Values.upstream.server.image.tag | quote }}
 {{- end }}
 ---
 {{- include "gluon.tests.cypress-runner.overrides" (list . "argocd-test.cypress-runner") -}}
 {{- define "argocd-test.cypress-runner" -}}
 metadata:
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}-cypress
+    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.upstream.server.name }}-cypress
     helm.sh/chart: {{ include "argo-cd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.server.name }}-cypress
-    app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
+    app.kubernetes.io/component: {{ .Values.upstream.server.name }}-cypress
+    app.kubernetes.io/version: {{ default .Values.upstream.global.image.tag .Values.upstream.server.image.tag | quote }}
 {{- end }}
