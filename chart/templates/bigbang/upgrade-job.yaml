@@ -11,7 +11,7 @@ spec:
   template:
     metadata:
     spec:
-      {{- with .Values.upstream.server.imagePullSecrets | default .Values.upstream.global.imagePullSecrets }}
+      {{- with .Values.upstream.server.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}

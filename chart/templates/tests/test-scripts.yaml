@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
     app.kubernetes.io/component: {{ .Values.upstream.server.name }}
-    app.kubernetes.io/version: {{ default .Values.upstream.global.image.tag .Values.upstream.server.image.tag | quote }}
+    app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.upstream.server.image.tag | quote }}
 {{- end }}
 ---
 {{- include "gluon.tests.script-runner.overrides" (list . "argocd.script-runner") }}
@@ -21,5 +21,5 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
     app.kubernetes.io/component: {{ .Values.upstream.server.name }}
-    app.kubernetes.io/version: {{ default .Values.upstream.global.image.tag .Values.upstream.server.image.tag | quote }}
+    app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.upstream.server.image.tag | quote }}
 {{- end }}
