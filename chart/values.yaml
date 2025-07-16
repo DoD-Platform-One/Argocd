@@ -1,18 +1,4 @@
 # Big Bang Additions
-# SSO Additions
-sso:
-  enabled: false
-  rbac:
-    policy.csv: |
-      g, Impact Level 2 Authorized, role:admin
-  keycloakClientSecret: this-can-be-anything-for-dev
-  config:
-    oidc.config: |
-      name: Keycloak
-      issuer: https://login.dso.mil/auth/realms/baby-yoda
-      clientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd
-      clientSecret: $oidc.keycloak.clientSecret
-      requestedScopes: ["openid","ArgoCD"]
 # Optional key/secret for IAM role when using SOPS encryption in AWS.
 awsCredentials:
   awsAccessKeyId: ""
@@ -133,6 +119,201 @@ bbtests:
       ARGOCD_USER: "admin"
       ARGOCD_PASSWORD: "Password123"
 
+# -- BigBang HA Redis Passthrough
+redis-bb:
+  enabled: true
+  # pass throughs to BigBang's redis
+  # https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis/-/blob/main/chart/values.yaml
+  auth:
+    enabled: false
+  istio:
+    redis:
+      enabled: false
+  image:
+    pullSecrets:
+    - private-registry
+  metrics:
+    enabled: true
+    # --  Custom labels for the haproxy pod. This is relevant for Argo CD CLI.
+    labels:
+      app.kubernetes.io/name: argocd-redis-ha-haproxy
+    metrics:
+    # -- HAProxy enable prometheus metric scraping
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsGroup: 1001
+  master:
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+      limits:
+        memory: 256Mi
+        cpu: 100m
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsGroup: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop:
+        - ALL
+  replica:
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 100m
+      limits:
+        memory: 256Mi
+        cpu: 100m
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsGroup: 1001
+      runAsNonRoot: true
+      capabilities:
+        drop:
+        - ALL
+    readinessProbe:
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 30
+      successThreshold: 1
+      failureThreshold: 3
+      tcpSocket:
+        port: 6379
+  commonConfiguration: |-
+    maxmemory 200mb
+    save ""
+ 
+## Globally shared configuration
+global:
+  # -- Default domain used by all components
+  ## Used for ingresses, certificates, SSO, notifications, etc.
+  domain: argocd.example.com
+
+  # -- Runtime class name for all components
+  runtimeClassName: ""
+
+  # -- Common labels for the all resources
+  additionalLabels: {}
+    # app: argo-cd
+
+  # -- Number of old deployment ReplicaSets to retain. The rest will be garbage collected.
+  revisionHistoryLimit: 3
+
+  # Default image used by all components
+  image:
+    # -- If defined, a repository applied to all Argo CD deployments
+    repository: registry1.dso.mil/ironbank/big-bang/argocd
+    # -- Overrides the global Argo CD image tag whose default is the chart appVersion
+    tag: v3.0.6
+    # -- If defined, a imagePullPolicy applied to all Argo CD deployments
+    imagePullPolicy: IfNotPresent
+
+  # -- Secrets with credentials to pull images from a private registry
+  imagePullSecrets:
+  - name: private-registry
+
+  # Default logging options used by all components
+  logging:
+    # -- Set the global logging format. Either: `text` or `json`
+    format: text
+    # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
+    level: info
+
+  # -- Annotations for the all deployed Statefulsets
+  statefulsetAnnotations: {}
+
+  # -- Annotations for the all deployed Deployments
+  deploymentAnnotations: {}
+
+  # -- Annotations for the all deployed pods
+  podAnnotations: {}
+
+  # -- Labels for the all deployed pods
+  podLabels: {}
+
+  # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
+  addPrometheusAnnotations: false
+
+  # -- Toggle and define pod-level security context.
+  # @default -- `{}` (See [values.yaml])
+  securityContext: {}
+  #  runAsUser: 999
+  #  runAsGroup: 999
+  #  fsGroup: 999
+
+  # -- Mapping between IP and hostnames that will be injected as entries in the pod's hosts files
+  hostAliases: []
+  # - ip: 10.20.30.40
+  #   hostnames:
+  #   - git.myhostname
+
+  # Configure dual-stack used by all component services
+  dualStack:
+    # -- IP family policy to configure dual-stack see [Configure dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services)
+    ipFamilyPolicy: ""
+    # -- IP families that should be supported and the order in which they should be applied to ClusterIP as well. Can be IPv4 and/or IPv6.
+    ipFamilies: []
+
+  # Default network policy rules used by all components
+  networkPolicy:
+    # -- Create NetworkPolicy objects for all components
+    create: false
+    # -- Default deny all ingress traffic
+    defaultDenyIngress: false
+
+  # -- Default priority class for all components
+  priorityClassName: ""
+
+  # -- Default node selector for all components
+  nodeSelector:
+    kubernetes.io/os: linux
+
+  # -- Default tolerations for all components
+  tolerations: []
+
+  # Default affinity preset for all components
+  affinity:
+    # -- Default pod anti-affinity rules. Either: `none`, `soft` or `hard`
+    podAntiAffinity: soft
+    # Node affinity rules
+    nodeAffinity:
+      # -- Default node affinity rules. Either: `none`, `soft` or `hard`
+      type: hard
+      # -- Default match expressions for node affinity
+      matchExpressions: []
+        # - key: topology.kubernetes.io/zone
+        #   operator: In
+        #   values:
+        #    - antarctica-east1
+        #    - antarctica-west1
+
+  # -- Default [TopologySpreadConstraints] rules for all components
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+  ## If labelSelector is left out, it will default to the labelSelector of the component
+  topologySpreadConstraints: []
+    # - maxSkew: 1
+    #   topologyKey: topology.kubernetes.io/zone
+    #   whenUnsatisfiable: DoNotSchedule
+
+  # -- Deployment strategy for the all deployed Deployments
+  deploymentStrategy: {}
+    # type: RollingUpdate
+    # rollingUpdate:
+    #   maxSurge: 25%
+    #   maxUnavailable: 25%
+
+  # -- Environment variables to pass to all deployed Deployments
+  env: []
+
+  # -- Annotations for the all deployed Certificates
+  certificateAnnotations: {}
+  
+
+
 
 ## Argo CD configuration
 ## Ref: https://github.com/argoproj/argo-cd
@@ -176,131 +357,6 @@ upstream:
     annotations: {}
     # -- Addtional labels to be added to all CRDs
     additionalLabels: {}
-  
-  ## Globally shared configuration
-  global:
-    # -- Default domain used by all components
-    ## Used for ingresses, certificates, SSO, notifications, etc.
-    domain: argocd.example.com
-  
-    # -- Runtime class name for all components
-    runtimeClassName: ""
-  
-    # -- Common labels for the all resources
-    additionalLabels: {}
-      # app: argo-cd
-  
-    # -- Number of old deployment ReplicaSets to retain. The rest will be garbage collected.
-    revisionHistoryLimit: 3
-  
-    # Default image used by all components
-    image:
-      # -- If defined, a repository applied to all Argo CD deployments
-      repository: registry1.dso.mil/ironbank/big-bang/argocd
-      # -- Overrides the global Argo CD image tag whose default is the chart appVersion
-      tag: v3.0.6
-      # -- If defined, a imagePullPolicy applied to all Argo CD deployments
-      imagePullPolicy: IfNotPresent
-  
-    # -- Secrets with credentials to pull images from a private registry
-    imagePullSecrets:
-    - name: private-registry
-  
-    # Default logging options used by all components
-    logging:
-      # -- Set the global logging format. Either: `text` or `json`
-      format: text
-      # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
-      level: info
-  
-    # -- Annotations for the all deployed Statefulsets
-    statefulsetAnnotations: {}
-  
-    # -- Annotations for the all deployed Deployments
-    deploymentAnnotations: {}
-  
-    # -- Annotations for the all deployed pods
-    podAnnotations: {}
-  
-    # -- Labels for the all deployed pods
-    podLabels: {}
-  
-    # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
-    addPrometheusAnnotations: false
-  
-    # -- Toggle and define pod-level security context.
-    # @default -- `{}` (See [values.yaml])
-    securityContext: {}
-    #  runAsUser: 999
-    #  runAsGroup: 999
-    #  fsGroup: 999
-  
-    # -- Mapping between IP and hostnames that will be injected as entries in the pod's hosts files
-    hostAliases: []
-    # - ip: 10.20.30.40
-    #   hostnames:
-    #   - git.myhostname
-  
-    # Configure dual-stack used by all component services
-    dualStack:
-      # -- IP family policy to configure dual-stack see [Configure dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services)
-      ipFamilyPolicy: ""
-      # -- IP families that should be supported and the order in which they should be applied to ClusterIP as well. Can be IPv4 and/or IPv6.
-      ipFamilies: []
-  
-    # Default network policy rules used by all components
-    networkPolicy:
-      # -- Create NetworkPolicy objects for all components
-      create: false
-      # -- Default deny all ingress traffic
-      defaultDenyIngress: false
-  
-    # -- Default priority class for all components
-    priorityClassName: ""
-  
-    # -- Default node selector for all components
-    nodeSelector:
-      kubernetes.io/os: linux
-  
-    # -- Default tolerations for all components
-    tolerations: []
-  
-    # Default affinity preset for all components
-    affinity:
-      # -- Default pod anti-affinity rules. Either: `none`, `soft` or `hard`
-      podAntiAffinity: soft
-      # Node affinity rules
-      nodeAffinity:
-        # -- Default node affinity rules. Either: `none`, `soft` or `hard`
-        type: hard
-        # -- Default match expressions for node affinity
-        matchExpressions: []
-          # - key: topology.kubernetes.io/zone
-          #   operator: In
-          #   values:
-          #    - antarctica-east1
-          #    - antarctica-west1
-  
-    # -- Default [TopologySpreadConstraints] rules for all components
-    ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
-    ## If labelSelector is left out, it will default to the labelSelector of the component
-    topologySpreadConstraints: []
-      # - maxSkew: 1
-      #   topologyKey: topology.kubernetes.io/zone
-      #   whenUnsatisfiable: DoNotSchedule
-  
-    # -- Deployment strategy for the all deployed Deployments
-    deploymentStrategy: {}
-      # type: RollingUpdate
-      # rollingUpdate:
-      #   maxSurge: 25%
-      #   maxUnavailable: 25%
-  
-    # -- Environment variables to pass to all deployed Deployments
-    env: []
-  
-    # -- Annotations for the all deployed Certificates
-    certificateAnnotations: {}
   
   ## Argo Configs
   configs:
@@ -1532,10 +1588,6 @@ upstream:
   
   ## Redis
   redis:
-    # -- Endpoint URL for external Redis
-    # For use with BigBang passthrough
-    externalEndpoint: ""
-  
     # -- Enable redis 
     enabled: false
     # -- Redis name
@@ -1564,7 +1616,7 @@ upstream:
     ## Redis image
     image:
       # -- Redis repository
-      repository: ironbank/bitnami/redis
+      repository: registry1.dso.mil/ironbank/bitnami/redis
       # -- Redis tag
       tag: 8.0.2
       # -- Redis image pull policy
@@ -1859,76 +1911,6 @@ upstream:
         runAsUser: 999
         runAsGroup: 999
   
-  # -- BigBang HA Redis Passthrough
-  redis-bb:
-    enabled: false
-    # pass throughs to BigBang's redis
-    # https://repo1.dso.mil/platform-one/big-bang/apps/sandbox/redis/-/blob/main/chart/values.yaml
-    auth:
-      enabled: false
-    istio:
-      redis:
-        enabled: false
-    image:
-      pullSecrets:
-      - private-registry
-    metrics:
-      enabled: true
-      # --  Custom labels for the haproxy pod. This is relevant for Argo CD CLI.
-      labels:
-        app.kubernetes.io/name: argocd-redis-ha-haproxy
-      metrics:
-      # -- HAProxy enable prometheus metric scraping
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 1001
-        runAsGroup: 1001
-  
-    master:
-      resources:
-        requests:
-          memory: 256Mi
-          cpu: 100m
-        limits:
-          memory: 256Mi
-          cpu: 100m
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 1001
-        runAsGroup: 1001
-        runAsNonRoot: true
-        capabilities:
-          drop:
-          - ALL
-    replica:
-      resources:
-        requests:
-          memory: 256Mi
-          cpu: 100m
-        limits:
-          memory: 256Mi
-          cpu: 100m
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 1001
-        runAsGroup: 1001
-        runAsNonRoot: true
-        capabilities:
-          drop:
-          - ALL
-      readinessProbe:
-        initialDelaySeconds: 5
-        periodSeconds: 10
-        timeoutSeconds: 30
-        successThreshold: 1
-        failureThreshold: 3
-        tcpSocket:
-          port: 6379
-    commonConfiguration: |-
-      maxmemory 200mb
-      save ""
-   
-  
   # This key configures Redis-HA subchart and when enabled (redis-ha.enabled=true)
   # the custom redis deployment is omitted
   # Check the redis-ha chart for more properties
@@ -1982,7 +1964,7 @@ upstream:
   # External Redis parameters
   externalRedis:
     # -- External Redis server host
-    host: ""
+    host: "argocd-argocd-redis-bb-headless.argocd.svc.cluster.local"
     # -- External Redis username
     username: ""
     # -- External Redis password

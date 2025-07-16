@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 8.0.10-bb.1](https://img.shields.io/badge/Version-8.0.10--bb.1-informational?style=flat-square) ![AppVersion: v3.0.6](https://img.shields.io/badge/AppVersion-v3.0.6-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 8.0.10-bb.2](https://img.shields.io/badge/Version-8.0.10--bb.2-informational?style=flat-square) ![AppVersion: v3.0.6](https://img.shields.io/badge/AppVersion-v3.0.6-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -45,10 +45,6 @@ helm install argocd chart/
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| sso.enabled | bool | `false` |  |
-| sso.rbac."policy.csv" | string | `"g, Impact Level 2 Authorized, role:admin\n"` |  |
-| sso.keycloakClientSecret | string | `"this-can-be-anything-for-dev"` |  |
-| sso.config."oidc.config" | string | `"name: Keycloak\nissuer: https://login.dso.mil/auth/realms/baby-yoda\nclientID: platform1_a8604cc9-f5e9-4656-802d-d05624370245_bb8-argocd\nclientSecret: $oidc.keycloak.clientSecret\nrequestedScopes: [\"openid\",\"ArgoCD\"]\n"` |  |
 | awsCredentials.awsAccessKeyId | string | `""` |  |
 | awsCredentials.awsSecretAccessKey | string | `""` |  |
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
@@ -109,6 +105,40 @@ helm install argocd chart/
 | bbtests.scripts.envs.ARGOCD_SERVER | string | `"http://argocd-server"` |  |
 | bbtests.scripts.envs.ARGOCD_USER | string | `"admin"` |  |
 | bbtests.scripts.envs.ARGOCD_PASSWORD | string | `"Password123"` |  |
+| redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":true,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"metrics":{"containerSecurityContext":{"enabled":true,"runAsGroup":1001,"runAsUser":1001},"enabled":true,"labels":{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"},"metrics":null},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":5,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":6379},"timeoutSeconds":30},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
+| redis-bb.metrics.labels | object | `{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"}` | Custom labels for the haproxy pod. This is relevant for Argo CD CLI. |
+| redis-bb.metrics.containerSecurityContext | object | `{"enabled":true,"runAsGroup":1001,"runAsUser":1001}` | HAProxy enable prometheus metric scraping |
+| global.domain | string | `"argocd.example.com"` | Default domain used by all components # Used for ingresses, certificates, SSO, notifications, etc. |
+| global.runtimeClassName | string | `""` | Runtime class name for all components |
+| global.additionalLabels | object | `{}` | Common labels for the all resources |
+| global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
+| global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
+| global.image.tag | string | `"v3.0.6"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
+| global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
+| global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
+| global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
+| global.logging.level | string | `"info"` | Set the global logging level. One of: `debug`, `info`, `warn` or `error` |
+| global.statefulsetAnnotations | object | `{}` | Annotations for the all deployed Statefulsets |
+| global.deploymentAnnotations | object | `{}` | Annotations for the all deployed Deployments |
+| global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
+| global.podLabels | object | `{}` | Labels for the all deployed pods |
+| global.addPrometheusAnnotations | bool | `false` | Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors. |
+| global.securityContext | object | `{}` (See [values.yaml]) | Toggle and define pod-level security context. |
+| global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
+| global.dualStack.ipFamilyPolicy | string | `""` | IP family policy to configure dual-stack see [Configure dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services) |
+| global.dualStack.ipFamilies | list | `[]` | IP families that should be supported and the order in which they should be applied to ClusterIP as well. Can be IPv4 and/or IPv6. |
+| global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
+| global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
+| global.priorityClassName | string | `""` | Default priority class for all components |
+| global.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Default node selector for all components |
+| global.tolerations | list | `[]` | Default tolerations for all components |
+| global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `none`, `soft` or `hard` |
+| global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `none`, `soft` or `hard` |
+| global.affinity.nodeAffinity.matchExpressions | list | `[]` | Default match expressions for node affinity |
+| global.topologySpreadConstraints | list | `[]` | Default [TopologySpreadConstraints] rules for all components # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector of the component |
+| global.deploymentStrategy | object | `{}` | Deployment strategy for the all deployed Deployments |
+| global.env | list | `[]` | Environment variables to pass to all deployed Deployments |
+| global.certificateAnnotations | object | `{}` | Annotations for the all deployed Certificates |
 | upstream.nameOverride | string | `"argocd"` | Provide a name in place of `argocd` |
 | upstream.fullnameOverride | string | `""` | String to fully override `"argo-cd.fullname"` |
 | upstream.namespaceOverride | string | `.Release.Namespace` | Override the namespace |
@@ -121,37 +151,6 @@ helm install argocd chart/
 | upstream.crds.keep | bool | `true` | Keep CRDs on chart uninstall |
 | upstream.crds.annotations | object | `{}` | Annotations to be added to all CRDs |
 | upstream.crds.additionalLabels | object | `{}` | Addtional labels to be added to all CRDs |
-| upstream.global.domain | string | `"argocd.example.com"` | Default domain used by all components # Used for ingresses, certificates, SSO, notifications, etc. |
-| upstream.global.runtimeClassName | string | `""` | Runtime class name for all components |
-| upstream.global.additionalLabels | object | `{}` | Common labels for the all resources |
-| upstream.global.revisionHistoryLimit | int | `3` | Number of old deployment ReplicaSets to retain. The rest will be garbage collected. |
-| upstream.global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` | If defined, a repository applied to all Argo CD deployments |
-| upstream.global.image.tag | string | `"v3.0.6"` | Overrides the global Argo CD image tag whose default is the chart appVersion |
-| upstream.global.image.imagePullPolicy | string | `"IfNotPresent"` | If defined, a imagePullPolicy applied to all Argo CD deployments |
-| upstream.global.imagePullSecrets | list | `[{"name":"private-registry"}]` | Secrets with credentials to pull images from a private registry |
-| upstream.global.logging.format | string | `"text"` | Set the global logging format. Either: `text` or `json` |
-| upstream.global.logging.level | string | `"info"` | Set the global logging level. One of: `debug`, `info`, `warn` or `error` |
-| upstream.global.statefulsetAnnotations | object | `{}` | Annotations for the all deployed Statefulsets |
-| upstream.global.deploymentAnnotations | object | `{}` | Annotations for the all deployed Deployments |
-| upstream.global.podAnnotations | object | `{}` | Annotations for the all deployed pods |
-| upstream.global.podLabels | object | `{}` | Labels for the all deployed pods |
-| upstream.global.addPrometheusAnnotations | bool | `false` | Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors. |
-| upstream.global.securityContext | object | `{}` (See [values.yaml]) | Toggle and define pod-level security context. |
-| upstream.global.hostAliases | list | `[]` | Mapping between IP and hostnames that will be injected as entries in the pod's hosts files |
-| upstream.global.dualStack.ipFamilyPolicy | string | `""` | IP family policy to configure dual-stack see [Configure dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services) |
-| upstream.global.dualStack.ipFamilies | list | `[]` | IP families that should be supported and the order in which they should be applied to ClusterIP as well. Can be IPv4 and/or IPv6. |
-| upstream.global.networkPolicy.create | bool | `false` | Create NetworkPolicy objects for all components |
-| upstream.global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress traffic |
-| upstream.global.priorityClassName | string | `""` | Default priority class for all components |
-| upstream.global.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Default node selector for all components |
-| upstream.global.tolerations | list | `[]` | Default tolerations for all components |
-| upstream.global.affinity.podAntiAffinity | string | `"soft"` | Default pod anti-affinity rules. Either: `none`, `soft` or `hard` |
-| upstream.global.affinity.nodeAffinity.type | string | `"hard"` | Default node affinity rules. Either: `none`, `soft` or `hard` |
-| upstream.global.affinity.nodeAffinity.matchExpressions | list | `[]` | Default match expressions for node affinity |
-| upstream.global.topologySpreadConstraints | list | `[]` | Default [TopologySpreadConstraints] rules for all components # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector of the component |
-| upstream.global.deploymentStrategy | object | `{}` | Deployment strategy for the all deployed Deployments |
-| upstream.global.env | list | `[]` | Environment variables to pass to all deployed Deployments |
-| upstream.global.certificateAnnotations | object | `{}` | Annotations for the all deployed Certificates |
 | upstream.configs.cm.create | bool | `true` | Create the argocd-cm configmap for [declarative setup] |
 | upstream.configs.cm.annotations | object | `{}` | Annotations to be added to argocd-cm configmap |
 | upstream.configs.cm."application.instanceLabelKey" | string | `"argocd.argoproj.io/instance"` | The name of tracking label used by Argo CD for resource pruning |
@@ -400,7 +399,6 @@ helm install argocd chart/
 | upstream.dex.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules to the deployment |
 | upstream.dex.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to dex # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | upstream.dex.deploymentStrategy | object | `{}` | Deployment strategy to be added to the Dex server Deployment |
-| upstream.redis.externalEndpoint | string | `""` | Endpoint URL for external Redis For use with BigBang passthrough |
 | upstream.redis.enabled | bool | `false` | Enable redis  |
 | upstream.redis.name | string | `"redis"` | Redis name |
 | upstream.redis.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for redis |
@@ -409,7 +407,7 @@ helm install argocd chart/
 | upstream.redis.pdb.annotations | object | `{}` | Annotations to be added to Redis pdb |
 | upstream.redis.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | upstream.redis.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `redis.pdb.minAvailable` |
-| upstream.redis.image.repository | string | `"ironbank/bitnami/redis"` | Redis repository |
+| upstream.redis.image.repository | string | `"registry1.dso.mil/ironbank/bitnami/redis"` | Redis repository |
 | upstream.redis.image.tag | string | `"8.0.2"` | Redis tag |
 | upstream.redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
 | upstream.redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
@@ -502,10 +500,7 @@ helm install argocd chart/
 | upstream.redis.metrics.containerSecurityContext.enabled | bool | `true` |  |
 | upstream.redis.metrics.containerSecurityContext.runAsUser | int | `999` |  |
 | upstream.redis.metrics.containerSecurityContext.runAsGroup | int | `999` |  |
-| upstream.redis-bb | object | `{"auth":{"enabled":false},"commonConfiguration":"maxmemory 200mb\nsave \"\"","enabled":false,"image":{"pullSecrets":["private-registry"]},"istio":{"redis":{"enabled":false}},"master":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}},"metrics":{"containerSecurityContext":{"enabled":true,"runAsGroup":1001,"runAsUser":1001},"enabled":true,"labels":{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"},"metrics":null},"replica":{"containerSecurityContext":{"capabilities":{"drop":["ALL"]},"enabled":true,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":5,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":6379},"timeoutSeconds":30},"resources":{"limits":{"cpu":"100m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"256Mi"}}}}` | BigBang HA Redis Passthrough |
-| upstream.redis-bb.metrics.labels | object | `{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"}` | Custom labels for the haproxy pod. This is relevant for Argo CD CLI. |
-| upstream.redis-bb.metrics.containerSecurityContext | object | `{"enabled":true,"runAsGroup":1001,"runAsUser":1001}` | HAProxy enable prometheus metric scraping |
-| upstream.externalRedis.host | string | `""` | External Redis server host |
+| upstream.externalRedis.host | string | `"argocd-argocd-redis-bb-headless.argocd.svc.cluster.local"` | External Redis server host |
 | upstream.externalRedis.username | string | `""` | External Redis username |
 | upstream.externalRedis.password | string | `""` | External Redis password |
 | upstream.externalRedis.port | int | `6379` | External Redis server port |

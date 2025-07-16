@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.0.10-bb.2] (2025-07-12)
+
+### Changed
+
+- fix redis implementation to use redis-bb
+- refactor SSO from upstream to bake into configs properly
+
 ## [8.0.10-bb.1] (2025-07-03)
 
 ### Changed
