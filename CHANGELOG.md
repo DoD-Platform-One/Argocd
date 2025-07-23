@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.2.0-bb.0] (2025-07-23)
+
+### Changed
+
+- Upgrade argo-cd helm chart 8.0.10 -> 8.2.0
+
 ## [8.0.10-bb.2] (2025-07-12)
 
 ### Changed
