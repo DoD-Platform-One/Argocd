@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 8.2.0-bb.0](https://img.shields.io/badge/Version-8.2.0--bb.0-informational?style=flat-square) ![AppVersion: v3.0.11](https://img.shields.io/badge/AppVersion-v3.0.11-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 8.2.0-bb.1](https://img.shields.io/badge/Version-8.2.0--bb.1-informational?style=flat-square) ![AppVersion: v3.0.11](https://img.shields.io/badge/AppVersion-v3.0.11-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -408,12 +408,12 @@ helm install argocd chart/
 | upstream.redis.pdb.minAvailable | string | `""` (defaults to 0 if not specified) | Number of pods that are available after eviction as number or percentage (eg.: 50%) |
 | upstream.redis.pdb.maxUnavailable | string | `""` | Number of pods that are unavailble after eviction as number or percentage (eg.: 50%). # Has higher precedence over `redis.pdb.minAvailable` |
 | upstream.redis.image.repository | string | `"registry1.dso.mil/ironbank/bitnami/redis"` | Redis repository |
-| upstream.redis.image.tag | string | `"8.0.2"` | Redis tag |
+| upstream.redis.image.tag | string | `"8.0.3"` | Redis tag |
 | upstream.redis.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Redis image pull policy |
 | upstream.redis.exporter.enabled | bool | `false` | Enable Prometheus redis-exporter sidecar |
 | upstream.redis.exporter.env | list | `[]` | Environment variables to pass to the Redis exporter |
 | upstream.redis.exporter.image.repository | string | `"ironbank/bitnami/analytics/redis-exporter"` | Repository to use for the redis-exporter |
-| upstream.redis.exporter.image.tag | string | `"v1.73.0"` | Tag to use for the redis-exporter |
+| upstream.redis.exporter.image.tag | string | `"v1.74.0"` | Tag to use for the redis-exporter |
 | upstream.redis.exporter.image.imagePullPolicy | string | `""` (defaults to global.image.imagePullPolicy) | Image pull policy for the redis-exporter |
 | upstream.redis.exporter.containerSecurityContext | object | See [values.yaml] | Redis exporter security context |
 | upstream.redis.exporter.readinessProbe.enabled | bool | `false` | Enable Kubernetes liveness probe for Redis exporter (optional) |
