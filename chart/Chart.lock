@@ -1,7 +1,7 @@
 dependencies:
 - name: argo-cd
   repository: https://argoproj.github.io/argo-helm
-  version: 8.2.0
+  version: 8.2.4
 - name: redis
   repository: oci://registry1.dso.mil/bigbang
   version: 21.2.9-bb.0
@@ -11,5 +11,5 @@ dependencies:
 - name: argocd-apps
   repository: https://argoproj.github.io/argo-helm/
   version: 2.0.2
-digest: sha256:45d337d1717164199b7caf153dd151c0de7d50b190974677378835b408241d37
-generated: "2025-07-23T08:08:35.68466-06:00"
+digest: sha256:8e9a7a80adda6963eff195d394d9436833aa83bf7f1d49231bef77ba4f7c7df6
+generated: "2025-07-30T17:21:40.442791253Z"
