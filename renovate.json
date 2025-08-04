@@ -17,16 +17,15 @@
         "argocd",
         "renovate"
     ],
-    "commitMessagePrefix": "SKIP UPDATE CHECK",
     "packageRules": [
         {
-            "matchDatasources": [
-                "docker"
-            ],
+            "matchDatasources": ["docker"],
             "groupName": "Ironbank",
-            "registryUrls": [
-                "https://registry1.dso.mil"
-            ]
+            "registryUrls": ["https://registry1.dso.mil"]
+        },
+        {
+            "matchManagers": ["custom.regex"],
+            "groupName": "Grouped Chart Dependency Updates"
         }
     ],
     "customManagers": [
