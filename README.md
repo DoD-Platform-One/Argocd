@@ -995,11 +995,6 @@ helm install argocd chart/
 | upstream.notifications.bots.slack.affinity | object | `{}` (defaults to global.affinity preset) | Assign custom [affinity] rules |
 | upstream.notifications.bots.slack.tolerations | list | `[]` | [Tolerations] for use with node taints |
 | upstream.notifications.bots.slack.nodeSelector | object | `{}` | [Node selector] |
-| upstream.argocd-apps.applications | object | `{}` (See [values.yaml]) | Deploy Argo CD Applications within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
-| upstream.argocd-apps.projects | object | `{}` (See [values.yaml]) | Deploy Argo CD Projects within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
-| upstream.argocd-apps.applicationsets | object | `{}` (See [values.yaml]) | Deploy Argo CD ApplicationSets within this helm release # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/ |
-| upstream.argocd-apps.itemTemplates | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications/ApplicationSets/Projects within this helm release # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/ |
-| upstream.argocd-apps.extensions | object | `{}` (See [values.yaml]) | DEPRECATED - Please refer [Deprecation Notice](https://github.com/argoproj-labs/argocd-extensions?tab=readme-ov-file#deprecation-notice) for more info. # This function in tech preview stage, do expect unstability or breaking changes in newer versions. Bump image.tag if necessary. # Ref: https://github.com/argoproj-labs/argocd-extensions |
 | upstream.commitServer.enabled | bool | `false` | Enable commit server |
 | upstream.commitServer.name | string | `"commit-server"` | Commit server name |
 | upstream.commitServer.runtimeClassName | string | `""` (defaults to global.runtimeClassName) | Runtime class name for the commit server |
@@ -1050,6 +1045,11 @@ helm install argocd chart/
 | upstream.commitServer.topologySpreadConstraints | list | `[]` (defaults to global.topologySpreadConstraints) | Assign custom [TopologySpreadConstraints] rules to the commit server # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ # If labelSelector is left out, it will default to the labelSelector configuration of the deployment |
 | upstream.commitServer.deploymentStrategy | object | `{}` | Deployment strategy to be added to the commit server Deployment |
 | upstream.commitServer.priorityClassName | string | `""` (defaults to global.priorityClassName) | Priority class for the commit server pods |
+| argocd-apps.applications | object | `{}` (See [values.yaml]) | Deploy Argo CD Applications within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
+| argocd-apps.projects | object | `{}` (See [values.yaml]) | Deploy Argo CD Projects within this helm release # Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/ |
+| argocd-apps.applicationsets | object | `{}` (See [values.yaml]) | Deploy Argo CD ApplicationSets within this helm release # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/ |
+| argocd-apps.itemTemplates | list | `[]` (See [values.yaml]) | Deploy Argo CD Applications/ApplicationSets/Projects within this helm release # Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/ |
+| argocd-apps.extensions | object | `{}` (See [values.yaml]) | DEPRECATED - Please refer [Deprecation Notice](https://github.com/argoproj-labs/argocd-extensions?tab=readme-ov-file#deprecation-notice) for more info. # This function in tech preview stage, do expect unstability or breaking changes in newer versions. Bump image.tag if necessary. # Ref: https://github.com/argoproj-labs/argocd-extensions |
 
 ## Contributing
 
