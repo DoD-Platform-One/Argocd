@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v3.0.12
+appVersion: v3.1.1
 kubeVersion: ">=1.25.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 8.2.5-bb.1
+version: 8.3.3-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -18,11 +18,11 @@ maintainers:
     url: https://argoproj.github.io/
 dependencies:
   - name: argo-cd
-    version: 8.2.5
+    version: 8.3.3
     repository: https://argoproj.github.io/argo-helm
     alias: upstream
   - name: redis
-    version: 21.2.9-bb.0
+    version: 22.0.4-bb.1
     repository: "oci://registry1.dso.mil/bigbang"
     condition: redis-bb.enabled
     alias: redis-bb
@@ -36,24 +36,15 @@ dependencies:
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Argocd: v3.0.12
+    - Argocd: v3.1.1
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.0.12
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.1.1
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
     - name: dex
       condition: dex.enabled
-      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.43.1
-    - name: redis
-      condition: redis-bb.enabled
-      image: registry1.dso.mil/ironbank/bitnami/redis:8.0.3
-    - name: redis-exporter
-      condition: redis-bb.metrics.enabled
-      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.74.0
-  artifacthub.io/changes: |
-    - kind: changed
-      description: Downgrade Redis to latest 7.2.8 to be in-line with upstream and CNCF Allowlist License Policy
+      image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.44.0

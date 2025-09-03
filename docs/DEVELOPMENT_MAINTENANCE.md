@@ -41,15 +41,20 @@ You will want to install with:
 The above can be accomplished with the following overrides for Big Bang:
 
 ```yaml
-istio:
+istioCRDs:
+  enabled: true
+istiod:
+  enabled: true
+istioGateway:
   enabled: true
 addons:
   argocd: 
     enabled: true
     values:
-      configs:
-        secret:
-          argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
+      upstream:
+        configs:
+          secret:
+            argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
 ```
 
 Testing Steps:

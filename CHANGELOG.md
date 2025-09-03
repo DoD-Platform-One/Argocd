@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [8.3.3-bb.0] (2025-09-02)
+
+### Changed
+
+- Upgrade argo-cd helm chart 8.2.5 -> 8.3.=3
+- redis 21.2.9-bb.0 -> 22.0.4-bb.1
+- registry1.dso.mil/ironbank/opensource/dexidp/dex v2.43.1 -> v2.44.0
+- Cleaned up values file to reflect passthrough pattern
+
+
 ## [8.2.5-bb.1] (2025-08-29)
 
 ### Changed
