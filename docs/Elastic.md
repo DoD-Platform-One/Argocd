@@ -54,4 +54,5 @@ After filtering to target specific components of ArgoCD you can search for speci
 ```
 
 log: "error"
+
 ```
