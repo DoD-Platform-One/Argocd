@@ -1,4 +1,4 @@
-#ArgoCD Development Overrides
+# ArgoCD Development Overrides
 
 ## make sure to replcae git branch and image tag with your development branch and tag values
 

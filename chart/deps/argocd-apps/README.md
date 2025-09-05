@@ -3,6 +3,7 @@
 A Helm chart for managing additional Argo CD Applications and Projects
 
 To regenerate this document, from the root of this chart directory run:
+
 ```shell
 docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
 ```
@@ -20,8 +21,8 @@ For full list of changes, please check ArtifactHub [changelog].
 ## Installation
 
 ```console
-$ helm repo add argo https://argoproj.github.io/argo-helm
-$ helm install my-release argo/argocd-apps
+helm repo add argo https://argoproj.github.io/argo-helm
+helm install my-release argo/argocd-apps
 ```
 
 ## Values
