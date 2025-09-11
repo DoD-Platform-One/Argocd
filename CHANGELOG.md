@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.3.4-bb.1] (2025-09-11)
+
+### Changed
+
+- Update .Values.upstream.externalRedis.host to "redis-bb-headless.argocd.svc.cluster.local" due to redis-bb upstream changes
+
 ## [8.3.4-bb.0] (2025-09-05)
 
 ### Changed

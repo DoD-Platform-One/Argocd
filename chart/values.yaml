@@ -261,7 +261,7 @@ upstream:
 
   # External Redis parameters
   externalRedis:
-    host: "argocd-argocd-redis-bb-headless.argocd.svc.cluster.local"
+    host: "redis-bb-headless.argocd.svc.cluster.local"
 
   redisSecretInit:
     enabled: false
