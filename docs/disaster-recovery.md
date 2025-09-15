@@ -16,4 +16,4 @@ Export to a backup:
 
     docker run -v ~/.kube:/home/argocd/.kube --rm argoproj/argocd:$VERSION argocd-util export > backup.yaml
 
-For more information on Argo CD disaster recovery see the following [link](https://argoproj.github.io/argo-cd/operator-manual/disaster_recovery/).
+For more information on Argo CD disaster recovery see the following [link](https://argo-cd.readthedocs.io/en/stable/operator-manual/disaster_recovery/).

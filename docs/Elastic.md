@@ -1,6 +1,6 @@
 ### Kibana / ECK log notes
 
-Log in to <https://kibana>.<domain>.<tld>
+Log in to `<https://kibana>.<domain>.<tld>`
 
 Create an index pattern for fluentd if not already created
 
@@ -9,7 +9,7 @@ argocd*
 ```
 
 Link that describes ArgoCD components  
-<https://argoproj.github.io/argo-cd/operator-manual/architecture/>  
+https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/  
   
 Build filters by argocd container name.
   
