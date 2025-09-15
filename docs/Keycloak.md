@@ -128,7 +128,7 @@ helm upgrade -i -n argocd --create-namespace argocd chart/
 
 3. Restart ArgoCD to apply changes by executing  "kubectl -n argocd delete pod --all" within bastion or environment.
 
-4. Go to <https://argocd>.<domain>.<tld> select login with keycloak and use the created username and password.
+4. Go to `<https://argocd>.<domain>.<tld>` select login with keycloak and use the created username and password.
 
 ## OIDC Custom CA
 

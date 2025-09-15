@@ -25,7 +25,7 @@ spec:
 ## Custom `repo-server`
 
 To support the various Kustomize plugins, a custom `repo-server` image is used following the standard ArgoCD custom
-tooling walkthrough [here](https://argoproj.github.io/argo-cd/operator-manual/custom_tools/#byoi-build-your-own-image).
+tooling walkthrough [here](https://argo-cd.readthedocs.io/en/stable/operator-manual/custom_tools/#byoi-build-your-own-image).
  The image and the contents can be found in the root level `Dockerfile`.
 
 The image is located in the P1 repo:
@@ -59,17 +59,17 @@ This does __not__ mean we're "insecure"!
 
 ### HTTP server
 
-<https://argocd>.<your.namespace.goes.here>
+`<https://argocd>.<your.namespace.goes.here>`
 
 ### Allow SSO login
 
 Once cluster is up and running use the docs in the keycloak repository for creating users to create the developer user.
 Once the developer user is created login to keycloak using the admin password and assign that user to the ArgoCDAdmins
-group. Go to <https://argocd>.<domain>.<tld> select login with keycloak and use the developer username and password.
+group. Go to `<https://argocd>.<domain>.<tld>` select login with keycloak and use the developer username and password.
 
 ### Kibana / ECK log notes
 
-Log in to <https://kibana>.<domain>.<tld>
+Log in to `<https://kibana>.<domain>.<tld>`
 
 Create an index pattern for fluentd if not already created
 
@@ -90,7 +90,7 @@ Build filter for argocd namespace
 ```
 
 Link that describes ArgoCD components  
-<https://argoproj.github.io/argo-cd/operator-manual/architecture/>  
+https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/ 
   
 Build filters by argocd container name.
   

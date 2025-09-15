@@ -32,6 +32,13 @@ kyvernoPolicies:
   values:
     bbtests:
       enabled: false
+    policies:
+      update-automountserviceaccounttokens:
+        namespaces:
+          - namespace: argocd
+            pods:
+              allow:
+              - argocd-argocd-script-test
 kyverno:
   values:
     bbtests:

@@ -4,6 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.3.5-bb.0] (2025-09-05)
+
+### Changed
+
+- Upgrade argo-cd helm chart 8.3.4 -> 8.3.5
+- ironbank/big-bang/argocd (source) 3.1.3 -> 3.1.4
+- gluon 0.8.4 -> 0.9.0
+
 ## [8.3.4-bb.1] (2025-09-11)
 
 ### Changed
