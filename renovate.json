@@ -19,20 +19,26 @@
     ],
     "packageRules": [
         {
-            "matchDatasources": ["docker"],
+            "matchDatasources": [
+                "docker"
+            ],
             "groupName": "Ironbank",
-            "registryUrls": ["https://registry1.dso.mil"]
+            "registryUrls": [
+                "https://registry1.dso.mil"
+            ]
         },
         {
-            "matchManagers": ["custom.regex"],
+            "matchManagers": [
+                "custom.regex"
+            ],
             "groupName": "Grouped Chart Dependency Updates"
         }
     ],
     "customManagers": [
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/values\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/values\\.yaml$/"
             ],
             "matchStrings": [
                 "image:\\s+(?:#.*\\n\\s+)?repository:\\s+[^/]+/(?<depName>.+)\\s+(?:#.*\\n\\s+)tag:\\s+(?<currentValue>.+)"
@@ -41,8 +47,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/Chart\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "appVersion:[^\\S\\r\\n]+(?<currentValue>.+)"
@@ -52,8 +58,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/Chart\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "- Argocd:\\s+(?<currentValue>.+)"
@@ -63,8 +69,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/external/Chart\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/external/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "version:\\s+(?<currentValue>.+)"
@@ -75,8 +81,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "^chart/Chart\\.yaml$"
+            "managerFilePatterns": [
+                "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
