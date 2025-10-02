@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.3.5-bb.1] (2025-10-02)
+
+### Changed
+
+- Added redis and redis-exporter as dependencies to the chart annotation helm.sh/images
+
 ## [8.3.5-bb.0] (2025-09-05)
 
 ### Changed
