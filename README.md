@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 8.3.5-bb.1](https://img.shields.io/badge/Version-8.3.5--bb.1-informational?style=flat-square) ![AppVersion: v3.1.4](https://img.shields.io/badge/AppVersion-v3.1.4-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 8.5.8-bb.0](https://img.shields.io/badge/Version-8.5.8--bb.0-informational?style=flat-square) ![AppVersion: v3.1.8](https://img.shields.io/badge/AppVersion-v3.1.8-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -109,7 +109,7 @@ helm install argocd chart/
 | redis-bb.upstream.metrics.labels | object | `{"app.kubernetes.io/name":"argocd-redis-ha-haproxy"}` | Custom labels for the haproxy pod. This is relevant for Argo CD CLI. |
 | redis-bb.upstream.metrics.containerSecurityContext | object | `{"enabled":true,"runAsGroup":1001,"runAsUser":1001}` | HAProxy enable prometheus metric scraping |
 | global.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/argocd"` |  |
-| global.image.tag | string | `"v3.1.4"` |  |
+| global.image.tag | string | `"v3.1.8"` |  |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | global.imagePullSecrets[0].name | string | `"private-registry"` |  |
 | argocd-apps.applications | object | `{}` |  |
