@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v3.1.4
+appVersion: v3.1.8
 kubeVersion: ">=1.25.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 8.3.5-bb.1
+version: 8.5.8-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -18,16 +18,16 @@ maintainers:
     url: https://argoproj.github.io/
 dependencies:
   - name: argo-cd
-    version: 8.3.5
+    version: 8.5.8
     repository: https://argoproj.github.io/argo-helm
     alias: upstream
   - name: redis
-    version: 22.0.4-bb.1
+    version: 22.0.7-bb.1
     repository: "oci://registry1.dso.mil/bigbang"
     condition: redis-bb.enabled
     alias: redis-bb
   - name: gluon
-    version: "0.9.0"
+    version: "0.9.2"
     repository: "oci://registry1.dso.mil/bigbang"
   - name: argocd-apps
     version: "2.0.2"
@@ -36,12 +36,12 @@ dependencies:
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Argocd: v3.1.4
+    - Argocd: v3.1.8
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.1.4
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.1.8
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -50,9 +50,8 @@ annotations:
       image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.44.0
     - name: redis
       condition: redis-bb.enabled
-      image: registry1.dso.mil/ironbank/bitnami/redis:8.0.3
+      image: registry1.dso.mil/ironbank/bitnami/redis:8.2.1
     - name: redis-exporter
       condition: redis-bb.enabled
-      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.74.0
-
+      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.77.0
 

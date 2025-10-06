@@ -200,7 +200,7 @@ redis-bb:
 global:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v3.1.4
+    tag: v3.1.8
     imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: private-registry
