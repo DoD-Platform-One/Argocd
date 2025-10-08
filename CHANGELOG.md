@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.5.8-bb.1] (2025-10-08)
+
+### Changed
+
+- Fix renovate to consolidate changes into one MR
+
 ## [8.5.8-bb.0] (2025-10-03)
 
 ### Changed
