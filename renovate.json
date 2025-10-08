@@ -6,6 +6,7 @@
     "dependencyDashboard": true,
     "dependencyDashboardTitle": "Renovate: Upgrade ArgoCD Package Dependencies",
     "draftPR": true,
+    "branchName": "renovate/ironbank",
     "enabledManagers": [
         "custom.regex",
         "helmv3"
@@ -19,19 +20,13 @@
     ],
     "packageRules": [
         {
-            "matchDatasources": [
-                "docker"
+            "matchManagers": [
+                "custom.regex"
             ],
             "groupName": "Ironbank",
             "registryUrls": [
                 "https://registry1.dso.mil"
             ]
-        },
-        {
-            "matchManagers": [
-                "custom.regex"
-            ],
-            "groupName": "Grouped Chart Dependency Updates"
         }
     ],
     "customManagers": [
