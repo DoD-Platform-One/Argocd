@@ -136,6 +136,7 @@ redis-bb:
       redis:
         enabled: false
     image:
+      tag: 8.2.2
       pullSecrets:
       - private-registry
     metrics:
