@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.5.8-bb.2] (2025-10-09)
+
+### Changed
+
+- redis 8.2.1 -> 8.2.2
+
 ## [8.5.8-bb.1] (2025-10-08)
 
 ### Changed
