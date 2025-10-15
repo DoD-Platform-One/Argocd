@@ -4,6 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [8.6.1-bb.0] (2025-10-14)
+
+### Changed
+
+- Upgrade argo-cd helm chart 8.5.8 -> 8.6.1
+- gluon 0.9.2 -> 0.9.3
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.77.0 -> v1.78.0
+
 ## [8.5.8-bb.2] (2025-10-09)
 
 ### Changed
