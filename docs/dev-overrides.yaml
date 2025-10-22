@@ -1,0 +1,69 @@
+# dev-overrides.yaml
+# Copy this to your overrides directory and modify it as needed
+istioCRDs:
+  enabled: true
+istiod:
+  enabled: true
+istioGateway:
+  enabled: true
+addons:
+  argocd: 
+    enabled: true
+    git:
+      tag: null
+      branch: "your-branch-name"
+    bbtests:
+      enabled: true
+    values:
+      monitoring:
+        enabled: true
+      networkPolicies:
+        enabled: true
+      upstream:
+        configs:
+          secret:
+            argocdServerAdminPassword: '$2a$10$rUDZDckdDZ2TEwk9PDs3QuqjkL58qR1IHE1Kj4MwDx.7/m5dytZJm'
+          # # OIDC parameters for Keycloak integration. Uncomment to enable
+          # cm:
+          #   oidc.config: |
+          #     name: Keycloak
+          #     issuer: https://keycloak.dev.bigbang.mil/auth/realms/baby-yoda
+          #     clientID: dev_00eb8904-5b88-4c68-ad67-cec0d2e07aa6_argocd
+          #     clientSecret: this-can-be-anything-for-dev
+          #     enablePKCEAuthentication: true
+          #     requestedScopes: ["openid", "ArgoCD"]
+          # rbac:
+          #   policy.csv: |
+          #     g, /Impact Level 2 Authorized, role:admin
+          # 
+        # # Monitoring Parameters. Uncomment to enable metrics
+        # server:
+        #   metrics:
+        #       enabled: true
+        #       serviceMonitor:
+        #         enabled: true
+        #   controller:
+        #     metrics:
+        #       enabled: true
+        #       serviceMonitor:
+        #         enabled: true
+        #   repoServer:
+        #     metrics:
+        #       enabled: true
+        #       serviceMonitor:
+        #         enabled: true
+        #   applicationSet:
+        #     metrics:
+        #       enabled: true
+        #       serviceMonitor:
+        #         enabled: true
+        #   notifications:
+        #     metrics:
+        #       enabled: true
+        #       serviceMonitor:
+        #         enabled: true
+        #   dex:
+        #     metrics:
+        #       enabled: true
+        #       serviceMonitor:
+        #         enabled: true

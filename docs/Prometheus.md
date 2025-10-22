@@ -8,9 +8,9 @@
   - argocd-server-metrics
 - List of metrics gathered
 
-- ### argocd-server metrics port 8083
+- ## argocd-server metrics port 8083
 
-       ```
+
        # HELP argocd_redis_request_duration Redis requests duration.
        # TYPE argocd_redis_request_duration histogram
        argocd_redis_request_duration_bucket{initiator="argocd-server",le="0.1"} 10
@@ -1680,11 +1680,11 @@
        # HELP process_virtual_memory_max_bytes Maximum amount of virtual memory available in bytes.
        # TYPE process_virtual_memory_max_bytes gauge
        process_virtual_memory_max_bytes -1
-       ```
 
-- ### argocd-application-controller port 8082
 
-       ```
+- ## argocd-application-controller port 8082
+
+
        # HELP argocd_app_info Information about application.
        # TYPE argocd_app_info gauge
        argocd_app_info{dest_namespace="anchore",dest_server="https://kubernetes.default.svc",health_status="Unknown",name="anchore",namespace="argocd",operation="",project="managed-apps",repo="https://repo1.dso.mil/platform-one/private/big-bang/fences-bootstrap",sync_status="Unknown"} 1
@@ -2108,7 +2108,7 @@
        workqueue_work_duration_seconds_bucket{name="app_reconciliation_queue",le="+Inf"} 2327
        workqueue_work_duration_seconds_sum{name="app_reconciliation_queue"} 1884.5912232190005
        workqueue_work_duration_seconds_count{name="app_reconciliation_queue"} 2327
-       ```
+
 
 - Useful queries
   - argocd_app_info{health_status="Healthy"}

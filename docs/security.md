@@ -2,7 +2,7 @@
 
 ArgoCD is [PCI compliant](https://www.pcisecuritystandards.org/).  Continuous internal reviews and penetration testing has been completed to satisfy security requirements.
 
-### Authentication
+## Authentication
 
 JSON Web Tokens (JWT) are utilized for Authentication to ARGOCD API server using the following methods:
 
@@ -12,4 +12,4 @@ JSON Web Tokens (JWT) are utilized for Authentication to ARGOCD API server using
 
 3. Automation tokens are generated for a project using the /api/v1/projects/{project}/roles/{role}/token endpoint, and are signed & issued by Argo CD. These tokens are limited in scope and privilege, and can only be used to manage application resources in the project which it belongs to. Project JWTs have a configurable expiration and can be immediately revoked by deleting the JWT reference ID from the project role.
 
-Click [here](https://argo-cd.readthedocs.io/en/stable/operator-manual/security/) for more security information.
+View the [Security Documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/security/) for more security information.

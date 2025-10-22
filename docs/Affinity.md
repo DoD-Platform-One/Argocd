@@ -1,8 +1,8 @@
-## Setting Affinity, nodeSelector, and tolerations within ArgoCD Chart
+# Setting Affinity, nodeSelector, and tolerations within ArgoCD Chart
 
-### Each component has they ability to set
+## Each component has they ability to set
 
-```
+```yaml
 ## Node selectors and tolerations for server scheduling to nodes with taints
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 ##
@@ -13,7 +13,7 @@ affinity: {}
 
 ### To enable set the values in the values.yaml
 
-```
+```yaml
 controller:
   nodeSelector: {}
   tolerations: []

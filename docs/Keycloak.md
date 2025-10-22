@@ -113,22 +113,22 @@ Update chart/values.yaml to enable sso and ArgoCD keycloak client secret:
 
 1. modify values.yaml. This will apply changes to argo-cm argo-rbac-cm and argo-secret:
 
-```
+```yaml
 # SSO Additions
 sso:
   enabled: true <--change to true
   keycloakClientSecret: <place secret here>
 ```
 
-2. Apply helm chart:
+1. Apply helm chart:
 
-```
+```shell
 helm upgrade -i -n argocd --create-namespace argocd chart/
 ```
 
-3. Restart ArgoCD to apply changes by executing  "kubectl -n argocd delete pod --all" within bastion or environment.
+1. Restart ArgoCD to apply changes by executing  "kubectl -n argocd delete pod --all" within bastion or environment.
 
-4. Go to `<https://argocd>.<domain>.<tld>` select login with keycloak and use the created username and password.
+1. Go to `<https://argocd>.<domain>.<tld>` select login with keycloak and use the created username and password.
 
 ## OIDC Custom CA
 
