@@ -136,11 +136,12 @@ redis-bb:
       redis:
         enabled: false
     image:
-      tag: 8.2.2
       pullSecrets:
       - private-registry
     metrics:
       enabled: true
+      image:
+        tag: v1.79.0
       # --  Custom labels for the haproxy pod. This is relevant for Argo CD CLI.
       labels:
         app.kubernetes.io/name: argocd-redis-ha-haproxy
@@ -201,7 +202,7 @@ redis-bb:
 global:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v3.1.8
+    tag: v3.1.9
     imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: private-registry
