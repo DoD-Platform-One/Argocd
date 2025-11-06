@@ -113,7 +113,7 @@ bbtests:
         cpu: 4
         memory: 8Gi
   scripts:
-    image: "registry1.dso.mil/bigbang-ci/devops-tester:1.1.2"
+    image: "registry1.dso.mil/ironbank/big-bang/devops-tester:1.0"
     envs:
       ARGOCD_SERVER: "http://argocd-server"
       ARGOCD_USER: "admin"
@@ -141,7 +141,7 @@ redis-bb:
     metrics:
       enabled: true
       image:
-        tag: v1.79.0
+        tag: v1.80.0
       # --  Custom labels for the haproxy pod. This is relevant for Argo CD CLI.
       labels:
         app.kubernetes.io/name: argocd-redis-ha-haproxy
