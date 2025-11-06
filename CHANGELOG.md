@@ -4,6 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.0.3-bb.1] (2025-11-06)
+
+### Changed
+
+- Upgrade argo-cd helm chart 9.0.3 -> 9.1.0
+- gluon 0.9.5 -> 0.9.6
+- registry1.dso.mil/ironbank/big-bang/argocd v3.1.8 -> v3.1.9
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.7.0 -> v1.80.0
+- registry1.dso.mil/bigbang-ci/devops-tester:1.1.2 -> registry1.dso.mil/ironbank/big-bang/devops-tester:1.0
+
 ## [9.0.3-bb.0] (2025-10-21)
 
 ### Changed
