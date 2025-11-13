@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.0.3-bb.2] (2025-11-12)
+
+### Changed
+
+- Update allow-egress-external network policy to handle `vcpCidr` in addition to controlPlaneCidr
+- Add `controlPlaneCidr` as a variable rather than a set value
+
 ## [9.0.3-bb.1] (2025-11-06)
 
 ### Changed
