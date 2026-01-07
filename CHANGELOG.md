@@ -3,6 +3,17 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
+## [9.1.7-bb.0] (2025-01-07)
+
+### Changed
+
+- gluon 0.9.6 -> 0.9.7
+- Upgrade argo-cd helm chart 9.1.4 -> 9.1.7
+- redis (source) 23.2.12-bb.0 -> 24.0.0-bb.0
+- registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter v1.80.0 -> v1.80.1
+- registry1.dso.mil/ironbank/big-bang/argocd v3.2.0 -> v3.2.3
+
+
 
 ## [9.1.4-bb.0] (2025-11-24)
 
