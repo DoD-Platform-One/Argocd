@@ -4,6 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.3.0-bb.0] (2026-01-13)
+
+### Changed
+
+- Upgrade argo-cd helm chart 9.1.7 -> 9.3.0
+- Upgrade argocd-apps 2.0.2 -> 2.0.4
+- redis (source) 24.0.0-bb.0 -> 24.1.0-bb.0
+
 ## [9.1.7-bb.0] (2026-01-07)
 
 ### Changed
