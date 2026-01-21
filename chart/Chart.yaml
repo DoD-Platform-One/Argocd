@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v3.2.3
+appVersion: v3.2.5
 kubeVersion: ">=1.25.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 9.3.0-bb.0
+version: 9.3.4-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -18,7 +18,7 @@ maintainers:
     url: https://argoproj.github.io/
 dependencies:
   - name: argo-cd
-    version: 9.3.0
+    version: 9.3.4
     repository: https://argoproj.github.io/argo-helm
     alias: upstream
   - name: redis
@@ -36,12 +36,12 @@ dependencies:
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Argocd: v3.2.3
+    - Argocd: v3.2.5
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.2.3
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.2.5
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -50,7 +50,7 @@ annotations:
       image: registry1.dso.mil/ironbank/opensource/dexidp/dex:v2.44.0
     - name: redis
       condition: redis-bb.enabled
-      image: registry1.dso.mil/ironbank/bitnami/redis:8.2.3
+      image: registry1.dso.mil/ironbank/bitnami/redis:8.4.0
     - name: redis-exporter
       condition: redis-bb.enabled
       image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.80.1
