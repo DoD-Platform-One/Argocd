@@ -206,7 +206,7 @@ redis-bb:
 global:
   image:
     repository: registry1.dso.mil/ironbank/big-bang/argocd
-    tag: v3.2.3
+    tag: v3.2.5
     imagePullPolicy: IfNotPresent
   imagePullSecrets:
     - name: private-registry
@@ -324,3 +324,7 @@ upstream:
     containerSecurityContext:
       runAsUser: 1000
       runAsGroup: 1000
+  openshift:
+    # -- enables using arbitrary uid for argo repo server
+    enabled: false
+      

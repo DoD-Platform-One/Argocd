@@ -4,6 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.3.4-bb.0] (2026-01-15)
+
+### Changed
+
+- Upgraded argo-cd 9.3.0 -> 9.3.4
+- Upgraded registry1.dso.mil/ironbank/big-bang/argocd v3.2.3 -> v3.2.5
+- Upgraded registry1.dso.mil/ironbank/bitnami/redis 8.2.3 -> 8.4.0
+
 ## [9.3.0-bb.0] (2026-01-13)
 
 ### Changed
