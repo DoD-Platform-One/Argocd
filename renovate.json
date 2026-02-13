@@ -8,6 +8,7 @@
     "draftPR": true,
     "branchName": "renovate/ironbank",
     "enabledManagers": [
+        "helm-values",
         "custom.regex",
         "helmv3"
     ],
@@ -16,66 +17,85 @@
     ],
     "labels": [
         "argocd",
-        "renovate"
+        "renovate",
+        "kind::maintenance",
+        "priority::2"
+    ],
+    "postUpdateOptions": [
+        "helmUpdateSubChartArchives"
     ],
     "packageRules": [
         {
             "matchManagers": [
-                "custom.regex"
+                "helmv3",
+                "helm-values",
+                "regex"
+            ],
+            "matchFileNames": [
+                "chart/Chart.yaml",
+                "chart/values.yaml"
+            ],
+            "groupName": "Tempo chart: subcharts + images"
+        },
+        {
+            "matchDatasources": [
+                "docker",
+                "helm"
             ],
             "groupName": "Ironbank",
-            "registryUrls": [
-                "https://registry1.dso.mil"
-            ]
+            "postUpgradeTasks": {
+                "commands": [
+                    "regenerate-helm-docs",
+                    "bump-changelog '{{#each upgrades}}- {{depName}} {{currentVersion}} -> {{newVersion}}\\n{{/each}}'"
+                ],
+                "executionMode": "update",
+                "fileFilters": [
+                    "README.md",
+                    "CHANGELOG.md"
+                ]
+            }
         }
     ],
     "customManagers": [
         {
             "customType": "regex",
+            "description": "Update image versions in values.yaml (repository + tag)",
             "managerFilePatterns": [
                 "/^chart/values\\.yaml$/"
             ],
             "matchStrings": [
-                "image:\\s+(?:#.*\\n\\s+)?repository:\\s+[^/]+/(?<depName>.+)\\s+(?:#.*\\n\\s+)tag:\\s+(?<currentValue>.+)"
+                "repository:\\s*[\"']?(?<depName>[^\\s\"']+)[\"']?\\s*\\n\\s*tag:\\s*[\"']?(?<currentValue>[^\\s\"']+)[\"']?"
             ],
             "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
+            "description": "Update app version chart annotations",
             "managerFilePatterns": [
                 "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
-                "appVersion:[^\\S\\r\\n]+(?<currentValue>.+)"
+                "- Argocd:\\s+(?<currentValue>.+)",
+                "appVersion:\\s+(?<currentValue>.+)"
             ],
             "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/argocd",
             "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
+            "description": "Update additional app version chart annotations",
             "managerFilePatterns": [
                 "/^chart/Chart\\.yaml$/"
             ],
             "matchStrings": [
                 "- Argocd:\\s+(?<currentValue>.+)"
             ],
-            "depNameTemplate": "ironbank/big-bang/argocd",
+            "depNameTemplate": "registry1.dso.mil/ironbank/big-bang/argocd",
             "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
-            "managerFilePatterns": [
-                "/^chart/external/Chart\\.yaml$/"
-            ],
-            "matchStrings": [
-                "version:\\s+(?<currentValue>.+)"
-            ],
-            "depNameTemplate": "https://repo1.dso.mil/big-bang/product/maintained/redis.git",
-            "datasourceTemplate": "git-tags",
-            "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-bb\\.(?<build>\\d+)$"
-        },
-        {
-            "customType": "regex",
+            "description": "Update docker image references",
             "managerFilePatterns": [
                 "/^chart/Chart\\.yaml$/"
             ],
@@ -83,6 +103,20 @@
                 "image:[^\\S\\r\\n]+(?<depName>.+):(?<currentValue>.+)"
             ],
             "datasourceTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "description": "Update chart version",
+            "managerFilePatterns": [
+                "/^chart/Chart\\.yaml$/"
+            ],
+            "matchStrings": [
+                "version:\\s+(?<currentValue>.+)-bb\\.\\d+"
+            ],
+            "autoReplaceStringTemplate": "version: {{newValue}}-bb.0",
+            "depNameTemplate": "argocd",
+            "datasourceTemplate": "helm",
+            "registryUrlTemplate": "https://argoproj.github.io/argo-helm"
         }
     ],
     "separateMajorMinor": false
