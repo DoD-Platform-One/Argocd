@@ -2,12 +2,12 @@
 {{- define "argocd.script-configmap" }}
 metadata:
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.upstream.server.name }}
+    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-script-test
     helm.sh/chart: {{ include "argo-cd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.upstream.server.name }}
+    app.kubernetes.io/component: script-test
     app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.upstream.server.image.tag | quote }}
 {{- end }}
 ---
@@ -15,11 +15,11 @@ metadata:
 {{- define "argocd.script-runner" }}
 metadata:
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.upstream.server.name }}
+    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-script-test
     helm.sh/chart: {{ include "argo-cd.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.upstream.server.name }}
+    app.kubernetes.io/component: script-test
     app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.upstream.server.image.tag | quote }}
 {{- end }}

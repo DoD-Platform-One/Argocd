@@ -9,12 +9,21 @@ domain: dev.bigbang.mil
 istio:
   # -- Toggle BigBang istio integration
   enabled: false
-  hardened:
+  # -- Toggle BigBang istio injection
+  injection: "disabled"
+  # -- Default argocd peer authentication
+  mtls:
+    # -- STRICT = Allow only mutual TLS traffic,
+    # PERMISSIVE = Allow both plain text and mutual TLS traffic
+    mode: STRICT
+  # -- Sidecar configuration for hardened mode
+  sidecar:
     enabled: false
     outboundTrafficPolicyMode: "REGISTRY_ONLY"
-    customServiceEntries: []
+  # -- Custom ServiceEntries for hardened mode
+  serviceEntries:
+    custom: []
     # - name: "allow-google"
-    #   enabled: true
     #   spec:
     #     exportTo:
     #       - "."
@@ -25,73 +34,107 @@ istio:
     #       - number: 443
     #         protocol: TLS
     #         name: https
-
-    customAuthorizationPolicies: []
+  # -- Authorization policies for hardened mode
+  authorizationPolicies:
+    enabled: false
+    # -- Generate AuthorizationPolicies from NetworkPolicy rules
+    generateFromNetpol: false
+    custom: []
     # - name: "allow-nothing"
-    #   enabled: true
     #   spec: {}
-    monitoring:
-      enabled: true
-      namespaces:
-      - monitoring
-      principals:
-      - cluster.local/ns/monitoring/sa/monitoring-grafana
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics
-      - cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter
+# -- Inbound routes for VirtualService generation
+routes:
+  inbound:
     argocd:
       enabled: true
-      namespaces:
-      - argocd
-      principals:
-      - cluster.local/ns/argocd/sa/argocd-application-controller
-      - cluster.local/ns/argocd/sa/argocd-applicationset-controller
-      - cluster.local/ns/argocd/sa/argocd-argocd-redis-bb
-      - cluster.local/ns/argocd/sa/argocd-argocd-repo-server
-      - cluster.local/ns/argocd/sa/argocd-dex-server
-      - cluster.local/ns/argocd/sa/argocd-notifications-controller
-      - cluster.local/ns/argocd/sa/argocd-server
-      - cluster.local/ns/argocd/sa/upgrade-job-svc-account
-      - cluster.local/ns/argocd/sa/argocd-argocd-redis-bb-metrics
-  # -- Toggle BigBang istio injection
-  injection: "disabled"
-  # -- Default argocd peer authentication
-  mtls:
-    # -- STRICT = Allow only mutual TLS traffic,
-    # PERMISSIVE = Allow both plain text and mutual TLS traffic
-    mode: STRICT
-  argocd:
-    # -- Toggle Istio VirtualService creation
-    enabled: true
-    # -- Set Annotations for VirtualService
-    annotations: {}
-    # -- Set Labels for VirtualService
-    labels: {}
-    # -- Set Gateway for VirtualService
-    gateways:
-    - istio-system/main
-    # -- Set Hosts for VirtualService
-    hosts:
-    - argocd.{{ .Values.domain }}
+      annotations: {}
+      labels: {}
+      gateways:
+      - istio-gateway/public-ingressgateway 
+      hosts:
+      - argocd.{{ .Values.domain }}
+      service: argocd-argocd-server
+      containerPort: 8080
+      port: 80
+      selector:
+        app.kubernetes.io/name: argocd-server
+
 monitoring:
   # -- Toggle BigBang monitoring integration
   enabled: false
 networkPolicies:
   # -- Toggle BigBang networkPolicies integration
-  enabled: false
-  ingressLabels:
-    app: istio-ingressgateway
-    istio: ingressgateway
-  # -- Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster
-  # Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints)
-  # Used by package NetworkPolicies to allow Kube API access
-  controlPlaneCidr: 0.0.0.0/0
-  # -- Vpc CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster
-  # Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints)
-  # Used by package NetworkPolicies to allow Kube API access
-  vpcCidr: 0.0.0.0/0
+  enabled: true
+
+  ingress:
+    to:
+      # -- Ingress to argocd-server for metrics from prometheus
+      argocd-server:8083:
+        from:
+          k8s:
+            monitoring-monitoring-kube-prometheus@monitoring/prometheus: true
+      # -- Ingress to argocd-repo-server for metrics from prometheus
+      argocd-repo-server:8084:
+        from:
+          k8s:
+            monitoring-monitoring-kube-prometheus@monitoring/prometheus: true
+      # -- Ingress to argocd-application-controller for metrics from prometheus
+      argocd-application-controller:8082:
+        from:
+          k8s:
+            monitoring-monitoring-kube-prometheus@monitoring/prometheus: true
+      # -- Ingress to redis from grafana for dashboards
+      redis-bb:6379:
+        from:
+          k8s:
+            monitoring/grafana: true
+      # -- Ingress to redis-exporter for metrics from prometheus
+      redis-bb:9121:
+        from:
+          k8s:
+            monitoring-monitoring-kube-prometheus@monitoring/prometheus: true
+  egress:
+    from:
+      # -- Egress to tempo for tracing from all pods
+      "*":
+        to:
+          k8s:
+            tempo/tempo:9411: false
+      # -- Egress to kube API for application-controller (needed for reconciling resources)
+      argocd-application-controller:
+        to:
+          definition:
+            kubeAPI: true
+      # -- Egress to kube API for server (needed for secrets/configmaps)
+      argocd-server:
+        to:
+          definition:
+            kubeAPI: true
+      # -- Egress to kube API for applicationset-controller
+      argocd-applicationset-controller:
+        to:
+          definition:
+            kubeAPI: true
+      # -- Egress to kube API for dex-server
+      argocd-dex-server:
+        to:
+          definition:
+            kubeAPI: true
+      # -- Egress to kube API for notifications-controller
+      argocd-notifications-controller:
+        to:
+          definition:
+            kubeAPI: true
+      # -- Egress to kube API for upgrade job (needed for labeling CRDs)
+      argocd-upgrade-job:
+        to:
+          definition:
+            kubeAPI: true
+      # -- Egress to external git repos for repo-server
+      argocd-repo-server:
+        to:
+          cidr:
+            0.0.0.0/0:443: true
   additionalPolicies: []
 upgradeJob:
   enabled: true

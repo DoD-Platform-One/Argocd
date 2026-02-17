@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.3.4-bb.1] (2026-02-05)
+
+### Changed
+
+- Migrated to bb-common version 0.14.0 to generate network policies and istio resources
+
 ## [9.3.4-bb.0] (2026-01-15)
 
 ### Changed

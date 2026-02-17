@@ -1,0 +1,68 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: test network policies
+templates:
+  - templates/bigbang/network-policies.yaml
+tests:
+  - it: should create default deny ingress policy when enabled
+    set:
+      networkPolicies.enabled: true
+    documentSelector:
+      path: metadata.name
+      value: default-ingress-deny-all
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: spec.podSelector
+          value: {}
+      - contains:
+          path: spec.policyTypes
+          content: Ingress
+
+  - it: should create default deny egress policy when enabled
+    set:
+      networkPolicies.enabled: true
+    documentSelector:
+      path: metadata.name
+      value: default-egress-deny-all
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - equal:
+          path: spec.podSelector
+          value: {}
+      - contains:
+          path: spec.policyTypes
+          content: Egress
+
+  - it: should create kubeAPI egress policy for application-controller
+    set:
+      networkPolicies.enabled: true
+    documentSelector:
+      path: metadata.name
+      value: allow-egress-from-argocd-application-controller-to-kubeapi
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - contains:
+          path: spec.policyTypes
+          content: Egress
+      - equal:
+          path: spec.podSelector.matchLabels["app.kubernetes.io/name"]
+          value: argocd-application-controller
+
+  - it: should create kubeAPI egress policy for server
+    set:
+      networkPolicies.enabled: true
+    documentSelector:
+      path: metadata.name
+      value: allow-egress-from-argocd-server-to-kubeapi
+    asserts:
+      - isKind:
+          of: NetworkPolicy
+      - contains:
+          path: spec.policyTypes
+          content: Egress
+      - equal:
+          path: spec.podSelector.matchLabels["app.kubernetes.io/name"]
+          value: argocd-server
