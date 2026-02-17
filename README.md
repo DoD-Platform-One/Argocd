@@ -1,7 +1,7 @@
 <!-- Warning: Do not manually edit this file. See notes on gluon + helm-docs at the end of this file for more information. -->
 # argocd
 
-![Version: 9.3.4-bb.0](https://img.shields.io/badge/Version-9.3.4--bb.0-informational?style=flat-square) ![AppVersion: v3.2.5](https://img.shields.io/badge/AppVersion-v3.2.5-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
+![Version: 9.3.4-bb.1](https://img.shields.io/badge/Version-9.3.4--bb.1-informational?style=flat-square) ![AppVersion: v3.2.5](https://img.shields.io/badge/AppVersion-v3.2.5-informational?style=flat-square) ![Maintenance Track: bb_integrated](https://img.shields.io/badge/Maintenance_Track-bb_integrated-green?style=flat-square)
 
 A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 
@@ -50,43 +50,22 @@ helm install argocd chart/
 | awsCredentials.awsDefaultRegion | string | `"us-gov-west-1"` |  |
 | domain | string | `"dev.bigbang.mil"` |  |
 | istio.enabled | bool | `false` | Toggle BigBang istio integration |
-| istio.hardened.enabled | bool | `false` |  |
-| istio.hardened.outboundTrafficPolicyMode | string | `"REGISTRY_ONLY"` |  |
-| istio.hardened.customServiceEntries | list | `[]` |  |
-| istio.hardened.customAuthorizationPolicies | list | `[]` |  |
-| istio.hardened.monitoring.enabled | bool | `true` |  |
-| istio.hardened.monitoring.namespaces[0] | string | `"monitoring"` |  |
-| istio.hardened.monitoring.principals[0] | string | `"cluster.local/ns/monitoring/sa/monitoring-grafana"` |  |
-| istio.hardened.monitoring.principals[1] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-alertmanager"` |  |
-| istio.hardened.monitoring.principals[2] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-operator"` |  |
-| istio.hardened.monitoring.principals[3] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-prometheus"` |  |
-| istio.hardened.monitoring.principals[4] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-kube-state-metrics"` |  |
-| istio.hardened.monitoring.principals[5] | string | `"cluster.local/ns/monitoring/sa/monitoring-monitoring-prometheus-node-exporter"` |  |
-| istio.hardened.argocd.enabled | bool | `true` |  |
-| istio.hardened.argocd.namespaces[0] | string | `"argocd"` |  |
-| istio.hardened.argocd.principals[0] | string | `"cluster.local/ns/argocd/sa/argocd-application-controller"` |  |
-| istio.hardened.argocd.principals[1] | string | `"cluster.local/ns/argocd/sa/argocd-applicationset-controller"` |  |
-| istio.hardened.argocd.principals[2] | string | `"cluster.local/ns/argocd/sa/argocd-argocd-redis-bb"` |  |
-| istio.hardened.argocd.principals[3] | string | `"cluster.local/ns/argocd/sa/argocd-argocd-repo-server"` |  |
-| istio.hardened.argocd.principals[4] | string | `"cluster.local/ns/argocd/sa/argocd-dex-server"` |  |
-| istio.hardened.argocd.principals[5] | string | `"cluster.local/ns/argocd/sa/argocd-notifications-controller"` |  |
-| istio.hardened.argocd.principals[6] | string | `"cluster.local/ns/argocd/sa/argocd-server"` |  |
-| istio.hardened.argocd.principals[7] | string | `"cluster.local/ns/argocd/sa/upgrade-job-svc-account"` |  |
-| istio.hardened.argocd.principals[8] | string | `"cluster.local/ns/argocd/sa/argocd-argocd-redis-bb-metrics"` |  |
 | istio.injection | string | `"disabled"` | Toggle BigBang istio injection |
 | istio.mtls | object | `{"mode":"STRICT"}` | Default argocd peer authentication |
 | istio.mtls.mode | string | `"STRICT"` | STRICT = Allow only mutual TLS traffic, PERMISSIVE = Allow both plain text and mutual TLS traffic |
-| istio.argocd.enabled | bool | `true` | Toggle Istio VirtualService creation |
-| istio.argocd.annotations | object | `{}` | Set Annotations for VirtualService |
-| istio.argocd.labels | object | `{}` | Set Labels for VirtualService |
-| istio.argocd.gateways | list | `["istio-system/main"]` | Set Gateway for VirtualService |
-| istio.argocd.hosts | list | `["argocd.{{ .Values.domain }}"]` | Set Hosts for VirtualService |
+| istio.sidecar | object | `{"enabled":false,"outboundTrafficPolicyMode":"REGISTRY_ONLY"}` | Sidecar configuration for hardened mode |
+| istio.serviceEntries | object | `{"custom":[]}` | Custom ServiceEntries for hardened mode |
+| istio.authorizationPolicies | object | `{"custom":[],"enabled":false,"generateFromNetpol":false}` | Authorization policies for hardened mode |
+| istio.authorizationPolicies.generateFromNetpol | bool | `false` | Generate AuthorizationPolicies from NetworkPolicy rules |
+| routes | object | `{"inbound":{"argocd":{"annotations":{},"containerPort":8080,"enabled":true,"gateways":["istio-gateway/public-ingressgateway"],"hosts":["argocd.{{ .Values.domain }}"],"labels":{},"port":80,"selector":{"app.kubernetes.io/name":"argocd-server"},"service":"argocd-argocd-server"}}}` | Inbound routes for VirtualService generation |
 | monitoring.enabled | bool | `false` | Toggle BigBang monitoring integration |
-| networkPolicies.enabled | bool | `false` | Toggle BigBang networkPolicies integration |
-| networkPolicies.ingressLabels.app | string | `"istio-ingressgateway"` |  |
-| networkPolicies.ingressLabels.istio | string | `"ingressgateway"` |  |
-| networkPolicies.controlPlaneCidr | string | `"0.0.0.0/0"` | Control Plane CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints) Used by package NetworkPolicies to allow Kube API access |
-| networkPolicies.vpcCidr | string | `"0.0.0.0/0"` | Vpc CIDR, defaults to 0.0.0.0/0, use `kubectl get endpoints -n default kubernetes` to get the CIDR range needed for your cluster Must be an IP CIDR range (x.x.x.x/x - ideally with /32 for the specific IP of a single endpoint, broader range for multiple masters/endpoints) Used by package NetworkPolicies to allow Kube API access |
+| networkPolicies.enabled | bool | `true` | Toggle BigBang networkPolicies integration |
+| networkPolicies.ingress.to.argocd-server:8083 | object | `{"from":{"definition":{"monitoring":true}}}` | Ingress to argocd-server for metrics from prometheus |
+| networkPolicies.ingress.to.argocd-repo-server:8084 | object | `{"from":{"definition":{"monitoring":true}}}` | Ingress to argocd-repo-server for metrics from prometheus |
+| networkPolicies.ingress.to.argocd-application-controller:8082 | object | `{"from":{"definition":{"monitoring":true}}}` | Ingress to argocd-application-controller for metrics from prometheus |
+| networkPolicies.ingress.to.redis-bb:6379 | object | `{"from":{"k8s":{"monitoring/grafana":true}}}` | Ingress to redis from grafana for dashboards |
+| networkPolicies.ingress.to.redis-bb:9121 | object | `{"from":{"definition":{"monitoring":true}}}` | Ingress to redis-exporter for metrics from prometheus |
+| networkPolicies.egress.from.* | object | `{"to":{"definition":{"kubeAPI":true},"k8s":{"tempo/tempo:9411":true}}}` | Egress to kube API for all pods (needed for API and GitRepo access) |
 | networkPolicies.additionalPolicies | list | `[]` |  |
 | upgradeJob.enabled | bool | `true` |  |
 | upgradeJob.image.repository | string | `"registry1.dso.mil/ironbank/big-bang/base"` |  |
