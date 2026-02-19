@@ -4,6 +4,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [9.4.2-bb.0] (2026-02-18)
+
+### Changed
+
+- Upgraded argo-cd 9.3.4 -> 9.4.2
+- Upgraded gluon 0.9.7 -> 0.9.8
+- Upgraded redis (source) 24.1.0-bb.0 -> 24.1.2-bb.0
+- Upgraded registry1.dso.mil/ironbank/big-bang/argocd (source) v3.2.5 -> v3.3.0
+- Upgraded registry1.dso.mil/ironbank/big-bang/devops-tester 1.0 -> 1.1
+- Upgraded registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter (source) v1.80.1 -> v1.81.0
+
 ## [9.3.4-bb.1] (2026-02-05)
 
 ### Changed

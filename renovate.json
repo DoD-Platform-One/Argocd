@@ -117,7 +117,17 @@
             "depNameTemplate": "argocd",
             "datasourceTemplate": "helm",
             "registryUrlTemplate": "https://argoproj.github.io/argo-helm"
-        }
+        },
+        {
+            "customType": "regex",
+            "description": "Update redis-exporter tag in redis-bb subchart values",
+            "managerFilePatterns": ["/^chart/values\\.yaml$/"],
+            "matchStrings": [
+                "metrics:\\s*\\n\\s*enabled:\\s*true\\s*\\n\\s*image:\\s*\\n\\s*tag:\\s*[\"']?(?<currentValue>[^\\s\"']+)[\"']?"
+            ],
+            "depNameTemplate": "registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter",
+            "datasourceTemplate": "docker"
+        }        
     ],
     "separateMajorMinor": false
 }

@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: v3.2.5
+appVersion: v3.3.0
 kubeVersion: ">=1.25.0-0"
 description: A Helm chart for Argo CD, a declarative, GitOps continuous delivery tool for Kubernetes.
 name: argocd
-version: 9.3.4-bb.1
+version: 9.4.2-bb.0
 home: https://github.com/argoproj/argo-helm
 icon: https://argo-cd.readthedocs.io/en/stable/assets/logo.png
 sources:
@@ -18,16 +18,16 @@ maintainers:
     url: https://argoproj.github.io/
 dependencies:
   - name: argo-cd
-    version: 9.3.4
+    version: 9.4.2
     repository: https://argoproj.github.io/argo-helm
     alias: upstream
   - name: redis
-    version: 24.1.0-bb.0
+    version: 24.1.2-bb.0
     repository: "oci://registry1.dso.mil/bigbang/maintained"
     condition: redis-bb.enabled
     alias: redis-bb
   - name: gluon
-    version: "0.9.7"
+    version: "0.9.8"
     repository: "oci://registry1.dso.mil/bigbang"
   - name: bb-common
     version: "0.14.0"
@@ -39,12 +39,12 @@ dependencies:
 annotations:
   bigbang.dev/maintenanceTrack: bb_integrated
   bigbang.dev/applicationVersions: |
-    - Argocd: v3.2.5
+    - Argocd: v3.3.0
   bigbang.dev/upstreamReleaseNotesMarkdown: |
     The [upstream chart's release notes](https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd#changelog) may help when reviewing this package.
   helm.sh/images: |
     - name: argocd
-      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.2.5
+      image: registry1.dso.mil/ironbank/big-bang/argocd:v3.3.0
     - name: base
       condition: upgradeJob.enabled
       image: registry1.dso.mil/ironbank/big-bang/base:2.1.0
@@ -56,8 +56,8 @@ annotations:
       image: registry1.dso.mil/ironbank/bitnami/redis:8.4.0
     - name: redis-exporter
       condition: redis-bb.enabled
-      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.80.1
+      image: registry1.dso.mil/ironbank/bitnami/analytics/redis-exporter:v1.81.0
     - name: bbtests
       condition: bbtests.enabled
-      image: registry1.dso.mil/ironbank/big-bang/devops-tester:1.0
+      image: registry1.dso.mil/ironbank/big-bang/devops-tester:1.1
 
