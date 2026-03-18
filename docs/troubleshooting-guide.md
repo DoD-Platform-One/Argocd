@@ -10,7 +10,9 @@ If you have issues using the `argocd` cli to query your cluster, be sure your ku
 export KUBECONFIG="<path-to-kubeconfig-file>"
 ```
 
-### Settings
+## Settings
+
+For the following steps, you will need to install the [ArgoCD CLI tools](https://argo-cd.readthedocs.io/en/stable/cli_installation/).
 
 Use the following command to validate settings configured in the `argocd-cm` configmap:
 
@@ -67,7 +69,7 @@ kind: ConfigMap
 
 To learn more about where and how ArgoCD stores configuration data, see [this doc](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#declarative-setup).
 
-### ArgoCD Server TLS
+## ArgoCD Server TLS
 
 The `argocd-server` service is deployed by this helm chart.
 
@@ -77,6 +79,6 @@ For this component to function properly in Big Bang, TLS must be disabled becaus
 
 As of this release, the TLS configuration for `argocd-server` is stored in the `argocd-cmd-params-cm` configmap using the `server.insecure` key. This should be set to `server.insecure: "true"`.
 
-### More Troubleshooting
+## More Troubleshooting
 
 See the [troubleshooting guide](https://argo-cd.readthedocs.io/en/stable/operator-manual/troubleshooting/)
